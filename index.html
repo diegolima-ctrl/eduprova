@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduProva — Sistema de Avaliações</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--border:#2a2f42;--accent:#4f7cff;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;--text:#e8eaf2;--muted:#6b7280;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--radius:12px;--shadow:0 8px 32px rgba(0,0,0,0.4)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;font-size:15px}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.hidden{display:none!important}.w-full{width:100%}.text-muted{color:var(--muted)}.text-sm{font-size:13px}.text-xs{font-size:11px}
+.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}
+
+/* LOADING */
+#loading-overlay{position:fixed;inset:0;background:rgba(13,15,20,0.88);backdrop-filter:blur(4px);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--muted);font-size:14px}
+
+/* LOGIN */
+#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#screen-login::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(79,124,255,.12) 0%,transparent 70%);top:-200px;left:-100px;animation:pulse 6s ease-in-out infinite}
+#screen-login::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.08) 0%,transparent 70%);bottom:-100px;right:-100px;animation:pulse 8s ease-in-out infinite reverse}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 44px;width:420px;position:relative;z-index:1;box-shadow:var(--shadow);animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:-.5px}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.login-title{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:8px}
+.login-desc{color:var(--muted);font-size:14px;margin-bottom:32px}
+.tabs{display:flex;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:28px;gap:4px}
+.tab-btn{flex:1;padding:9px;border:none;background:transparent;color:var(--muted);border-radius:7px;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:500;transition:all .2s}
+.tab-btn.active{background:var(--accent);color:#fff}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:12px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
+.form-input,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .2s;appearance:none}
+.form-input:focus,.form-select:focus{border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border:none;border-radius:9px;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-primary{background:var(--accent);color:#fff;width:100%;font-size:15px;padding:14px}
+.btn-primary:hover:not(:disabled){background:#3d6ef0;transform:translateY(-1px)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:#3b1c1c;color:var(--red);border:1px solid #5a2020}
+.btn-danger:hover{background:#4a2020}
+.btn-success{background:#1a3a2a;color:var(--green);border:1px solid #1e4a33}
+.btn-success:hover{background:#1e4a33}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:7px}
+.login-error{color:var(--red);font-size:13px;margin-top:12px;text-align:center;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:9px}
+
+/* APP */
+#screen-app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-logo .logo-icon{width:34px;height:34px;font-size:16px}
+.sidebar-logo .logo-text{font-size:18px}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.user-name{font-weight:600;font-size:14px}
+.user-role{font-size:11px;color:var(--accent);background:rgba(79,124,255,.12);padding:2px 8px;border-radius:20px;font-weight:500}
+.user-role.aluno{color:var(--accent2);background:rgba(167,139,250,.12)}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:8px 10px 6px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;color:var(--muted);font-size:14px;font-weight:500;transition:all .2s;border:1px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(79,124,255,.12);color:var(--accent);border-color:rgba(79,124,255,.2)}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border)}
+.main-content{flex:1;margin-left:240px;padding:32px 36px;min-height:100vh}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.page-title{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.5px}
+.page-subtitle{color:var(--muted);font-size:14px;margin-top:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.card-title{font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.stat-label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-family:var(--font-display);font-size:32px;font-weight:800;margin:6px 0 2px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.turmas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:24px}
+.turma-card{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s}
+.turma-card:hover,.turma-card.selected{border-color:var(--accent);background:rgba(79,124,255,.08)}
+.turma-name{font-family:var(--font-display);font-size:20px;font-weight:800}
+.turma-alunos{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Turma checkbox grid */
+.turmas-check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:8px}
+.turma-check-item{display:flex;align-items:center;gap:6px;background:var(--surface2);border:2px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;transition:all .2s;user-select:none}
+.turma-check-item:hover{border-color:var(--accent)}
+.turma-check-item.checked{border-color:var(--accent);background:rgba(79,124,255,.1);color:var(--accent)}
+.turma-check-item input[type=checkbox]{display:none}
+.turma-check-label{font-family:var(--font-display);font-size:14px;font-weight:700;cursor:pointer}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border)}
+td{padding:13px 14px;border-bottom:1px solid rgba(42,47,66,.6);font-size:14px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.table-wrap{overflow-x:auto}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-blue{background:rgba(79,124,255,.15);color:var(--accent)}
+.badge-green{background:rgba(52,211,153,.15);color:var(--green)}
+.badge-red{background:rgba(248,113,113,.15);color:var(--red)}
+.badge-yellow{background:rgba(251,191,36,.15);color:var(--yellow)}
+.badge-purple{background:rgba(167,139,250,.15);color:var(--accent2)}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-lg{max-width:900px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700}
+.modal-close{background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
+.modal-close:hover{color:var(--text);border-color:var(--text)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+
+/* QUESTÕES */
+.questao-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.questao-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.questao-num{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--accent);background:rgba(79,124,255,.12);padding:3px 10px;border-radius:20px}
+.opcoes-list{list-style:none;margin-top:10px}
+.opcao-item{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.opcao-letter{width:26px;height:26px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;cursor:pointer;transition:all .15s}
+.opcao-letter.correct{background:var(--green);border-color:var(--green);color:var(--bg)}
+.opcao-letter:hover{border-color:var(--green)}
+.prova-questao{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.prova-questao-enunciado{font-size:15px;margin-bottom:14px;line-height:1.6}
+.radio-opcao{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;margin-bottom:6px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.radio-opcao:hover{background:rgba(255,255,255,.04);border-color:var(--border)}
+.radio-opcao.selected{background:rgba(79,124,255,.1);border-color:var(--accent)}
+.radio-opcao.correct-answer{background:rgba(52,211,153,.1);border-color:var(--green)}
+.radio-opcao.wrong-answer{background:rgba(248,113,113,.1);border-color:var(--red)}
+.radio-btn{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.radio-btn.filled{border-color:var(--accent);background:var(--accent)}
+.radio-btn.filled::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.resultado-score{text-align:center;padding:32px}
+.resultado-num{font-family:var(--font-display);font-size:80px;font-weight:800;line-height:1}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.empty-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
+.progress-bar{background:var(--surface2);border-radius:4px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;z-index:9999;font-size:14px;font-weight:500;box-shadow:var(--shadow);animation:slideInRight .3s ease;display:flex;align-items:center;gap:10px}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.section{display:none}
+.section.active{display:block;animation:fadeUp .3s ease}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.action-bar{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay" class="hidden">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Carregando...</div>
+</div>
+<div id="toast" class="hidden"></div>
+
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <div><div class="logo-text">EduProva</div><div class="logo-sub">Sistema de Avaliações</div></div>
+    </div>
+    <div class="login-title">Bem-vindo!</div>
+    <div class="login-desc">Faça login para acessar o sistema de avaliações.</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setLoginTab('professor')">👨‍🏫 Professor</button>
+      <button class="tab-btn" onclick="setLoginTab('aluno')">🎓 Aluno</button>
+    </div>
+    <div id="login-professor-form">
+      <div class="form-group"><label class="form-label">Usuário</label><input class="form-input" id="prof-user" placeholder="professor"></div>
+      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="prof-pass" placeholder="••••••"></div>
+    </div>
+    <div id="login-aluno-form" class="hidden">
+      <div class="form-group">
+        <label class="form-label">Turma</label>
+        <select class="form-select" id="aluno-turma">
+          <option value="">Selecione sua turma</option>
+          <option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option>
+          <option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Nome completo</label><input class="form-input" id="aluno-nome" placeholder="Seu nome completo"></div>
+      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="aluno-senha" placeholder="••••••"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Entrar →</button>
+    <div id="login-error" class="login-error hidden"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="screen-app" class="hidden">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">📚</div><div><div class="logo-text">EduProva</div></div></div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sb-avatar">P</div>
+      <div><div class="user-name" id="sb-name">Professor</div><div class="user-role" id="sb-role">Professor</div></div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer"><button class="btn btn-secondary w-full btn-sm" onclick="doLogout()">⬅ Sair</button></div>
+  </aside>
+  <main class="main-content">
+
+    <!-- Dashboard -->
+    <div class="section" id="sec-dashboard">
+      <div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-subtitle">Visão geral do sistema</div></div></div>
+      <div class="stats-grid" id="dash-stats"></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-title">📋 Provas Recentes</div><div id="dash-provas-recentes"></div></div>
+        <div class="card"><div class="card-title">🏫 Turmas</div><div id="dash-turmas-lista"></div></div>
+      </div>
+    </div>
+
+    <!-- Turmas -->
+    <div class="section" id="sec-turmas">
+      <div class="page-header"><div><div class="page-title">Gerenciar Turmas</div><div class="page-subtitle">Visualize e gerencie alunos por turma</div></div></div>
+      <div class="turmas-grid" id="turmas-grid"></div>
+      <div class="card" id="turma-detalhe-card" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" id="turma-detalhe-title" style="margin:0"></div>
+          <button class="btn btn-success btn-sm" onclick="exportarTurmaAtual()">📥 Exportar CSV</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nome</th><th>Provas Realizadas</th><th>Média</th><th>Ação</th></tr></thead>
+          <tbody id="turma-alunos-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- Nova / Editar Prova -->
+    <div class="section" id="sec-nova-prova">
+      <div class="page-header">
+        <div><div class="page-title" id="nova-prova-title">Nova Prova</div><div class="page-subtitle">Crie uma avaliação para uma ou mais turmas</div></div>
+      </div>
+      <div class="card">
+        <input type="hidden" id="prova-edit-id" value="">
+        <div class="grid-2" style="margin-bottom:18px">
+          <div class="form-group" style="margin:0"><label class="form-label">Título da Prova</label><input class="form-input" id="prova-titulo" placeholder="Ex: Prova Bimestral de Matemática"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Disciplina</label><input class="form-input" id="prova-disciplina" placeholder="Ex: Matemática"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Turmas</label>
+          <div class="turmas-check-grid" id="turmas-check-grid"></div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="toggleAllTurmas(true)">Selecionar Todas</button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleAllTurmas(false)">Limpar</button>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:18px;max-width:200px"><label class="form-label">Pontos por Questão</label><input class="form-input" type="number" id="prova-pts" value="1" min="0.1" step="0.1"></div>
+        <hr class="divider">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div class="card-title" style="margin:0">📝 Questões</div>
+          <button class="btn btn-secondary btn-sm" onclick="addQuestao()">+ Adicionar Questão</button>
+        </div>
+        <div id="questoes-container"></div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <button class="btn btn-secondary" style="width:160px" onclick="cancelarEdicao()">Cancelar</button>
+          <button class="btn btn-primary" style="width:200px" id="btn-salvar-prova" onclick="salvarProva()">💾 Salvar Prova</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Provas -->
+    <div class="section" id="sec-provas">
+      <div class="page-header">
+        <div><div class="page-title">Provas Cadastradas</div><div class="page-subtitle">Gerencie e visualize resultados</div></div>
+        <button class="btn btn-primary btn-sm" onclick="irParaNovaProva()">+ Nova Prova</button>
+      </div>
+      <div class="card"><div class="table-wrap"><table>
+        <thead><tr><th>Título</th><th>Disciplina</th><th>Turmas</th><th>Questões</th><th>Realizadas</th><th>Ações</th></tr></thead>
+        <tbody id="provas-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="section" id="sec-resultados">
+      <div class="page-header">
+        <div><div class="page-title">Resultados</div><div class="page-subtitle">Notas e desempenho dos alunos</div></div>
+        <button class="btn btn-success btn-sm" onclick="exportarResultados()">📥 Exportar CSV</button>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+          <div class="form-group" style="margin:0;flex:1;min-width:160px"><label class="form-label">Filtrar por Turma</label>
+            <select class="form-select" id="res-filtro-turma" onchange="renderResultados()">
+              <option value="">Todas as turmas</option>
+              <option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option>
+              <option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;flex:1;min-width:160px"><label class="form-label">Filtrar por Prova</label>
+            <select class="form-select" id="res-filtro-prova" onchange="renderResultados()"><option value="">Todas as provas</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="card"><div class="table-wrap"><table>
+        <thead><tr><th>Aluno</th><th>Turma</th><th>Prova</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead>
+        <tbody id="resultados-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- Aluno: Provas -->
+    <div class="section" id="sec-aluno-provas">
+      <div class="page-header"><div><div class="page-title">Minhas Provas</div><div class="page-subtitle" id="aluno-turma-label"></div></div></div>
+      <div id="aluno-provas-grid"></div>
+    </div>
+
+    <!-- Aluno: Notas -->
+    <div class="section" id="sec-aluno-notas">
+      <div class="page-header"><div><div class="page-title">Minhas Notas</div><div class="page-subtitle">Histórico de avaliações</div></div></div>
+      <div class="stats-grid" id="aluno-stats"></div>
+      <div class="card"><div class="table-wrap"><table>
+        <thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead>
+        <tbody id="aluno-notas-tbody"></tbody>
+      </table></div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Ver Prova -->
+<div class="modal-overlay hidden" id="modal-ver-prova">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title" id="modal-ver-titulo">Prova</div><button class="modal-close" onclick="closeModal('modal-ver-prova')">×</button></div>
+    <div class="modal-body" id="modal-ver-body"></div>
+  </div>
+</div>
+
+<!-- Modal: Fazer Prova -->
+<div class="modal-overlay hidden" id="modal-fazer-prova">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div><div class="modal-title" id="modal-fazer-titulo"></div><div class="text-muted text-sm mt-1" id="modal-fazer-info"></div></div>
+      <button class="modal-close" onclick="closeModal('modal-fazer-prova')">×</button>
+    </div>
+    <div class="modal-body" id="modal-fazer-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-fazer-prova')">Cancelar</button>
+      <button class="btn btn-primary" onclick="entregarProva()" id="btn-entregar" style="width:auto">📨 Entregar Prova</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Resultado -->
+<div class="modal-overlay hidden" id="modal-resultado">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🏆 Resultado da Prova</div><button class="modal-close" onclick="closeModal('modal-resultado');renderAlunoProvas()">×</button></div>
+    <div class="modal-body" id="modal-resultado-body"></div>
+    <div class="modal-footer"><button class="btn btn-primary" style="width:auto" onclick="closeModal('modal-resultado');renderAlunoProvas()">Fechar</button></div>
+  </div>
+</div>
+
+<script>
+// ═══ SUPABASE ═══
+const SUPABASE_URL='https://ervdfmkgeihpbblwknog.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVydmRmbWtnZWlocGJibHdrbm9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzE2NzEsImV4cCI6MjA5MDA0NzY3MX0.0cItNzM-JxM71c-8yjH4RNbxaqPhYIYe0sVDVA7JBN0';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const TURMAS=['1M1','1M2','1M3','1M4','1M5','2T1','2T2','2T3','3M1','3M2'];
+let state={user:null,provas:[],alunos:[],respostas:[]};
+let turmaSelecionadaDetalhe='';
+
+// ═══ LOADING ═══
+function showLoading(msg='Carregando...'){document.getElementById('loading-text').textContent=msg;document.getElementById('loading-overlay').classList.remove('hidden')}
+function hideLoading(){document.getElementById('loading-overlay').classList.add('hidden')}
+
+// ═══ LOGIN ═══
+let loginTab='professor';
+function setLoginTab(tab){
+  loginTab=tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&tab==='professor')||(i===1&&tab==='aluno')));
+  document.getElementById('login-professor-form').classList.toggle('hidden',tab!=='professor');
+  document.getElementById('login-aluno-form').classList.toggle('hidden',tab!=='aluno');
+  document.getElementById('login-error').classList.add('hidden');
+}
+async function doLogin(){
+  const errEl=document.getElementById('login-error'),btn=document.getElementById('btn-login');
+  errEl.classList.add('hidden');btn.disabled=true;btn.textContent='Entrando...';
+  try{
+    if(loginTab==='professor'){
+      const u=document.getElementById('prof-user').value.trim(),p=document.getElementById('prof-pass').value.trim();
+      if(u!=='professor'||p!=='1234'){errEl.textContent='Usuário ou senha incorretos.';errEl.classList.remove('hidden');return;}
+      state.user={tipo:'professor',nome:'Professor(a)',turma:null,ra:'prof'};
+    }else{
+      const turma=document.getElementById('aluno-turma').value,nome=document.getElementById('aluno-nome').value.trim(),senha=document.getElementById('aluno-senha').value.trim();
+      if(!turma||!nome||!senha){errEl.textContent='Preencha todos os campos.';errEl.classList.remove('hidden');return;}
+      showLoading('Verificando cadastro...');
+      const alunoId=nome.toLowerCase().replace(/\s+/g,'.')+'_'+turma;
+      const{data:ex,error:e1}=await sb.from('alunos').select('*').eq('aluno_id',alunoId).maybeSingle();
+      if(e1)throw e1;
+      if(ex){
+        if(ex.senha!==senha){hideLoading();errEl.textContent='Senha incorreta.';errEl.classList.remove('hidden');return;}
+        state.user={tipo:'aluno',nome:ex.nome,turma:ex.turma,ra:ex.aluno_id};
+      }else{
+        const{error:e2}=await sb.from('alunos').insert({aluno_id:alunoId,nome,turma,senha});
+        if(e2)throw e2;
+        state.user={tipo:'aluno',nome,turma,ra:alunoId};
+      }
+      hideLoading();
+    }
+    showLoading('Carregando dados...');
+    await loadAllData();hideLoading();
+    document.getElementById('screen-login').classList.add('hidden');
+    document.getElementById('screen-app').classList.remove('hidden');
+    initApp();
+  }catch(e){hideLoading();errEl.textContent='Erro de conexão. Tente novamente.';errEl.classList.remove('hidden');console.error(e);}
+  finally{btn.disabled=false;btn.textContent='Entrar →';}
+}
+function doLogout(){
+  state={user:null,provas:[],alunos:[],respostas:[]};
+  document.getElementById('screen-login').classList.remove('hidden');
+  document.getElementById('screen-app').classList.add('hidden');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  ['prof-user','prof-pass','aluno-nome','aluno-senha'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('aluno-turma').value='';
+}
+
+// ═══ DATA ═══
+async function loadAllData(){
+  const[r1,r2,r3]=await Promise.all([
+    sb.from('provas').select('*').order('criada_em',{ascending:false}),
+    sb.from('alunos').select('*'),
+    sb.from('respostas').select('*')
+  ]);
+  if(r1.error)throw r1.error;if(r2.error)throw r2.error;if(r3.error)throw r3.error;
+  state.provas=r1.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turma:p.turma,turmas:p.turmas||[p.turma],pontosPorQ:p.pontos_por_q,questoes:p.questoes,criadaEm:p.criada_em}));
+  // Sort alunos alphabetically
+  state.alunos=r2.data.map(a=>({ra:a.aluno_id,alunoId:a.aluno_id,nome:a.nome,turma:a.turma})).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  state.respostas=r3.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+}
+async function reload(){showLoading('Atualizando...');try{await loadAllData();}catch(e){console.error(e);}hideLoading();}
+
+// ═══ APP ═══
+function initApp(){
+  const u=state.user;
+  document.getElementById('sb-avatar').textContent=u.nome[0].toUpperCase();
+  document.getElementById('sb-name').textContent=u.nome;
+  const re=document.getElementById('sb-role');
+  if(u.tipo==='professor'){re.textContent='Professor';re.className='user-role';buildProfNav();showSection('sec-dashboard');setActiveNav('nav-dashboard');renderDashboard();}
+  else{re.textContent=u.turma;re.className='user-role aluno';buildAlunoNav();showSection('sec-aluno-provas');setActiveNav('nav-aluno-provas');renderAlunoProvas();}
+}
+function buildProfNav(){
+  document.getElementById('sidebar-nav').innerHTML=`
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" id="nav-dashboard" onclick="showSection('sec-dashboard');setActiveNav('nav-dashboard');renderDashboard()"><span class="icon">🏠</span> Dashboard</div>
+    <div class="nav-label">Provas</div>
+    <div class="nav-item" id="nav-nova-prova" onclick="irParaNovaProva()"><span class="icon">➕</span> Nova Prova</div>
+    <div class="nav-item" id="nav-provas" onclick="showSection('sec-provas');setActiveNav('nav-provas');reload().then(renderProvas)"><span class="icon">📋</span> Provas</div>
+    <div class="nav-item" id="nav-resultados" onclick="showSection('sec-resultados');setActiveNav('nav-resultados');reload().then(renderResultados)"><span class="icon">📊</span> Resultados</div>
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" id="nav-turmas" onclick="showSection('sec-turmas');setActiveNav('nav-turmas');reload().then(renderTurmas)"><span class="icon">🏫</span> Turmas</div>`;
+}
+function buildAlunoNav(){
+  document.getElementById('sidebar-nav').innerHTML=`
+    <div class="nav-label">Aluno</div>
+    <div class="nav-item" id="nav-aluno-provas" onclick="showSection('sec-aluno-provas');setActiveNav('nav-aluno-provas');reload().then(renderAlunoProvas)"><span class="icon">📝</span> Minhas Provas</div>
+    <div class="nav-item" id="nav-aluno-notas" onclick="showSection('sec-aluno-notas');setActiveNav('nav-aluno-notas');reload().then(renderAlunoNotas)"><span class="icon">🏆</span> Minhas Notas</div>`;
+}
+function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setActiveNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');}
+
+// ═══ DASHBOARD ═══
+function renderDashboard(){
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Provas Cadastradas</div><div class="stat-value">${state.provas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Alunos Registrados</div><div class="stat-value">${state.alunos.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Provas Realizadas</div><div class="stat-value">${state.respostas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Turmas</div><div class="stat-value">${TURMAS.length}</div></div>`;
+  const rec=state.provas.slice(0,5);
+  document.getElementById('dash-provas-recentes').innerHTML=rec.length===0
+    ?'<div class="empty-state" style="padding:30px"><div class="empty-icon">📭</div><div class="empty-title">Nenhuma prova ainda</div></div>'
+    :rec.map(p=>{const n=state.respostas.filter(r=>r.provaId===p.id).length;const ts=(p.turmas||[p.turma]).join(', ');return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600;font-size:14px">${p.titulo}</div><div class="text-muted text-sm">${ts} · ${p.disciplina}</div></div><span class="badge badge-blue">${n} entrega${n!==1?'s':''}</span></div>`;}).join('');
+  document.getElementById('dash-turmas-lista').innerHTML=TURMAS.map(t=>{const a=state.alunos.filter(x=>x.turma===t).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(42,47,66,.6)"><span style="font-weight:600">${t}</span><span class="text-muted text-sm">${a} aluno${a!==1?'s':''}</span></div>`;}).join('');
+}
+
+// ═══ TURMAS ═══
+function renderTurmas(){
+  document.getElementById('turmas-grid').innerHTML=TURMAS.map(t=>{const a=state.alunos.filter(x=>x.turma===t).length;return`<div class="turma-card" onclick="verTurma('${t}')"><div class="turma-name">${t}</div><div class="turma-alunos">${a} aluno${a!==1?'s':''}</div></div>`;}).join('');
+  document.getElementById('turma-detalhe-card').style.display='none';
+  turmaSelecionadaDetalhe='';
+}
+function verTurma(turma){
+  turmaSelecionadaDetalhe=turma;
+  document.querySelectorAll('.turma-card').forEach(c=>c.classList.toggle('selected',c.querySelector('.turma-name').textContent===turma));
+  document.getElementById('turma-detalhe-card').style.display='block';
+  document.getElementById('turma-detalhe-title').innerHTML=`🏫 Turma ${turma}`;
+  renderTurmaAlunos(turma);
+}
+function renderTurmaAlunos(turma){
+  const alunos=state.alunos.filter(a=>a.turma===turma); // already sorted alphabetically
+  const tbody=document.getElementById('turma-alunos-tbody');
+  if(!alunos.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted)">Nenhum aluno registrado</td></tr>';return;}
+  tbody.innerHTML=alunos.map(a=>{
+    const rs=state.respostas.filter(r=>r.alunoRA===a.ra);
+    const media=rs.length?(rs.reduce((s,r)=>s+r.nota,0)/rs.length).toFixed(1):'-';
+    const badge=rs.length?`<span class="badge badge-green">${rs.length} prova${rs.length!==1?'s':''}</span>`:`<span class="badge" style="background:var(--surface2);color:var(--muted)">Sem provas</span>`;
+    return`<tr>
+      <td><strong>${a.nome}</strong></td>
+      <td>${badge}</td>
+      <td><strong>${media==='-'?'-':media+' pts'}</strong></td>
+      <td><button class="btn btn-danger btn-sm" onclick="excluirAluno('${a.ra}','${a.nome.replace(/'/g,"\\'")}')">🗑 Excluir</button></td>
+    </tr>`;
+  }).join('');
+}
+async function excluirAluno(ra,nome){
+  if(!confirm(`Excluir o aluno "${nome}"?\nTodas as respostas dele também serão removidas.`))return;
+  showLoading('Excluindo aluno...');
+  try{
+    await sb.from('respostas').delete().eq('aluno_ra',ra);
+    await sb.from('alunos').delete().eq('aluno_id',ra);
+    await loadAllData();
+    renderTurmaAlunos(turmaSelecionadaDetalhe);
+    // update count
+    const a=state.alunos.filter(x=>x.turma===turmaSelecionadaDetalhe).length;
+    document.querySelectorAll('.turma-card').forEach(c=>{if(c.querySelector('.turma-name').textContent===turmaSelecionadaDetalhe)c.querySelector('.turma-alunos').textContent=`${a} aluno${a!==1?'s':''}`;});
+    showToast('🗑 Aluno excluído','red');
+  }catch(e){showToast('❌ Erro ao excluir aluno','red');console.error(e);}
+  finally{hideLoading();}
+}
+
+// ═══ TURMAS CHECK GRID ═══
+function buildTurmasCheckGrid(selecionadas=[]){
+  document.getElementById('turmas-check-grid').innerHTML=TURMAS.map(t=>`
+    <label class="turma-check-item ${selecionadas.includes(t)?'checked':''}" id="tc-${t}" onclick="toggleTurmaCheck('${t}')">
+      <input type="checkbox" ${selecionadas.includes(t)?'checked':''}>
+      <span class="turma-check-label">${t}</span>
+    </label>`).join('');
+}
+function toggleTurmaCheck(t){
+  const el=document.getElementById(`tc-${t}`);
+  const inp=el.querySelector('input');
+  inp.checked=!inp.checked;
+  el.classList.toggle('checked',inp.checked);
+}
+function toggleAllTurmas(v){
+  TURMAS.forEach(t=>{
+    const el=document.getElementById(`tc-${t}`);
+    if(el){el.querySelector('input').checked=v;el.classList.toggle('checked',v);}
+  });
+}
+function getTurmasSelecionadas(){
+  return TURMAS.filter(t=>{const el=document.getElementById(`tc-${t}`);return el&&el.querySelector('input').checked;});
+}
+
+// ═══ NOVA / EDITAR PROVA ═══
+let questoesData=[];
+function irParaNovaProva(){
+  document.getElementById('prova-edit-id').value='';
+  document.getElementById('nova-prova-title').textContent='Nova Prova';
+  document.getElementById('btn-salvar-prova').textContent='💾 Salvar Prova';
+  questoesData=[];
+  ['prova-titulo','prova-disciplina'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prova-pts').value='1';
+  document.getElementById('questoes-container').innerHTML='';
+  buildTurmasCheckGrid([]);
+  addQuestao();
+  showSection('sec-nova-prova');setActiveNav('nav-nova-prova');
+}
+function cancelarEdicao(){
+  showSection('sec-provas');setActiveNav('nav-provas');reload().then(renderProvas);
+}
+
+function editarProva(id){
+  const p=state.provas.find(x=>x.id===id);if(!p)return;
+  document.getElementById('prova-edit-id').value=p.id;
+  document.getElementById('nova-prova-title').textContent='Editar Prova';
+  document.getElementById('btn-salvar-prova').textContent='💾 Atualizar Prova';
+  document.getElementById('prova-titulo').value=p.titulo;
+  document.getElementById('prova-disciplina').value=p.disciplina;
+  document.getElementById('prova-pts').value=p.pontosPorQ;
+  buildTurmasCheckGrid(p.turmas||[p.turma]);
+  // Build questões
+  questoesData=[];
+  document.getElementById('questoes-container').innerHTML='';
+  p.questoes.forEach(q=>{
+    const idx=questoesData.length;
+    questoesData.push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta});
+    addQuestaoDOM(idx);
+    // fill values
+    const item=document.getElementById(`q-item-${idx}`);
+    const inputs=item.querySelectorAll('input[type=text],input:not([type])');
+    if(inputs[0])inputs[0].value=q.enunciado;
+    q.opcoes.forEach((op,oi)=>{if(inputs[oi+1])inputs[oi+1].value=op;});
+    if(q.correta!==null)setCorreta(idx,q.correta);
+  });
+  showSection('sec-nova-prova');setActiveNav('nav-nova-prova');
+}
+
+function addQuestao(){
+  const idx=questoesData.length;
+  questoesData.push({enunciado:'',opcoes:['','','',''],correta:null});
+  addQuestaoDOM(idx);
+}
+function addQuestaoDOM(idx){
+  const div=document.createElement('div');
+  div.className='questao-item';div.id=`q-item-${idx}`;
+  div.innerHTML=`<div class="questao-header"><span class="questao-num">Questão ${idx+1}</span><button class="btn btn-danger btn-sm" onclick="removeQuestao(${idx})">🗑 Remover</button></div>
+    <div class="form-group" style="margin-bottom:10px"><label class="form-label">Enunciado</label>
+      <input class="form-input" placeholder="Digite o enunciado..." oninput="questoesData[${idx}].enunciado=this.value">
+    </div>
+    <label class="form-label">Opções (clique na letra para marcar a correta)</label>
+    <ul class="opcoes-list">${['A','B','C','D'].map((l,oi)=>`<li class="opcao-item"><div class="opcao-letter" id="opt-${idx}-${oi}" onclick="setCorreta(${idx},${oi})">${l}</div><input class="form-input" style="flex:1" placeholder="Opção ${l}..." oninput="questoesData[${idx}].opcoes[${oi}]=this.value"></li>`).join('')}</ul>
+    <div class="text-muted text-sm mt-2" id="correta-hint-${idx}">⬆ Clique na letra para marcar a resposta correta</div>`;
+  document.getElementById('questoes-container').appendChild(div);
+}
+function setCorreta(qi,oi){
+  questoesData[qi].correta=oi;
+  ['A','B','C','D'].forEach((_,i)=>document.getElementById(`opt-${qi}-${i}`).classList.toggle('correct',i===oi));
+  const h=document.getElementById(`correta-hint-${qi}`);
+  h.textContent=`✅ Resposta correta: opção ${['A','B','C','D'][oi]}`;h.style.color='var(--green)';
+}
+function removeQuestao(idx){questoesData.splice(idx,1);rebuildQuestoes();}
+function rebuildQuestoes(){
+  document.getElementById('questoes-container').innerHTML='';
+  const copy=[...questoesData];questoesData=[];
+  copy.forEach((q,i)=>{
+    questoesData.push({...q,opcoes:[...q.opcoes]});
+    addQuestaoDOM(i);
+    const item=document.getElementById(`q-item-${i}`);
+    const inputs=item.querySelectorAll('input[type=text],input:not([type])');
+    if(inputs[0])inputs[0].value=q.enunciado;
+    q.opcoes.forEach((op,oi)=>{if(inputs[oi+1])inputs[oi+1].value=op;});
+    if(q.correta!==null)setCorreta(i,q.correta);
+  });
+}
+async function salvarProva(){
+  const titulo=document.getElementById('prova-titulo').value.trim();
+  const disciplina=document.getElementById('prova-disciplina').value.trim();
+  const turmasSel=getTurmasSelecionadas();
+  const pontosPorQ=parseFloat(document.getElementById('prova-pts').value)||1;
+  const editId=document.getElementById('prova-edit-id').value;
+  if(!titulo||!disciplina)return showToast('⚠️ Preencha título e disciplina!','yellow');
+  if(!turmasSel.length)return showToast('⚠️ Selecione ao menos uma turma!','yellow');
+  if(!questoesData.length)return showToast('⚠️ Adicione ao menos uma questão!','yellow');
+  if(questoesData.find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return showToast('⚠️ Preencha todas as questões e marque a resposta correta!','yellow');
+  const btn=document.getElementById('btn-salvar-prova');
+  btn.disabled=true;btn.textContent='Salvando...';showLoading('Salvando prova...');
+  try{
+    const payload={
+      titulo,disciplina,
+      turma:turmasSel[0], // keep turma for backwards compat
+      turmas:turmasSel,
+      pontos_por_q:pontosPorQ,
+      questoes:questoesData.map(q=>({...q,opcoes:[...q.opcoes]})),
+      criada_em:new Date().toLocaleDateString('pt-BR')
+    };
+    if(editId){
+      const{error}=await sb.from('provas').update(payload).eq('id',editId);
+      if(error)throw error;
+      showToast('✅ Prova atualizada!','green');
+    }else{
+      const{error}=await sb.from('provas').insert({id:Date.now().toString(),...payload});
+      if(error)throw error;
+      showToast('✅ Prova salva com sucesso!','green');
+    }
+    await loadAllData();hideLoading();
+    irParaNovaProva();
+    showSection('sec-provas');setActiveNav('nav-provas');renderProvas();
+  }catch(e){hideLoading();showToast('❌ Erro ao salvar prova.','red');console.error(e);}
+  finally{btn.disabled=false;btn.textContent=document.getElementById('prova-edit-id').value?'💾 Atualizar Prova':'💾 Salvar Prova';}
+}
+
+// ═══ PROVAS LIST ═══
+function renderProvas(){
+  const tbody=document.getElementById('provas-tbody');
+  if(!state.provas.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Nenhuma prova cadastrada</td></tr>';return;}
+  tbody.innerHTML=state.provas.map(p=>{
+    const n=state.respostas.filter(r=>r.provaId===p.id).length;
+    const ts=(p.turmas||[p.turma]).map(t=>`<span class="badge badge-blue" style="margin:1px">${t}</span>`).join('');
+    return`<tr>
+      <td><strong>${p.titulo}</strong><div class="text-muted text-xs mt-1">${p.criadaEm}</div></td>
+      <td><span class="badge badge-purple">${p.disciplina}</span></td>
+      <td>${ts}</td>
+      <td>${p.questoes.length} questões</td>
+      <td><span class="badge ${n>0?'badge-green':'badge-yellow'}">${n} entrega${n!==1?'s':''}</span></td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="verProvaProfessor('${p.id}')">👁 Ver</button>
+        <button class="btn btn-success btn-sm" onclick="editarProva('${p.id}')">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deletarProva('${p.id}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+async function deletarProva(id){
+  if(!confirm('Deletar esta prova e todos os seus resultados?'))return;
+  showLoading('Excluindo...');
+  try{
+    await sb.from('respostas').delete().eq('prova_id',id);
+    await sb.from('provas').delete().eq('id',id);
+    await loadAllData();renderProvas();showToast('🗑 Prova removida','red');
+  }catch(e){showToast('❌ Erro ao excluir.','red');console.error(e);}
+  finally{hideLoading();}
+}
+function verProvaProfessor(id){
+  const p=state.provas.find(x=>x.id===id);if(!p)return;
+  document.getElementById('modal-ver-titulo').textContent=p.titulo;
+  const ents=state.respostas.filter(r=>r.provaId===id);
+  const L=['A','B','C','D'];
+  const ts=(p.turmas||[p.turma]).map(t=>`<span class="badge badge-blue">${t}</span>`).join(' ');
+  let html=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">${ts}<span class="badge badge-purple">📚 ${p.disciplina}</span><span class="badge badge-yellow">⭐ ${p.pontosPorQ} pts/questão</span><span class="badge badge-green">📊 ${p.questoes.length*p.pontosPorQ} pts total</span></div><div class="card-title">📝 Questões</div>`;
+  p.questoes.forEach((q,i)=>{html+=`<div class="questao-item"><div class="questao-header"><span class="questao-num">Questão ${i+1}</span></div><p style="margin-bottom:12px;font-size:15px">${q.enunciado}</p><ul class="opcoes-list">${q.opcoes.map((op,oi)=>`<li class="opcao-item"><div class="opcao-letter ${oi===q.correta?'correct':''}">${L[oi]}</div><span>${op}</span></li>`).join('')}</ul></div>`;});
+  if(ents.length){html+=`<div class="card-title" style="margin-top:24px">📊 Resultados (${ents.length})</div><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody>${ents.map(r=>{const max=p.questoes.length*p.pontosPorQ;const ok=r.nota>=max*.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`;}).join('')}</tbody></table></div>`;}
+  document.getElementById('modal-ver-body').innerHTML=html;
+  document.getElementById('modal-ver-prova').classList.remove('hidden');
+}
+
+// ═══ RESULTADOS ═══
+function renderResultados(){
+  const ps=document.getElementById('res-filtro-prova');const cp=ps.value;
+  ps.innerHTML='<option value="">Todas as provas</option>'+state.provas.map(p=>`<option value="${p.id}" ${cp===p.id?'selected':''}>${p.titulo}</option>`).join('');
+  const ft=document.getElementById('res-filtro-turma').value,fp=document.getElementById('res-filtro-prova').value;
+  let res=[...state.respostas];
+  if(ft)res=res.filter(r=>r.alunoTurma===ft);
+  if(fp)res=res.filter(r=>r.provaId===fp);
+  // sort by turma then name
+  res.sort((a,b)=>a.alunoTurma.localeCompare(b.alunoTurma)||a.alunoNome.localeCompare(b.alunoNome,'pt-BR'));
+  const tbody=document.getElementById('resultados-tbody');
+  if(!res.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">Nenhum resultado encontrado</td></tr>';return;}
+  tbody.innerHTML=res.map(r=>{
+    const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';
+    const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*.6,pct=Math.round((r.acertos/p.questoes.length)*100);
+    return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge badge-blue">${r.alunoTurma}</span></td><td>${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="progress-bar mt-1" style="width:100px"><div class="progress-fill" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong>/<span class="text-muted">${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅ Aprovado':'❌ Reprovado'}</span></td></tr>`;
+  }).join('');
+}
+
+// ═══ EXPORT CSV ═══
+function csvEscape(v){return`"${String(v).replace(/"/g,'""')}"` }
+function downloadCSV(filename,rows){
+  const csv=rows.map(r=>r.map(csvEscape).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+}
+function exportarResultados(){
+  const ft=document.getElementById('res-filtro-turma').value,fp=document.getElementById('res-filtro-prova').value;
+  let res=[...state.respostas];
+  if(ft)res=res.filter(r=>r.alunoTurma===ft);
+  if(fp)res=res.filter(r=>r.provaId===fp);
+  res.sort((a,b)=>a.alunoTurma.localeCompare(b.alunoTurma)||a.alunoNome.localeCompare(b.alunoNome,'pt-BR'));
+  if(!res.length)return showToast('⚠️ Nenhum resultado para exportar','yellow');
+  const rows=[['Aluno','Turma','Prova','Disciplina','Acertos','Total Questões','Nota','Nota Máxima','Status','Data Entrega']];
+  res.forEach(r=>{
+    const p=state.provas.find(x=>x.id===r.provaId);if(!p)return;
+    const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*.6;
+    rows.push([r.alunoNome,r.alunoTurma,p.titulo,p.disciplina,r.acertos,p.questoes.length,r.nota.toFixed(1),max.toFixed(1),ok?'Aprovado':'Reprovado',r.entregueEm||'']);
+  });
+  const turmaLabel=ft?`_${ft}`:'';
+  downloadCSV(`resultados${turmaLabel}_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`,rows);
+  showToast('📥 CSV exportado!','green');
+}
+function exportarTurmaAtual(){
+  if(!turmaSelecionadaDetalhe)return;
+  const alunos=state.alunos.filter(a=>a.turma===turmaSelecionadaDetalhe);
+  const rows=[['Aluno','Turma','Prova','Disciplina','Acertos','Total Questões','Nota','Nota Máxima','Status']];
+  alunos.forEach(a=>{
+    const rs=state.respostas.filter(r=>r.alunoRA===a.ra);
+    if(rs.length){
+      rs.forEach(r=>{
+        const p=state.provas.find(x=>x.id===r.provaId);if(!p)return;
+        const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*.6;
+        rows.push([a.nome,a.turma,p.titulo,p.disciplina,r.acertos,p.questoes.length,r.nota.toFixed(1),max.toFixed(1),ok?'Aprovado':'Reprovado']);
+      });
+    }else{
+      rows.push([a.nome,a.turma,'—','—','—','—','—','—','Sem provas']);
+    }
+  });
+  downloadCSV(`turma_${turmaSelecionadaDetalhe}_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`,rows);
+  showToast('📥 CSV da turma exportado!','green');
+}
+
+// ═══ ALUNO: PROVAS ═══
+function renderAlunoProvas(){
+  const u=state.user;
+  document.getElementById('aluno-turma-label').textContent=`Turma ${u.turma} — ${u.nome}`;
+  const provas=state.provas.filter(p=>(p.turmas||[p.turma]).includes(u.turma));
+  const el=document.getElementById('aluno-provas-grid');
+  if(!provas.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Nenhuma prova disponível</div><div class="text-muted">Seu professor ainda não publicou provas para a turma ${u.turma}.</div></div>`;return;}
+  el.innerHTML=provas.map(p=>{
+    const ent=state.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);
+    const max=p.questoes.length*p.pontosPorQ;
+    return`<div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div><div style="font-family:var(--font-display);font-size:18px;font-weight:700">${p.titulo}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="badge badge-purple">${p.disciplina}</span><span class="badge badge-yellow">${p.questoes.length} questões</span><span class="badge badge-blue">Máx: ${max.toFixed(1)} pts</span></div></div>
+      <div style="text-align:right">${ent
+        ?`<div><span class="badge badge-green" style="font-size:13px;padding:6px 14px">✅ Entregue</span><div style="margin-top:8px;font-size:22px;font-family:var(--font-display);font-weight:800;color:${ent.nota>=max*.6?'var(--green)':'var(--red)'}">${ent.nota.toFixed(1)} <span style="font-size:14px;color:var(--muted)">/ ${max.toFixed(1)}</span></div></div>`
+        :`<button class="btn btn-primary" style="width:auto" onclick="abrirProva('${p.id}')">✏️ Fazer Prova</button>`}
+      </div></div></div>`;
+  }).join('');
+}
+
+// ═══ FAZER PROVA ═══
+let provaAtiva=null,respostasAluno={};
+function abrirProva(id){
+  const p=state.provas.find(x=>x.id===id);if(!p)return;
+  provaAtiva=p;respostasAluno={};
+  document.getElementById('modal-fazer-titulo').textContent=p.titulo;
+  document.getElementById('modal-fazer-info').textContent=`${p.disciplina} · ${p.questoes.length} questões · ${p.questoes.length*p.pontosPorQ} pontos`;
+  const L=['A','B','C','D'];
+  document.getElementById('modal-fazer-body').innerHTML=p.questoes.map((q,qi)=>`<div class="prova-questao">
+    <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Questão ${qi+1}</div>
+    <div class="prova-questao-enunciado">${q.enunciado}</div>
+    ${q.opcoes.map((op,oi)=>`<div class="radio-opcao" id="ro-${qi}-${oi}" onclick="selOpcao(${qi},${oi})"><div class="radio-btn" id="rb-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}
+  </div>`).join('');
+  document.getElementById('btn-entregar').disabled=false;
+  document.getElementById('modal-fazer-prova').classList.remove('hidden');
+}
+function selOpcao(qi,oi){
+  provaAtiva.questoes[qi].opcoes.forEach((_,i)=>{document.getElementById(`ro-${qi}-${i}`).classList.remove('selected');document.getElementById(`rb-${qi}-${i}`).classList.remove('filled');});
+  document.getElementById(`ro-${qi}-${oi}`).classList.add('selected');document.getElementById(`rb-${qi}-${oi}`).classList.add('filled');
+  respostasAluno[qi]=oi;
+}
+async function entregarProva(){
+  const respondidas=Object.keys(respostasAluno).length,total=provaAtiva.questoes.length;
+  if(respondidas<total&&!confirm(`Você respondeu ${respondidas} de ${total} questões. Entregar assim mesmo?`))return;
+  let acertos=0;provaAtiva.questoes.forEach((q,qi)=>{if(respostasAluno[qi]===q.correta)acertos++;});
+  const nota=acertos*provaAtiva.pontosPorQ,u=state.user;
+  const btn=document.getElementById('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';showLoading('Salvando respostas...');
+  try{
+    const reg={id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:provaAtiva.id,respostas:{...respostasAluno},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')};
+    const{error}=await sb.from('respostas').insert(reg);if(error)throw error;
+    await loadAllData();hideLoading();closeModal('modal-fazer-prova');
+    mostrarResultado({...reg,alunoRA:reg.aluno_ra,alunoNome:reg.aluno_nome,alunoTurma:reg.aluno_turma,provaId:reg.prova_id,entregueEm:reg.entregue_em},provaAtiva);
+  }catch(e){hideLoading();showToast('❌ Erro ao enviar prova.','red');console.error(e);}
+  finally{btn.disabled=false;btn.textContent='📨 Entregar Prova';}
+}
+function mostrarResultado(reg,prova){
+  const total=prova.questoes.length,max=total*prova.pontosPorQ,ok=reg.nota>=max*.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
+  let html=`<div class="resultado-score"><div class="resultado-num" style="color:${ok?'var(--green)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="resultado-label">de ${max.toFixed(1)} pontos</div><div class="badge ${ok?'badge-green':'badge-red'}" style="font-size:15px;padding:8px 24px;margin-top:12px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="text-muted mt-3">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div></div>
+  <div class="progress-bar" style="margin:0 24px 24px;height:12px"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <hr class="divider" style="margin:0 0 20px"><div style="padding:0 4px"><div class="card-title">📋 Gabarito</div>`;
+  prova.questoes.forEach((q,qi)=>{
+    const esc=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)],cor=q.correta,ac=esc===cor;
+    html+=`<div class="prova-questao"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="questao-num" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--green)':'var(--red)'}">Questão ${qi+1}</span><span style="font-size:18px">${ac?'✅':'❌'}</span></div>
+      <div class="prova-questao-enunciado">${q.enunciado}</div>
+      ${q.opcoes.map((op,oi)=>`<div class="radio-opcao ${oi===cor?'correct-answer':oi===esc&&!ac?'wrong-answer':''}">
+        <div style="width:18px;height:18px;border-radius:50%;background:${oi===cor?'var(--green)':oi===esc&&!ac?'var(--red)':'var(--border)'};flex-shrink:0"></div>
+        <span><strong>${L[oi]}.</strong> ${op}</span>
+        ${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--green)">✓ Correta</span>':''}
+        ${oi===esc&&!ac?'<span style="margin-left:auto;font-size:11px;color:var(--red)">✗ Sua resposta</span>':''}
+      </div>`).join('')}</div>`;
+  });
+  html+='</div>';
+  document.getElementById('modal-resultado-body').innerHTML=html;
+  document.getElementById('modal-resultado').classList.remove('hidden');
+}
+
+// ═══ ALUNO: NOTAS ═══
+function renderAlunoNotas(){
+  const u=state.user,rs=state.respostas.filter(r=>r.alunoRA===u.ra);
+  const med=rs.length?(rs.reduce((s,r)=>s+r.nota,0)/rs.length).toFixed(1):'-';
+  const aprov=rs.filter(r=>{const p=state.provas.find(x=>x.id===r.provaId);return p&&r.nota>=p.questoes.length*p.pontosPorQ*.6;}).length;
+  document.getElementById('aluno-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Provas Realizadas</div><div class="stat-value">${rs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Média Geral</div><div class="stat-value">${med}</div></div>
+    <div class="stat-card"><div class="stat-label">Aprovações</div><div class="stat-value">${aprov}</div></div>`;
+  const tbody=document.getElementById('aluno-notas-tbody');
+  if(!rs.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">Você ainda não fez nenhuma prova.</td></tr>';return;}
+  tbody.innerHTML=rs.map(r=>{
+    const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';
+    const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*.6;
+    return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong>/<span class="text-muted">${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅ Aprovado':'❌ Reprovado'}</span></td></tr>`;
+  }).join('');
+}
+
+// ═══ UTILS ═══
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+let toastTO;
+function showToast(msg,type='green'){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.style.borderColor=type==='green'?'var(--green)':type==='red'?'var(--red)':'var(--yellow)';
+  t.style.color=type==='green'?'var(--green)':type==='red'?'var(--red)':'var(--yellow)';
+  t.classList.remove('hidden');clearTimeout(toastTO);toastTO=setTimeout(()=>t.classList.add('hidden'),3000);
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');}));
+document.addEventListener('DOMContentLoaded',()=>{irParaNovaProva&&buildTurmasCheckGrid([]);});
+</script>
+</body>
+</html>
