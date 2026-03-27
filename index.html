@@ -3,32 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduProva — Sistema de Avaliações</title>
+<title>EduProva — Sistema Educacional</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--border:#2a2f42;
-  --accent:#4f7cff;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;
+  --accent:#4f7cff;--accent2:#a78bfa;--green:#34d399;--red:#f87171;--yellow:#fbbf24;--teal:#2dd4bf;
   --text:#e8eaf2;--muted:#6b7280;
   --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
-  --radius:12px;--shadow:0 8px 32px rgba(0,0,0,0.4);
-  --sidebar:240px;
+  --radius:12px;--shadow:0 8px 32px rgba(0,0,0,.4);--sidebar:240px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;font-size:15px}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .hidden{display:none!important}
 .w-full{width:100%}.text-muted{color:var(--muted)}.text-sm{font-size:13px}.text-xs{font-size:11px}
-.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}
+.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mb-2{margin-bottom:8px}
 
-/* ── LOADING ── */
+/* LOADING */
 #loading-overlay{position:fixed;inset:0;background:rgba(13,15,20,.9);backdrop-filter:blur(4px);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--muted);font-size:14px}
 
-/* ── LOGIN ── */
+/* LOGIN */
 #screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px}
 #screen-login::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(79,124,255,.12) 0%,transparent 70%);top:-150px;left:-100px;animation:pulse 6s ease-in-out infinite;pointer-events:none}
 #screen-login::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.08) 0%,transparent 70%);bottom:-80px;right:-80px;animation:pulse 8s ease-in-out infinite reverse;pointer-events:none}
@@ -46,11 +45,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .tab-btn.active{background:var(--accent);color:#fff}
 .form-group{margin-bottom:16px}
 .form-label{display:block;font-size:12px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-.form-input,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .2s;appearance:none}
-.form-input:focus,.form-select:focus{border-color:var(--accent)}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .2s;appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-textarea{resize:vertical;min-height:120px;line-height:1.6}
 .form-select option{background:var(--surface2)}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border:none;border-radius:9px;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 .btn-primary{background:var(--accent);color:#fff;width:100%;font-size:15px;padding:13px}
@@ -61,29 +61,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .btn-danger:hover:not(:disabled){background:#4a2020}
 .btn-warning{background:#3a2e0a;color:var(--yellow);border:1px solid #5a4510}
 .btn-warning:hover:not(:disabled){background:#4a3a10}
+.btn-teal{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.3)}
+.btn-teal:hover:not(:disabled){background:rgba(45,212,191,.2)}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
 .btn-icon{padding:7px;border-radius:8px;width:32px;height:32px}
 .login-error{color:var(--red);font-size:13px;margin-top:12px;text-align:center;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:9px}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 #screen-app{display:flex;min-height:100vh}
-
-/* MOBILE TOPBAR */
 .topbar{display:none;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
 .topbar-logo{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:16px;font-weight:800}
 .topbar-logo .logo-icon{width:28px;height:28px;font-size:13px;border-radius:7px}
 .hamburger{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}
-
-/* SIDEBAR OVERLAY */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;backdrop-filter:blur(2px)}
 .sidebar-overlay.show{display:block}
-
-/* SIDEBAR */
-.sidebar{
-  width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;position:fixed;height:100vh;z-index:160;
-  transition:transform .3s ease;
-}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:160;transition:transform .3s ease}
 .sidebar-logo{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .sidebar-logo .logo-icon{width:32px;height:32px;font-size:15px;border-radius:8px}
 .sidebar-logo .logo-text{font-size:17px}
@@ -99,49 +91,39 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .nav-item.active{background:rgba(79,124,255,.12);color:var(--accent);border-color:rgba(79,124,255,.2)}
 .nav-item .icon{font-size:15px;width:19px;text-align:center;flex-shrink:0}
 .sidebar-footer{padding:14px 10px;border-top:1px solid var(--border)}
-
-/* MAIN */
 .main-content{flex:1;margin-left:var(--sidebar);padding:28px 32px;min-height:100vh}
 
 /* PAGE */
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap}
 .page-title{font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-.5px}
 .page-subtitle{color:var(--muted);font-size:13px;margin-top:3px}
-.page-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
 .card-title{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
 .stat-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .stat-value{font-family:var(--font-display);font-size:30px;font-weight:800;margin:5px 0 2px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-/* TURMAS */
 .turmas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:20px}
 .turma-card{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
 .turma-card:hover,.turma-card.selected{border-color:var(--accent);background:rgba(79,124,255,.08)}
-.turma-name{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text)}
+.turma-name{font-family:var(--font-display);font-size:18px;font-weight:800}
 .turma-alunos{font-size:11px;color:var(--muted);margin-top:3px}
-
-/* TABLE */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;min-width:500px}
+table{width:100%;border-collapse:collapse;min-width:480px}
 th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--border)}
-td{padding:12px 12px;border-bottom:1px solid rgba(42,47,66,.6);font-size:13px}
+td{padding:12px 12px;border-bottom:1px solid rgba(42,47,66,.6);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
-
-/* BADGES */
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-blue{background:rgba(79,124,255,.15);color:var(--accent)}
 .badge-green{background:rgba(52,211,153,.15);color:var(--green)}
 .badge-red{background:rgba(248,113,113,.15);color:var(--red)}
 .badge-yellow{background:rgba(251,191,36,.15);color:var(--yellow)}
 .badge-purple{background:rgba(167,139,250,.15);color:var(--accent2)}
+.badge-teal{background:rgba(45,212,191,.15);color:var(--teal)}
 
 /* TURMAS CHECK */
-.turmas-check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px}
+.turmas-check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:7px}
 .turma-check-item{background:var(--surface2);border:2px solid var(--border);border-radius:9px;padding:9px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
 .turma-check-item:hover{border-color:var(--accent)}
 .turma-check-item.checked{border-color:var(--accent);background:rgba(79,124,255,.12);color:var(--accent)}
@@ -152,18 +134,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
 @media(min-width:600px){.modal-overlay{align-items:center;padding:20px}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px 16px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:slideUpMobile .3s ease;box-shadow:0 -8px 40px rgba(0,0,0,.5)}
-@media(min-width:600px){.modal{border-radius:16px;max-width:680px;animation:slideUp .3s ease}}
-.modal-lg{max-width:860px}
+@media(min-width:600px){.modal{border-radius:16px;max-width:700px;animation:slideUp .3s ease}}
+.modal-lg{max-width:880px}
 @keyframes slideUpMobile{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:10}
 .modal-title{font-family:var(--font-display);font-size:17px;font-weight:700}
 .modal-close{background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;flex-shrink:0}
-.modal-close:hover{color:var(--text);border-color:var(--text)}
+.modal-close:hover{color:var(--text)}
 .modal-body{padding:20px}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 
-/* QUESTÕES EDITOR */
+/* QUESTÕES */
 .questao-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
 .questao-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .questao-num{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--accent);background:rgba(79,124,255,.12);padding:3px 10px;border-radius:20px}
@@ -175,21 +157,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* IMAGE UPLOAD */
 .img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-top:8px}
-.img-upload-area:hover,.img-upload-area.drag-over{border-color:var(--accent);background:rgba(79,124,255,.05)}
+.img-upload-area:hover{border-color:var(--accent);background:rgba(79,124,255,.05)}
 .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .img-upload-label{color:var(--muted);font-size:13px;pointer-events:none}
 .img-upload-label strong{color:var(--accent)}
-.img-preview-wrap{position:relative;margin-top:8px;display:inline-block;max-width:100%}
-.img-preview{max-width:100%;max-height:240px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:block}
-.img-remove-btn{position:absolute;top:5px;right:5px;background:rgba(248,113,113,.95);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;transition:all .15s}
-.img-remove-btn:hover{background:var(--red);transform:scale(1.1)}
+.img-preview-wrap{position:relative;display:inline-block;max-width:100%;margin-top:8px}
+.img-preview{max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:block}
+.img-remove-btn{position:absolute;top:5px;right:5px;background:rgba(248,113,113,.95);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
 .img-uploading{display:flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;margin-top:8px}
 .img-spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 
-/* PROVA ALUNO */
+/* PROVA/EXERCICIO ALUNO */
 .prova-questao{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
 .prova-questao-enunciado{font-size:15px;margin-bottom:8px;line-height:1.65}
-.prova-questao-img{max-width:100%;max-height:280px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:block;margin:10px 0 14px}
+.prova-questao-img{max-width:100%;max-height:260px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:block;margin:10px 0 14px}
 .radio-opcao{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;margin-bottom:6px;cursor:pointer;border:1px solid transparent;transition:all .15s}
 .radio-opcao:hover{background:rgba(255,255,255,.04);border-color:var(--border)}
 .radio-opcao.selected{background:rgba(79,124,255,.1);border-color:var(--accent)}
@@ -198,6 +179,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .radio-btn{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .radio-btn.filled{border-color:var(--accent);background:var(--accent)}
 .radio-btn.filled::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+
+/* AULAS */
+.aula-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;transition:border-color .2s}
+.aula-card:hover{border-color:var(--accent)}
+.aula-titulo{font-family:var(--font-display);font-size:17px;font-weight:700;margin-bottom:6px}
+.aula-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.aula-conteudo{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;margin-bottom:14px}
+.aula-imgs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.aula-img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:opacity .2s}
+.aula-img:hover{opacity:.85}
+.aula-imgs-upload{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.exercicio-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}
 
 /* RESULTADO */
 .resultado-score{text-align:center;padding:28px 16px}
@@ -217,7 +210,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .error-detail{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-top:10px;font-family:monospace;word-break:break-all}
 
-/* ── RESPONSIVE ── */
+/* FULLSCREEN IMG */
+#img-fullscreen{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:5000;display:flex;align-items:center;justify-content:center;cursor:zoom-out}
+#img-fullscreen img{max-width:94vw;max-height:90vh;border-radius:10px;object-fit:contain}
+
+/* RESPONSIVE */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
@@ -229,11 +226,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .page-header{margin-bottom:20px}
   .modal-footer{justify-content:stretch}
   .modal-footer .btn{flex:1}
-  table{min-width:400px}
 }
 @media(max-width:400px){
   .stats-grid{grid-template-columns:1fr}
-  .turmas-grid{grid-template-columns:repeat(3,1fr)}
   .login-card{padding:28px 20px}
 }
 </style>
@@ -242,13 +237,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <div id="loading-overlay" class="hidden"><div class="spinner"></div><div class="loading-text" id="loading-text">Carregando...</div></div>
 <div id="toast" class="hidden"></div>
+<div id="img-fullscreen" class="hidden" onclick="this.classList.add('hidden')"><img id="img-fullscreen-src" src="" alt=""></div>
 
 <!-- LOGIN -->
 <div id="screen-login">
   <div class="login-card">
-    <div class="logo"><div class="logo-icon">📚</div><div><div class="logo-text">EduProva</div><div class="logo-sub">Sistema de Avaliações</div></div></div>
+    <div class="logo"><div class="logo-icon">📚</div><div><div class="logo-text">EduProva</div><div class="logo-sub">Sistema Educacional</div></div></div>
     <div class="login-title">Bem-vindo!</div>
-    <div class="login-desc">Faça login para acessar o sistema de avaliações.</div>
+    <div class="login-desc">Faça login para acessar o sistema.</div>
     <div class="tabs">
       <button class="tab-btn active" onclick="setLoginTab('professor')">👨‍🏫 Professor</button>
       <button class="tab-btn" onclick="setLoginTab('aluno')">🎓 Aluno</button>
@@ -275,16 +271,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- APP -->
 <div id="screen-app" class="hidden">
-
-  <!-- Mobile topbar -->
   <div class="topbar">
     <div class="topbar-logo"><div class="logo-icon">📚</div>EduProva</div>
     <button class="hamburger" onclick="toggleSidebar()">☰</button>
   </div>
-
-  <!-- Sidebar overlay -->
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo"><div class="logo-icon">📚</div><div><div class="logo-text">EduProva</div></div></div>
     <div class="sidebar-user">
@@ -294,7 +285,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <nav class="sidebar-nav" id="sidebar-nav"></nav>
     <div class="sidebar-footer"><button class="btn btn-secondary w-full btn-sm" onclick="doLogout()">⬅ Sair</button></div>
   </aside>
-
   <main class="main-content">
 
     <!-- Dashboard -->
@@ -303,13 +293,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="stats-grid" id="dash-stats"></div>
       <div class="grid-2">
         <div class="card"><div class="card-title">📋 Provas Recentes</div><div id="dash-provas-recentes"></div></div>
-        <div class="card"><div class="card-title">🏫 Turmas</div><div id="dash-turmas-lista"></div></div>
+        <div class="card"><div class="card-title">📖 Aulas Recentes</div><div id="dash-aulas-recentes"></div></div>
       </div>
     </div>
 
     <!-- Turmas -->
     <div class="section" id="sec-turmas">
-      <div class="page-header"><div><div class="page-title">Turmas</div><div class="page-subtitle">Visualize e gerencie alunos</div></div></div>
+      <div class="page-header"><div><div class="page-title">Turmas</div><div class="page-subtitle">Gerencie alunos por turma</div></div></div>
       <div class="turmas-grid" id="turmas-grid"></div>
       <div class="card" id="turma-detalhe-card" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -325,27 +315,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
     <!-- Nova/Editar Prova -->
     <div class="section" id="sec-nova-prova">
-      <div class="page-header"><div><div class="page-title" id="form-prova-titulo-page">Nova Prova</div><div class="page-subtitle">Crie uma avaliação para uma ou mais turmas</div></div></div>
+      <div class="page-header"><div><div class="page-title" id="form-prova-titulo-page">Nova Prova</div><div class="page-subtitle">Crie uma avaliação para turmas</div></div></div>
       <div class="card">
         <div class="grid-2" style="margin-bottom:16px">
-          <div class="form-group" style="margin:0"><label class="form-label">Título da Prova</label><input class="form-input" id="prova-titulo" placeholder="Ex: Prova de Matemática"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Título</label><input class="form-input" id="prova-titulo" placeholder="Ex: Prova Bimestral"></div>
           <div class="form-group" style="margin:0"><label class="form-label">Disciplina</label><input class="form-input" id="prova-disciplina" placeholder="Ex: Matemática"></div>
         </div>
         <div class="form-group" style="max-width:220px"><label class="form-label">Pontos por Questão</label><input class="form-input" type="number" id="prova-pts" value="1" min="0.1" step="0.1"></div>
         <div class="form-group">
-          <label class="form-label">Turmas (selecione uma ou mais)</label>
-          <div class="turmas-check-grid" id="turmas-check-grid"></div>
-          <div id="turmas-selecionadas-hint" class="text-muted text-sm mt-2">Nenhuma turma selecionada</div>
+          <label class="form-label">Turmas</label>
+          <div class="turmas-check-grid" id="turmas-check-grid-prova"></div>
+          <div id="turmas-hint-prova" class="text-muted text-sm mt-2">Nenhuma turma selecionada</div>
         </div>
         <hr class="divider">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <div class="card-title" style="margin:0">📝 Questões</div>
-          <button class="btn btn-secondary btn-sm" onclick="addQuestao()">+ Adicionar Questão</button>
+          <button class="btn btn-secondary btn-sm" onclick="addQuestao()">+ Questão</button>
         </div>
         <div id="questoes-container"></div>
         <div id="save-error-detail" class="hidden"></div>
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-secondary" style="min-width:130px" onclick="cancelarEdicao()">Cancelar</button>
+          <button class="btn btn-secondary" style="min-width:120px" onclick="cancelarEdicaoProva()">Cancelar</button>
           <button class="btn btn-primary" style="min-width:180px;width:auto" id="btn-salvar-prova" onclick="salvarProva()">💾 Salvar Prova</button>
         </div>
       </div>
@@ -355,7 +345,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="section" id="sec-provas">
       <div class="page-header">
         <div><div class="page-title">Provas</div><div class="page-subtitle">Gerencie avaliações</div></div>
-        <button class="btn btn-primary btn-sm" onclick="irNova()">+ Nova Prova</button>
+        <button class="btn btn-primary btn-sm" onclick="irNovaProva()">+ Nova Prova</button>
       </div>
       <div class="card"><div class="table-wrap"><table>
         <thead><tr><th>Título</th><th>Disciplina</th><th>Turmas</th><th>Questões</th><th>Entregas</th><th></th></tr></thead>
@@ -371,14 +361,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="card" style="margin-bottom:18px">
         <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <div class="form-group" style="margin:0;flex:1;min-width:140px"><label class="form-label">Turma</label>
+          <div class="form-group" style="margin:0;flex:1;min-width:130px"><label class="form-label">Turma</label>
             <select class="form-select" id="res-filtro-turma" onchange="renderResultados()">
               <option value="">Todas</option>
               <option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option>
               <option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option>
             </select>
           </div>
-          <div class="form-group" style="margin:0;flex:1;min-width:140px"><label class="form-label">Prova</label>
+          <div class="form-group" style="margin:0;flex:1;min-width:130px"><label class="form-label">Prova</label>
             <select class="form-select" id="res-filtro-prova" onchange="renderResultados()"><option value="">Todas</option></select>
           </div>
         </div>
@@ -389,20 +379,86 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </table></div></div>
     </div>
 
+    <!-- ═══ AULAS (Professor) ═══ -->
+    <div class="section" id="sec-aulas-prof">
+      <div class="page-header">
+        <div><div class="page-title">Aulas</div><div class="page-subtitle">Conteúdo e exercícios por turma</div></div>
+        <button class="btn btn-teal btn-sm" onclick="irNovaAula()">+ Nova Aula</button>
+      </div>
+      <div id="aulas-prof-lista"></div>
+    </div>
+
+    <!-- Nova/Editar Aula -->
+    <div class="section" id="sec-nova-aula">
+      <div class="page-header"><div><div class="page-title" id="form-aula-titulo-page">Nova Aula</div><div class="page-subtitle">Conteúdo de texto e imagens para os alunos</div></div></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="form-group" style="margin:0"><label class="form-label">Título da Aula</label><input class="form-input" id="aula-titulo" placeholder="Ex: Introdução às Frações"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Disciplina</label><input class="form-input" id="aula-disciplina" placeholder="Ex: Matemática"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Turmas</label>
+          <div class="turmas-check-grid" id="turmas-check-grid-aula"></div>
+          <div id="turmas-hint-aula" class="text-muted text-sm mt-2">Nenhuma turma selecionada</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Conteúdo da Aula</label>
+          <textarea class="form-textarea" id="aula-conteudo" placeholder="Digite o conteúdo da aula aqui. Você pode usar parágrafos, listas, explicações..." style="min-height:200px"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Imagens da Aula</label>
+          <div id="aula-imgs-lista" class="aula-imgs-grid"></div>
+          <div class="img-upload-area" style="margin-top:8px">
+            <input type="file" accept="image/*" multiple onchange="handleAulaImgUpload(event)">
+            <div class="img-upload-label">🖼 <strong>Clique ou arraste</strong> imagens aqui (múltiplas)<br><span style="font-size:11px">PNG · JPG · WEBP — máx 5 MB cada</span></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn btn-secondary" style="min-width:120px" onclick="cancelarEdicaoAula()">Cancelar</button>
+          <button class="btn btn-teal" style="min-width:180px;width:auto" id="btn-salvar-aula" onclick="salvarAula()">💾 Salvar Aula</button>
+        </div>
+      </div>
+
+      <!-- Exercícios vinculados -->
+      <div class="card" id="aula-exercicios-card" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin:0">🏋️ Exercícios desta Aula</div>
+          <button class="btn btn-secondary btn-sm" onclick="abrirModalNovoExercicio()">+ Novo Exercício</button>
+        </div>
+        <div id="exercicios-da-aula"></div>
+      </div>
+    </div>
+
     <!-- Aluno: Provas -->
     <div class="section" id="sec-aluno-provas">
       <div class="page-header"><div><div class="page-title">Minhas Provas</div><div class="page-subtitle" id="aluno-turma-label"></div></div></div>
       <div id="aluno-provas-grid"></div>
     </div>
 
+    <!-- Aluno: Aulas -->
+    <div class="section" id="sec-aluno-aulas">
+      <div class="page-header"><div><div class="page-title">Aulas</div><div class="page-subtitle" id="aluno-aulas-label">Conteúdo das suas aulas</div></div></div>
+      <div id="aluno-aulas-lista"></div>
+    </div>
+
     <!-- Aluno: Notas -->
     <div class="section" id="sec-aluno-notas">
-      <div class="page-header"><div><div class="page-title">Minhas Notas</div><div class="page-subtitle">Histórico de avaliações</div></div></div>
+      <div class="page-header"><div><div class="page-title">Minhas Notas</div><div class="page-subtitle">Provas e exercícios</div></div></div>
       <div class="stats-grid" id="aluno-stats"></div>
-      <div class="card"><div class="table-wrap"><table>
-        <thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead>
-        <tbody id="aluno-notas-tbody"></tbody>
-      </table></div></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">📋 Provas</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead>
+          <tbody id="aluno-notas-tbody"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏋️ Exercícios</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead>
+          <tbody id="aluno-exercicios-tbody"></tbody>
+        </table></div>
+      </div>
     </div>
 
   </main>
@@ -416,7 +472,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- Modal: Fazer Prova -->
+<!-- Modal: Fazer Prova/Exercício (Aluno) -->
 <div class="modal-overlay hidden" id="modal-fazer-prova">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -426,7 +482,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="modal-body" id="modal-fazer-body"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-fazer-prova')">Cancelar</button>
-      <button class="btn btn-primary" onclick="entregarProva()" id="btn-entregar">📨 Entregar Prova</button>
+      <button class="btn btn-primary" onclick="entregarAtividade()" id="btn-entregar">📨 Entregar</button>
     </div>
   </div>
 </div>
@@ -434,9 +490,39 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <!-- Modal: Resultado -->
 <div class="modal-overlay hidden" id="modal-resultado">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">🏆 Resultado</div><button class="modal-close" onclick="closeModal('modal-resultado');renderAlunoProvas()">×</button></div>
+    <div class="modal-header"><div class="modal-title">🏆 Resultado</div><button class="modal-close" onclick="fecharResultado()">×</button></div>
     <div class="modal-body" id="modal-resultado-body"></div>
-    <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal('modal-resultado');renderAlunoProvas()">Fechar</button></div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="fecharResultado()">Fechar</button></div>
+  </div>
+</div>
+
+<!-- Modal: Novo Exercício -->
+<div class="modal-overlay hidden" id="modal-novo-exercicio">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title" id="modal-ex-titulo-header">Novo Exercício</div><button class="modal-close" onclick="closeModal('modal-novo-exercicio')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Título do Exercício</label><input class="form-input" id="ex-titulo" placeholder="Ex: Exercícios de Fixação"></div>
+      <div class="form-group"><label class="form-label">Descrição (opcional)</label><textarea class="form-textarea" id="ex-descricao" placeholder="Instruções ou contexto do exercício..." style="min-height:80px"></textarea></div>
+      <div class="form-group" style="max-width:220px"><label class="form-label">Pontos por Questão</label><input class="form-input" type="number" id="ex-pts" value="1" min="0.1" step="0.1"></div>
+      <hr class="divider">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-title" style="margin:0">📝 Questões</div>
+        <button class="btn btn-secondary btn-sm" onclick="addQuestaoEx()">+ Questão</button>
+      </div>
+      <div id="questoes-ex-container"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-novo-exercicio')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-salvar-ex" onclick="salvarExercicio()" style="width:auto;min-width:160px">💾 Salvar Exercício</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ver Aula (aluno) -->
+<div class="modal-overlay hidden" id="modal-ver-aula">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title" id="modal-aula-titulo"></div><button class="modal-close" onclick="closeModal('modal-ver-aula')">×</button></div>
+    <div class="modal-body" id="modal-aula-body"></div>
   </div>
 </div>
 
@@ -446,59 +532,49 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const BUCKET='questoes';
 const TURMAS=['1M1','1M2','1M3','1M4','1M5','2T1','2T2','2T3','3M1','3M2'];
-let state={user:null,provas:[],alunos:[],respostas:[]};
+let state={user:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[]};
 
-/* ── LOADING ── */
+/* ══ LOADING ══ */
 function showLoading(m='Carregando...'){document.getElementById('loading-text').textContent=m;document.getElementById('loading-overlay').classList.remove('hidden')}
 function hideLoading(){document.getElementById('loading-overlay').classList.add('hidden')}
 
-/* ── SIDEBAR MOBILE ── */
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebar-overlay').classList.toggle('show');
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('show');
-}
+/* ══ SIDEBAR ══ */
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('show');}
 
-/* ── DATA ── */
+/* ══ DATA ══ */
 async function loadAllData(){
-  const[r1,r2,r3]=await Promise.all([
+  const[r1,r2,r3,r4,r5,r6]=await Promise.all([
     sb.from('provas').select('*').order('criada_em',{ascending:false}),
     sb.from('alunos').select('*').order('nome',{ascending:true}),
-    sb.from('respostas').select('*')
+    sb.from('respostas').select('*'),
+    sb.from('aulas').select('*').order('criada_em',{ascending:false}),
+    sb.from('exercicios').select('*').order('criada_em',{ascending:false}),
+    sb.from('respostas_exercicios').select('*')
   ]);
-  if(r1.error)throw r1.error;
-  if(r2.error)throw r2.error;
-  if(r3.error)throw r3.error;
-  state.provas=r1.data.map(p=>({
-    id:p.id,titulo:p.titulo,disciplina:p.disciplina,
-    turmas:Array.isArray(p.turmas)?p.turmas:(p.turma?[p.turma]:[]),
-    pontosPorQ:p.pontos_por_q,questoes:Array.isArray(p.questoes)?p.questoes:[],criadaEm:p.criada_em
-  }));
+  [r1,r2,r3,r4,r5,r6].forEach(r=>{if(r.error)throw r.error;});
+  state.provas=r1.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:Array.isArray(p.turmas)?p.turmas:(p.turma?[p.turma]:[]),pontosPorQ:p.pontos_por_q,questoes:Array.isArray(p.questoes)?p.questoes:[],criadaEm:p.criada_em}));
   state.alunos=r2.data.map(a=>({ra:a.aluno_id,nome:a.nome,turma:a.turma}));
   state.respostas=r3.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  state.aulas=r4.data.map(a=>({id:a.id,titulo:a.titulo,disciplina:a.disciplina,turmas:Array.isArray(a.turmas)?a.turmas:[],conteudo:a.conteudo||'',imagens:Array.isArray(a.imagens)?a.imagens:[],criadaEm:a.criada_em}));
+  state.exercicios=r5.data.map(e=>({id:e.id,aulaId:e.aula_id,titulo:e.titulo,descricao:e.descricao||'',turmas:Array.isArray(e.turmas)?e.turmas:[],questoes:Array.isArray(e.questoes)?e.questoes:[],pontosPorQ:e.pontos_por_q,criadaEm:e.criada_em}));
+  state.respostasEx=r6.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
 }
 async function reload(){showLoading('Atualizando...');try{await loadAllData();}catch(e){console.error(e);}hideLoading();}
 
-/* ── IMAGE ── */
-async function uploadImagem(file,idx){
+/* ══ IMAGE UPLOAD ══ */
+async function uploadImg(file,prefix){
   const ext=file.name.split('.').pop().toLowerCase();
-  const path=`q_${Date.now()}_${idx}.${ext}`;
+  const path=`${prefix}_${Date.now()}.${ext}`;
   const{error}=await sb.storage.from(BUCKET).upload(path,file,{upsert:true,contentType:file.type});
   if(error)throw error;
-  const{data}=sb.storage.from(BUCKET).getPublicUrl(path);
-  return data.publicUrl;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
-async function removerImagemStorage(url){
-  try{
-    const m=url.split(`/storage/v1/object/public/${BUCKET}/`);
-    if(m.length>=2)await sb.storage.from(BUCKET).remove([decodeURIComponent(m[1])]);
-  }catch(e){console.warn('Aviso ao remover img:',e);}
+async function removeImg(url){
+  try{const m=url.split(`/storage/v1/object/public/${BUCKET}/`);if(m.length>=2)await sb.storage.from(BUCKET).remove([decodeURIComponent(m[1])]);}catch(e){console.warn(e);}
 }
 
-/* ── LOGIN ── */
+/* ══ LOGIN ══ */
 let loginTab='professor';
 function setLoginTab(t){
   loginTab=t;
@@ -530,65 +606,63 @@ async function doLogin(){
     document.getElementById('screen-login').classList.add('hidden');
     document.getElementById('screen-app').classList.remove('hidden');
     initApp();
-  }catch(e){
-    hideLoading();
-    errEl.textContent=`Erro de conexão: ${e.message||'tente novamente'}`;
-    errEl.classList.remove('hidden');
-    console.error('Login error:',e);
-  }
+  }catch(e){hideLoading();errEl.textContent=`Erro: ${e.message||'tente novamente'}`;errEl.classList.remove('hidden');console.error(e);}
   finally{btn.disabled=false;btn.textContent='Entrar →';}
 }
 function doLogout(){
-  state={user:null,provas:[],alunos:[],respostas:[]};
+  state={user:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[]};
   document.getElementById('screen-login').classList.remove('hidden');
   document.getElementById('screen-app').classList.add('hidden');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   ['prof-user','prof-pass','aluno-nome','aluno-senha'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('aluno-turma').value='';
-  closeSidebar();
+  document.getElementById('aluno-turma').value='';closeSidebar();
 }
 
-/* ── APP ── */
+/* ══ APP ══ */
 function initApp(){
   const u=state.user;
   document.getElementById('sb-avatar').textContent=u.nome[0].toUpperCase();
   document.getElementById('sb-name').textContent=u.nome;
   const re=document.getElementById('sb-role');
-  if(u.tipo==='professor'){re.textContent='Professor';re.className='user-role';buildProfNav();showSection('sec-dashboard');setActiveNav('nav-dashboard');renderDashboard();}
-  else{re.textContent=u.turma;re.className='user-role aluno';buildAlunoNav();showSection('sec-aluno-provas');setActiveNav('nav-aluno-provas');renderAlunoProvas();}
+  if(u.tipo==='professor'){re.textContent='Professor';re.className='user-role';buildProfNav();nav('sec-dashboard','nav-dashboard',renderDashboard);}
+  else{re.textContent=u.turma;re.className='user-role aluno';buildAlunoNav();nav('sec-aluno-aulas','nav-aluno-aulas',renderAlunoAulas);}
 }
-function nav(secId,navId,fn){
-  closeSidebar();showSection(secId);setActiveNav(navId);if(fn)fn();
-}
+function nav(secId,navId,fn){closeSidebar();showSection(secId);setActiveNav(navId);if(fn)fn();}
 function buildProfNav(){document.getElementById('sidebar-nav').innerHTML=`
   <div class="nav-label">Principal</div>
   <div class="nav-item" id="nav-dashboard" onclick="nav('sec-dashboard','nav-dashboard',renderDashboard)"><span class="icon">🏠</span>Dashboard</div>
-  <div class="nav-label">Provas</div>
-  <div class="nav-item" id="nav-nova-prova" onclick="irNova()"><span class="icon">➕</span>Nova Prova</div>
+  <div class="nav-label">Aulas</div>
+  <div class="nav-item" id="nav-aulas-prof" onclick="nav('sec-aulas-prof','nav-aulas-prof',()=>reload().then(renderAulasProfessor))"><span class="icon">📖</span>Aulas</div>
+  <div class="nav-label">Avaliações</div>
+  <div class="nav-item" id="nav-nova-prova" onclick="irNovaProva()"><span class="icon">➕</span>Nova Prova</div>
   <div class="nav-item" id="nav-provas" onclick="nav('sec-provas','nav-provas',()=>reload().then(renderProvas))"><span class="icon">📋</span>Provas</div>
   <div class="nav-item" id="nav-resultados" onclick="nav('sec-resultados','nav-resultados',()=>reload().then(renderResultados))"><span class="icon">📊</span>Resultados</div>
   <div class="nav-label">Gestão</div>
   <div class="nav-item" id="nav-turmas" onclick="nav('sec-turmas','nav-turmas',()=>reload().then(renderTurmas))"><span class="icon">🏫</span>Turmas</div>`;}
 function buildAlunoNav(){document.getElementById('sidebar-nav').innerHTML=`
-  <div class="nav-label">Aluno</div>
-  <div class="nav-item" id="nav-aluno-provas" onclick="nav('sec-aluno-provas','nav-aluno-provas',()=>reload().then(renderAlunoProvas))"><span class="icon">📝</span>Minhas Provas</div>
+  <div class="nav-label">Estudar</div>
+  <div class="nav-item" id="nav-aluno-aulas" onclick="nav('sec-aluno-aulas','nav-aluno-aulas',()=>reload().then(renderAlunoAulas))"><span class="icon">📖</span>Aulas</div>
+  <div class="nav-label">Avaliações</div>
+  <div class="nav-item" id="nav-aluno-provas" onclick="nav('sec-aluno-provas','nav-aluno-provas',()=>reload().then(renderAlunoProvas))"><span class="icon">📝</span>Provas</div>
   <div class="nav-item" id="nav-aluno-notas" onclick="nav('sec-aluno-notas','nav-aluno-notas',()=>reload().then(renderAlunoNotas))"><span class="icon">🏆</span>Minhas Notas</div>`;}
 function showSection(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function setActiveNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');}
 
-/* ── DASHBOARD ── */
+/* ══ DASHBOARD ══ */
 function renderDashboard(){
+  const totalEx=state.exercicios.length,totalResEx=state.respostasEx.length;
   document.getElementById('dash-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Aulas</div><div class="stat-value">${state.aulas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Exercícios</div><div class="stat-value">${totalEx}</div></div>
     <div class="stat-card"><div class="stat-label">Provas</div><div class="stat-value">${state.provas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Alunos</div><div class="stat-value">${state.alunos.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Realizadas</div><div class="stat-value">${state.respostas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Turmas</div><div class="stat-value">${TURMAS.length}</div></div>`;
-  const rec=state.provas.slice(0,5);
-  document.getElementById('dash-provas-recentes').innerHTML=rec.length===0?'<div class="empty-state" style="padding:24px"><div class="empty-icon">📭</div><div class="empty-title">Nenhuma prova ainda</div></div>':rec.map(p=>{const n=state.respostas.filter(r=>r.provaId===p.id).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600;font-size:13px">${p.titulo}</div><div class="text-muted text-xs">${(p.turmas||[]).join(', ')} · ${p.disciplina}</div></div><span class="badge badge-blue">${n}</span></div>`;}).join('');
-  document.getElementById('dash-turmas-lista').innerHTML=TURMAS.map(t=>{const a=state.alunos.filter(x=>x.turma===t).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(42,47,66,.5)"><span style="font-weight:600;font-size:13px">${t}</span><span class="text-muted text-xs">${a} aluno${a!==1?'s':''}</span></div>`;}).join('');
+    <div class="stat-card"><div class="stat-label">Alunos</div><div class="stat-value">${state.alunos.length}</div></div>`;
+  const recP=state.provas.slice(0,4);
+  document.getElementById('dash-provas-recentes').innerHTML=recP.length===0?'<div class="empty-state" style="padding:20px"><div class="empty-icon">📭</div><div class="empty-title">Nenhuma prova</div></div>':recP.map(p=>{const n=state.respostas.filter(r=>r.provaId===p.id).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600;font-size:13px">${p.titulo}</div><div class="text-muted text-xs">${(p.turmas||[]).join(', ')}</div></div><span class="badge badge-blue">${n}</span></div>`;}).join('');
+  const recA=state.aulas.slice(0,4);
+  document.getElementById('dash-aulas-recentes').innerHTML=recA.length===0?'<div class="empty-state" style="padding:20px"><div class="empty-icon">📚</div><div class="empty-title">Nenhuma aula</div></div>':recA.map(a=>{const exs=state.exercicios.filter(e=>e.aulaId===a.id).length;return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600;font-size:13px">${a.titulo}</div><div class="text-muted text-xs">${(a.turmas||[]).join(', ')} · ${a.disciplina}</div></div><span class="badge badge-teal">${exs} ex.</span></div>`;}).join('');
 }
 
-/* ── TURMAS ── */
+/* ══ TURMAS ══ */
 let turmaAtual=null;
 function renderTurmas(){
   document.getElementById('turmas-grid').innerHTML=TURMAS.map(t=>{const a=state.alunos.filter(x=>x.turma===t).length;return`<div class="turma-card" onclick="verTurma('${t}')"><div class="turma-name">${t}</div><div class="turma-alunos">${a} aluno${a!==1?'s':''}</div></div>`;}).join('');
@@ -601,20 +675,18 @@ function verTurma(turma){
   document.getElementById('turma-detalhe-title').innerHTML=`🏫 Turma ${turma}`;
   const alunos=state.alunos.filter(a=>a.turma===turma).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   const tbody=document.getElementById('turma-alunos-tbody');
-  if(!alunos.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Nenhum aluno registrado</td></tr>';return;}
+  if(!alunos.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Nenhum aluno</td></tr>';return;}
   tbody.innerHTML=alunos.map(a=>{
     const rs=state.respostas.filter(r=>r.alunoRA===a.ra);
     const media=rs.length?(rs.reduce((s,r)=>s+r.nota,0)/rs.length).toFixed(1):'-';
-    const badge=rs.length?`<span class="badge badge-green">${rs.length}</span>`:`<span class="badge" style="background:var(--surface2);color:var(--muted)">0</span>`;
-    return`<tr><td><strong>${a.nome}</strong></td><td>${badge}</td><td>${media==='-'?'-':media+' pts'}</td><td><button class="btn btn-danger btn-sm btn-icon" onclick="deletarAluno('${a.ra}','${a.nome.replace(/'/g,"\\'")}')">🗑</button></td></tr>`;
+    return`<tr><td><strong>${a.nome}</strong></td><td><span class="badge badge-green">${rs.length}</span></td><td>${media==='-'?'-':media+' pts'}</td><td><button class="btn btn-danger btn-sm btn-icon" onclick="deletarAluno('${a.ra}','${a.nome.replace(/'/g,"\\'")}')">🗑</button></td></tr>`;
   }).join('');
 }
 async function deletarAluno(ra,nome){
-  if(!confirm(`Excluir "${nome}"? As respostas também serão removidas.`))return;
+  if(!confirm(`Excluir "${nome}"?`))return;
   showLoading('Excluindo...');
-  try{await sb.from('respostas').delete().eq('aluno_ra',ra);await sb.from('alunos').delete().eq('aluno_id',ra);await loadAllData();verTurma(turmaAtual);renderTurmas();showToast('🗑 Aluno removido','red');}
-  catch(e){showToast('❌ Erro ao excluir.','red');console.error(e);}
-  finally{hideLoading();}
+  try{await sb.from('respostas').delete().eq('aluno_ra',ra);await sb.from('respostas_exercicios').delete().eq('aluno_ra',ra);await sb.from('alunos').delete().eq('aluno_id',ra);await loadAllData();verTurma(turmaAtual);renderTurmas();showToast('🗑 Aluno removido','red');}
+  catch(e){showToast('❌ Erro.','red');console.error(e);}finally{hideLoading();}
 }
 function exportarTurma(){
   if(!turmaAtual)return;
@@ -637,33 +709,37 @@ function exportarResultados(){
   downloadCSV(`${ft?'resultados_'+ft:'resultados_geral'}.csv`,[header,...rows]);
 }
 function downloadCSV(filename,rows){
-  const csv='\uFEFF'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=filename;a.click();
-  showToast('📥 CSV exportado!','green');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')],{type:'text/csv;charset=utf-8;'}));a.download=filename;a.click();showToast('📥 CSV exportado!','green');
 }
 
-/* ── NOVA/EDITAR PROVA ── */
-let questoesData=[],editandoProvaId=null,turmasSelecionadas=new Set();
-function buildTurmasCheckGrid(){
-  document.getElementById('turmas-check-grid').innerHTML=TURMAS.map(t=>`<div class="turma-check-item${turmasSelecionadas.has(t)?' checked':''}" id="tck-${t}" onclick="toggleTurma('${t}')"><span>${t}</span></div>`).join('');
-  atualizarHintTurmas();
+/* ══ TURMA CHECK HELPER ══ */
+function buildTurmasCheck(containerId,hintId,selectedSet){
+  document.getElementById(containerId).innerHTML=TURMAS.map(t=>`<div class="turma-check-item${selectedSet.has(t)?' checked':''}" id="${containerId}-${t}" onclick="toggleTurmaCheck('${containerId}','${hintId}','${t}',turmasSel_${containerId.replace(/-/g,'_')})"><span>${t}</span></div>`).join('');
+  updateTurmaHint(hintId,selectedSet);
 }
-function toggleTurma(t){turmasSelecionadas.has(t)?turmasSelecionadas.delete(t):turmasSelecionadas.add(t);document.getElementById(`tck-${t}`).classList.toggle('checked',turmasSelecionadas.has(t));atualizarHintTurmas();}
-function atualizarHintTurmas(){const h=document.getElementById('turmas-selecionadas-hint');if(!turmasSelecionadas.size){h.textContent='Nenhuma turma selecionada';h.style.color='var(--muted)';}else{h.textContent=`✅ Selecionadas: ${[...turmasSelecionadas].join(', ')}`;h.style.color='var(--green)';}}
-function irNova(){
-  editandoProvaId=null;questoesData=[];turmasSelecionadas=new Set();
+function toggleTurmaCheck(cid,hid,t,set){set.has(t)?set.delete(t):set.add(t);document.getElementById(`${cid}-${t}`).classList.toggle('checked',set.has(t));updateTurmaHint(hid,set);}
+function updateTurmaHint(hid,set){const h=document.getElementById(hid);if(!set.size){h.textContent='Nenhuma turma selecionada';h.style.color='var(--muted)';}else{h.textContent=`✅ ${[...set].join(', ')}`;h.style.color='var(--green)';}}
+
+/* Global selection sets */
+let turmasSel_turmas_check_grid_prova=new Set();
+let turmasSel_turmas_check_grid_aula=new Set();
+
+/* ══ PROVAS ══ */
+let questoesData=[],editandoProvaId=null;
+function irNovaProva(){
+  editandoProvaId=null;questoesData=[];turmasSel_turmas_check_grid_prova=new Set();
   document.getElementById('form-prova-titulo-page').textContent='Nova Prova';
   document.getElementById('btn-salvar-prova').textContent='💾 Salvar Prova';
   ['prova-titulo','prova-disciplina'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('prova-pts').value='1';
   document.getElementById('questoes-container').innerHTML='';
   document.getElementById('save-error-detail').classList.add('hidden');
-  buildTurmasCheckGrid();addQuestao();
-  closeSidebar();showSection('sec-nova-prova');setActiveNav('nav-nova-prova');
+  buildTurmasCheck('turmas-check-grid-prova','turmas-hint-prova',turmasSel_turmas_check_grid_prova);
+  addQuestao();closeSidebar();showSection('sec-nova-prova');setActiveNav('nav-nova-prova');
 }
 function editarProva(id){
   const p=state.provas.find(x=>x.id===id);if(!p)return;
-  editandoProvaId=id;questoesData=[];turmasSelecionadas=new Set(p.turmas||[]);
+  editandoProvaId=id;questoesData=[];turmasSel_turmas_check_grid_prova=new Set(p.turmas||[]);
   document.getElementById('form-prova-titulo-page').textContent='Editar Prova';
   document.getElementById('btn-salvar-prova').textContent='💾 Salvar Alterações';
   document.getElementById('prova-titulo').value=p.titulo;
@@ -671,215 +747,393 @@ function editarProva(id){
   document.getElementById('prova-pts').value=p.pontosPorQ;
   document.getElementById('questoes-container').innerHTML='';
   document.getElementById('save-error-detail').classList.add('hidden');
-  buildTurmasCheckGrid();
-  p.questoes.forEach((q,i)=>{questoesData.push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_renderQItem(i,q);});
+  buildTurmasCheck('turmas-check-grid-prova','turmas-hint-prova',turmasSel_turmas_check_grid_prova);
+  p.questoes.forEach((q,i)=>{questoesData.push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_renderQItem(i,q,'questoes-container','questoesData');});
   closeSidebar();showSection('sec-nova-prova');setActiveNav('nav-nova-prova');
 }
-function cancelarEdicao(){editandoProvaId=null;showSection('sec-provas');setActiveNav('nav-provas');renderProvas();}
+function cancelarEdicaoProva(){editandoProvaId=null;showSection('sec-provas');setActiveNav('nav-provas');renderProvas();}
 
 function addQuestao(){
   const idx=questoesData.length;
   questoesData.push({enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null});
-  _renderQItem(idx,{enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null});
+  _renderQItem(idx,{enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null},'questoes-container','questoesData');
 }
-function _renderQItem(idx,q){
+function setCorreta(qi,oi,arr='questoesData'){
+  window[arr][qi].correta=oi;
+  ['A','B','C','D'].forEach((_,i)=>document.getElementById(`opt-${arr}-${qi}-${i}`).classList.toggle('correct',i===oi));
+  const h=document.getElementById(`hint-${arr}-${qi}`);h.textContent=`✅ Resposta correta: ${'ABCD'[oi]}`;h.style.color='var(--green)';
+}
+function removeQuestaoFrom(idx,arr,cont){window[arr].splice(idx,1);rebuildQuestoes(arr,cont);}
+function rebuildQuestoes(arr,cont){
+  document.getElementById(cont).innerHTML='';
+  const copy=[...window[arr]];window[arr]=[];
+  copy.forEach((q,i)=>{window[arr].push({...q,opcoes:[...q.opcoes]});_renderQItem(i,q,cont,arr);});
+}
+function _renderQItem(idx,q,cont,arr){
   const L=['A','B','C','D'];
-  const div=document.createElement('div');
-  div.className='questao-item';div.id=`q-item-${idx}`;
+  const div=document.createElement('div');div.className='questao-item';div.id=`qi-${arr}-${idx}`;
   div.innerHTML=`
     <div class="questao-header">
       <span class="questao-num">Questão ${idx+1}</span>
-      <button class="btn btn-danger btn-sm" onclick="removeQuestao(${idx})">🗑 Remover</button>
+      <button class="btn btn-danger btn-sm" onclick="removeQuestaoFrom(${idx},'${arr}','${cont}')">🗑 Remover</button>
     </div>
     <div class="form-group" style="margin-bottom:10px">
       <label class="form-label">Enunciado</label>
-      <input class="form-input" id="enunciado-${idx}" placeholder="Digite o enunciado..." oninput="questoesData[${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}">
+      <input class="form-input" placeholder="Enunciado..." oninput="window['${arr}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}">
     </div>
     <label class="form-label">Imagem (opcional)</label>
-    <div id="img-wrap-${idx}">
+    <div id="imgw-${arr}-${idx}">
       ${q.imagemUrl
-        ?`<div class="img-preview-wrap"><img class="img-preview" src="${q.imagemUrl}" alt="img"><button class="img-remove-btn" onclick="removerImagem(${idx})">×</button></div>`
-        :`<div class="img-upload-area"><input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onchange="handleImgUpload(event,${idx})"><div class="img-upload-label">🖼 <strong>Clique ou arraste</strong> uma imagem<br><span style="font-size:11px">PNG · JPG · WEBP — máx 5 MB</span></div></div>`}
+        ?`<div class="img-preview-wrap"><img class="img-preview" src="${q.imagemUrl}" alt="img"><button class="img-remove-btn" onclick="removerImgQ(${idx},'${arr}')">×</button></div>`
+        :`<div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImgQ(event,${idx},'${arr}')"><div class="img-upload-label">🖼 <strong>Clique</strong> para adicionar imagem</div></div>`}
     </div>
-    <label class="form-label" style="margin-top:12px">Alternativas <span style="font-size:10px;color:var(--muted)">(clique na letra para marcar a correta)</span></label>
+    <label class="form-label" style="margin-top:12px">Alternativas</label>
     <ul class="opcoes-list">
       ${L.map((l,oi)=>`<li class="opcao-item">
-        <div class="opcao-letter${q.correta===oi?' correct':''}" id="opt-${idx}-${oi}" onclick="setCorreta(${idx},${oi})">${l}</div>
-        <input class="form-input" style="flex:1" placeholder="Alternativa ${l}..." oninput="questoesData[${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}">
+        <div class="opcao-letter${q.correta===oi?' correct':''}" id="opt-${arr}-${idx}-${oi}" onclick="setCorreta(${idx},${oi},'${arr}')">${l}</div>
+        <input class="form-input" style="flex:1" placeholder="Alternativa ${l}..." oninput="window['${arr}'][${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}">
       </li>`).join('')}
     </ul>
-    <div class="text-sm mt-2" id="correta-hint-${idx}" style="color:${q.correta!==null?'var(--green)':'var(--muted)'}">
+    <div class="text-sm mt-2" id="hint-${arr}-${idx}" style="color:${q.correta!==null?'var(--green)':'var(--muted)'}">
       ${q.correta!==null?`✅ Resposta correta: ${L[q.correta]}`:'⬆ Clique na letra para marcar a resposta correta'}
     </div>`;
-  document.getElementById('questoes-container').appendChild(div);
+  document.getElementById(cont).appendChild(div);
 }
-function setCorreta(qi,oi){
-  questoesData[qi].correta=oi;
-  ['A','B','C','D'].forEach((_,i)=>document.getElementById(`opt-${qi}-${i}`).classList.toggle('correct',i===oi));
-  const h=document.getElementById(`correta-hint-${qi}`);
-  h.textContent=`✅ Resposta correta: ${'ABCD'[oi]}`;h.style.color='var(--green)';
-}
-function removeQuestao(idx){questoesData.splice(idx,1);rebuildQuestoes();}
-function rebuildQuestoes(){
-  document.getElementById('questoes-container').innerHTML='';
-  const copy=[...questoesData];questoesData=[];
-  copy.forEach((q,i)=>{questoesData.push({...q,opcoes:[...q.opcoes]});_renderQItem(i,q);});
-}
-async function handleImgUpload(event,idx){
+async function handleImgQ(event,idx,arr){
   const file=event.target.files[0];if(!file)return;
-  if(file.size>5*1024*1024){showToast('⚠️ Imagem maior que 5 MB!','yellow');return;}
-  const wrap=document.getElementById(`img-wrap-${idx}`);
-  wrap.innerHTML=`<div class="img-uploading"><div class="img-spinner"></div>Enviando imagem...</div>`;
+  if(file.size>5*1024*1024){showToast('⚠️ Imagem > 5MB!','yellow');return;}
+  const wrap=document.getElementById(`imgw-${arr}-${idx}`);
+  wrap.innerHTML=`<div class="img-uploading"><div class="img-spinner"></div>Enviando...</div>`;
   try{
-    const url=await uploadImagem(file,idx);
-    questoesData[idx].imagemUrl=url;
-    wrap.innerHTML=`<div class="img-preview-wrap"><img class="img-preview" src="${url}" alt="img"><button class="img-remove-btn" onclick="removerImagem(${idx})">×</button></div>`;
+    const url=await uploadImg(file,'q');window[arr][idx].imagemUrl=url;
+    wrap.innerHTML=`<div class="img-preview-wrap"><img class="img-preview" src="${url}" alt="img"><button class="img-remove-btn" onclick="removerImgQ(${idx},'${arr}')">×</button></div>`;
     showToast('🖼 Imagem enviada!','green');
-  }catch(e){
-    wrap.innerHTML=`<div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImgUpload(event,${idx})"><div class="img-upload-label">🖼 <strong>Clique ou arraste</strong> uma imagem<br><span style="font-size:11px">PNG · JPG · WEBP — máx 5 MB</span></div></div>`;
-    showToast('❌ Erro ao enviar imagem.','red');console.error('Upload err:',e);
-  }
+  }catch(e){wrap.innerHTML=`<div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImgQ(event,${idx},'${arr}')"><div class="img-upload-label">🖼 <strong>Clique</strong> para adicionar imagem</div></div>`;showToast('❌ Erro no upload.','red');console.error(e);}
 }
-async function removerImagem(idx){
-  const url=questoesData[idx].imagemUrl;if(url)await removerImagemStorage(url);
-  questoesData[idx].imagemUrl=null;
-  document.getElementById(`img-wrap-${idx}`).innerHTML=`<div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImgUpload(event,${idx})"><div class="img-upload-label">🖼 <strong>Clique ou arraste</strong> uma imagem<br><span style="font-size:11px">PNG · JPG · WEBP — máx 5 MB</span></div></div>`;
-  showToast('🗑 Imagem removida','yellow');
+async function removerImgQ(idx,arr){
+  const url=window[arr][idx].imagemUrl;if(url)await removeImg(url);
+  window[arr][idx].imagemUrl=null;
+  document.getElementById(`imgw-${arr}-${idx}`).innerHTML=`<div class="img-upload-area"><input type="file" accept="image/*" onchange="handleImgQ(event,${idx},'${arr}')"><div class="img-upload-label">🖼 <strong>Clique</strong> para adicionar imagem</div></div>`;
 }
 
 async function salvarProva(){
   const titulo=document.getElementById('prova-titulo').value.trim();
   const disciplina=document.getElementById('prova-disciplina').value.trim();
   const pontosPorQ=parseFloat(document.getElementById('prova-pts').value)||1;
-  const errDiv=document.getElementById('save-error-detail');
-  errDiv.classList.add('hidden');
-
+  const errDiv=document.getElementById('save-error-detail');errDiv.classList.add('hidden');
   if(!titulo||!disciplina)return showToast('⚠️ Preencha título e disciplina!','yellow');
-  if(!turmasSelecionadas.size)return showToast('⚠️ Selecione ao menos uma turma!','yellow');
+  if(!turmasSel_turmas_check_grid_prova.size)return showToast('⚠️ Selecione ao menos uma turma!','yellow');
   if(!questoesData.length)return showToast('⚠️ Adicione ao menos uma questão!','yellow');
-  if(questoesData.find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return showToast('⚠️ Preencha todas as questões e marque a resposta correta!','yellow');
-
-  const btn=document.getElementById('btn-salvar-prova');
-  btn.disabled=true;btn.textContent='Salvando...';showLoading('Salvando prova...');
+  if(questoesData.find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return showToast('⚠️ Preencha todas as questões!','yellow');
+  const btn=document.getElementById('btn-salvar-prova');btn.disabled=true;btn.textContent='Salvando...';showLoading('Salvando prova...');
   try{
-    const questoesPayload=questoesData.map(q=>({
-      enunciado:q.enunciado,
-      opcoes:[...q.opcoes],
-      correta:q.correta,
-      imagemUrl:q.imagemUrl||null
-    }));
-    const payload={
-      titulo,
-      disciplina,
-      turmas:[...turmasSelecionadas],
-      pontos_por_q:pontosPorQ,
-      questoes:questoesPayload,
-      criada_em:new Date().toLocaleDateString('pt-BR')
-    };
-
-    console.log('Salvando payload:', JSON.stringify(payload));
-
-    let error;
-    if(editandoProvaId){
-      ({error}=await sb.from('provas').update(payload).eq('id',editandoProvaId));
-    }else{
-      ({error}=await sb.from('provas').insert({id:Date.now().toString(),...payload}));
-    }
-
-    if(error){
-      console.error('Supabase error:', error);
-      errDiv.className='error-detail';
-      errDiv.textContent=`Erro Supabase: ${error.message} (código: ${error.code||'?'})`;
-      errDiv.classList.remove('hidden');
-      hideLoading();
-      showToast('❌ Erro ao salvar. Veja o detalhe abaixo.','red');
-      return;
-    }
-
+    const payload={titulo,disciplina,turmas:[...turmasSel_turmas_check_grid_prova],pontos_por_q:pontosPorQ,questoes:questoesData.map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toLocaleDateString('pt-BR')};
+    const{error}=editandoProvaId?await sb.from('provas').update(payload).eq('id',editandoProvaId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
+    if(error){errDiv.className='error-detail';errDiv.textContent=`Supabase: ${error.message} (${error.code})`;errDiv.classList.remove('hidden');hideLoading();showToast('❌ Erro ao salvar.','red');return;}
     await loadAllData();hideLoading();editandoProvaId=null;
-    showToast(editandoProvaId?'✅ Prova atualizada!':'✅ Prova salva!','green');
-    showSection('sec-provas');setActiveNav('nav-provas');renderProvas();
-  }catch(e){
-    hideLoading();
-    errDiv.className='error-detail';
-    errDiv.textContent=`Erro JS: ${e.message}`;
-    errDiv.classList.remove('hidden');
-    showToast('❌ Erro ao salvar prova.','red');
-    console.error('Save error:',e);
-  }
+    showToast('✅ Prova salva!','green');showSection('sec-provas');setActiveNav('nav-provas');renderProvas();
+  }catch(e){hideLoading();errDiv.className='error-detail';errDiv.textContent=`JS: ${e.message}`;errDiv.classList.remove('hidden');showToast('❌ Erro.','red');console.error(e);}
   finally{btn.disabled=false;btn.textContent=editandoProvaId?'💾 Salvar Alterações':'💾 Salvar Prova';}
 }
-
-/* ── PROVAS LIST ── */
 function renderProvas(){
   const tbody=document.getElementById('provas-tbody');
-  if(!state.provas.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Nenhuma prova cadastrada</td></tr>';return;}
+  if(!state.provas.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhuma prova</td></tr>';return;}
   tbody.innerHTML=state.provas.map(p=>{
     const n=state.respostas.filter(r=>r.provaId===p.id).length;
     const ts=(p.turmas||[]).map(t=>`<span class="badge badge-blue" style="margin:1px">${t}</span>`).join('');
-    const imgs=p.questoes.filter(q=>q.imagemUrl).length;
-    return`<tr>
-      <td><strong>${p.titulo}</strong><div class="text-muted text-xs mt-1">${p.criadaEm}${imgs?` · 🖼 ${imgs}`:''}</div></td>
-      <td><span class="badge badge-purple">${p.disciplina}</span></td>
-      <td style="max-width:160px">${ts}</td>
-      <td>${p.questoes.length}</td>
-      <td><span class="badge ${n>0?'badge-green':'badge-yellow'}">${n}</span></td>
-      <td><div style="display:flex;gap:4px;flex-wrap:wrap">
-        <button class="btn btn-secondary btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button>
-        <button class="btn btn-warning btn-sm" onclick="editarProva('${p.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="deletarProva('${p.id}')">🗑</button>
-      </div></td>
-    </tr>`;
+    return`<tr><td><strong>${p.titulo}</strong><div class="text-muted text-xs mt-1">${p.criadaEm}</div></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'badge-green':'badge-yellow'}">${n}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warning btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="deletarProva('${p.id}')">🗑</button></div></td></tr>`;
   }).join('');
 }
 async function deletarProva(id){
-  if(!confirm('Deletar esta prova e todos os seus resultados?'))return;
+  if(!confirm('Deletar esta prova e seus resultados?'))return;
   showLoading('Excluindo...');
   try{
     const p=state.provas.find(x=>x.id===id);
-    if(p){for(const q of p.questoes){if(q.imagemUrl)await removerImagemStorage(q.imagemUrl);}}
-    await sb.from('respostas').delete().eq('prova_id',id);
-    await sb.from('provas').delete().eq('id',id);
+    if(p)for(const q of p.questoes){if(q.imagemUrl)await removeImg(q.imagemUrl);}
+    await sb.from('respostas').delete().eq('prova_id',id);await sb.from('provas').delete().eq('id',id);
     await loadAllData();renderProvas();showToast('🗑 Prova removida','red');
-  }catch(e){showToast('❌ Erro ao excluir.','red');console.error(e);}
-  finally{hideLoading();}
+  }catch(e){showToast('❌ Erro.','red');console.error(e);}finally{hideLoading();}
 }
 function verProvaProfessor(id){
   const p=state.provas.find(x=>x.id===id);if(!p)return;
   document.getElementById('modal-ver-titulo').textContent=p.titulo;
-  const entregas=state.respostas.filter(r=>r.provaId===id);
-  const L=['A','B','C','D'];
+  const entregas=state.respostas.filter(r=>r.provaId===id);const L=['A','B','C','D'];
   const ts=(p.turmas||[]).map(t=>`<span class="badge badge-blue" style="margin:2px">${t}</span>`).join('');
-  let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">${ts}<span class="badge badge-purple">${p.disciplina}</span><span class="badge badge-yellow">${p.pontosPorQ} pts/q</span><span class="badge badge-green">${p.questoes.length*p.pontosPorQ} pts total</span></div><div class="card-title">📝 Questões</div>`;
-  p.questoes.forEach((q,i)=>{
-    html+=`<div class="questao-item"><div class="questao-header"><span class="questao-num">Questão ${i+1}</span></div>
-      <p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p>
-      ${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:block;margin-bottom:10px" alt="img">`:''}
-      <ul class="opcoes-list">${q.opcoes.map((op,oi)=>`<li class="opcao-item"><div class="opcao-letter ${oi===q.correta?'correct':''}">${L[oi]}</div><span style="font-size:13px">${op}</span></li>`).join('')}</ul>
-    </div>`;
-  });
-  if(entregas.length){html+=`<div class="card-title" style="margin-top:20px">📊 Resultados (${entregas.length})</div><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody>${entregas.map(r=>{const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`;}).join('')}</tbody></table></div>`;}
+  let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">${ts}<span class="badge badge-purple">${p.disciplina}</span><span class="badge badge-yellow">${p.pontosPorQ} pts/q</span></div><div class="card-title">📝 Questões</div>`;
+  p.questoes.forEach((q,i)=>{html+=`<div class="questao-item"><div class="questao-header"><span class="questao-num">Q${i+1}</span></div><p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p>${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--border);display:block;margin-bottom:8px" alt="img">`:''}<ul class="opcoes-list">${q.opcoes.map((op,oi)=>`<li class="opcao-item"><div class="opcao-letter ${oi===q.correta?'correct':''}">${L[oi]}</div><span style="font-size:13px">${op}</span></li>`).join('')}</ul></div>`;});
+  if(entregas.length){html+=`<div class="card-title" style="margin-top:16px">📊 Resultados</div><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody>${entregas.map(r=>{const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`;}).join('')}</tbody></table></div>`;}
   document.getElementById('modal-ver-body').innerHTML=html;
   document.getElementById('modal-ver-prova').classList.remove('hidden');
 }
-
-/* ── RESULTADOS ── */
 function renderResultados(){
   const ps=document.getElementById('res-filtro-prova'),cp=ps.value;
   ps.innerHTML='<option value="">Todas</option>'+state.provas.map(p=>`<option value="${p.id}"${cp===p.id?' selected':''}>${p.titulo}</option>`).join('');
   const ft=document.getElementById('res-filtro-turma').value,fp=document.getElementById('res-filtro-prova').value;
-  let res=[...state.respostas];
-  if(ft)res=res.filter(r=>r.alunoTurma===ft);if(fp)res=res.filter(r=>r.provaId===fp);
+  let res=[...state.respostas];if(ft)res=res.filter(r=>r.alunoTurma===ft);if(fp)res=res.filter(r=>r.provaId===fp);
   const tbody=document.getElementById('resultados-tbody');
-  if(!res.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Nenhum resultado</td></tr>';return;}
-  tbody.innerHTML=res.map(r=>{
-    const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';
-    const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);
-    return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge badge-blue">${r.alunoTurma}</span></td><td style="max-width:140px;font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="progress-bar mt-1" style="width:70px"><div class="progress-fill" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;
+  if(!res.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Nenhum resultado</td></tr>';return;}
+  tbody.innerHTML=res.map(r=>{const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge badge-blue">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="progress-bar mt-1" style="width:60px"><div class="progress-fill" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+}
+
+/* ══ AULAS - PROFESSOR ══ */
+let editandoAulaId=null,aulaImagens=[],aulaExQuestoes=[];
+let aulaExEditandoId=null;
+
+function irNovaAula(){
+  editandoAulaId=null;aulaImagens=[];turmasSel_turmas_check_grid_aula=new Set();
+  document.getElementById('form-aula-titulo-page').textContent='Nova Aula';
+  document.getElementById('btn-salvar-aula').textContent='💾 Salvar Aula';
+  ['aula-titulo','aula-disciplina','aula-conteudo'].forEach(id=>document.getElementById(id).value='');
+  buildTurmasCheck('turmas-check-grid-aula','turmas-hint-aula',turmasSel_turmas_check_grid_aula);
+  renderAulaImgsPreview();
+  document.getElementById('aula-exercicios-card').style.display='none';
+  closeSidebar();showSection('sec-nova-aula');setActiveNav('nav-aulas-prof');
+}
+function editarAula(id){
+  const a=state.aulas.find(x=>x.id===id);if(!a)return;
+  editandoAulaId=id;aulaImagens=[...(a.imagens||[])];turmasSel_turmas_check_grid_aula=new Set(a.turmas||[]);
+  document.getElementById('form-aula-titulo-page').textContent='Editar Aula';
+  document.getElementById('btn-salvar-aula').textContent='💾 Salvar Alterações';
+  document.getElementById('aula-titulo').value=a.titulo;
+  document.getElementById('aula-disciplina').value=a.disciplina;
+  document.getElementById('aula-conteudo').value=a.conteudo||'';
+  buildTurmasCheck('turmas-check-grid-aula','turmas-hint-aula',turmasSel_turmas_check_grid_aula);
+  renderAulaImgsPreview();
+  document.getElementById('aula-exercicios-card').style.display='block';
+  renderExerciciosDaAula(id);
+  closeSidebar();showSection('sec-nova-aula');setActiveNav('nav-aulas-prof');
+}
+function cancelarEdicaoAula(){editandoAulaId=null;showSection('sec-aulas-prof');setActiveNav('nav-aulas-prof');renderAulasProfessor();}
+
+function renderAulaImgsPreview(){
+  const grid=document.getElementById('aula-imgs-lista');
+  grid.innerHTML=aulaImagens.map((url,i)=>`<div style="position:relative;display:inline-block">
+    <img src="${url}" class="aula-img" style="height:100px;width:140px;object-fit:cover" alt="img" onclick="verImgFull('${url}')">
+    <button class="img-remove-btn" onclick="removerAulaImg(${i})">×</button>
+  </div>`).join('');
+}
+async function handleAulaImgUpload(event){
+  const files=Array.from(event.target.files);
+  for(const file of files){
+    if(file.size>5*1024*1024){showToast('⚠️ Imagem > 5MB ignorada.','yellow');continue;}
+    showLoading('Enviando imagem...');
+    try{const url=await uploadImg(file,'aula');aulaImagens.push(url);renderAulaImgsPreview();showToast('🖼 Imagem adicionada!','green');}
+    catch(e){showToast('❌ Erro no upload.','red');console.error(e);}
+    finally{hideLoading();}
+  }
+  event.target.value='';
+}
+async function removerAulaImg(idx){
+  await removeImg(aulaImagens[idx]);aulaImagens.splice(idx,1);renderAulaImgsPreview();showToast('🗑 Imagem removida','yellow');
+}
+
+async function salvarAula(){
+  const titulo=document.getElementById('aula-titulo').value.trim();
+  const disciplina=document.getElementById('aula-disciplina').value.trim();
+  const conteudo=document.getElementById('aula-conteudo').value.trim();
+  if(!titulo||!disciplina)return showToast('⚠️ Preencha título e disciplina!','yellow');
+  if(!turmasSel_turmas_check_grid_aula.size)return showToast('⚠️ Selecione ao menos uma turma!','yellow');
+  const btn=document.getElementById('btn-salvar-aula');btn.disabled=true;btn.textContent='Salvando...';showLoading('Salvando aula...');
+  try{
+    const payload={titulo,disciplina,turmas:[...turmasSel_turmas_check_grid_aula],conteudo,imagens:aulaImagens,criada_em:new Date().toLocaleDateString('pt-BR')};
+    let savedId=editandoAulaId;
+    if(editandoAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editandoAulaId);if(error)throw error;}
+    else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;savedId=id;}
+    await loadAllData();hideLoading();
+    showToast('✅ Aula salva!','green');
+    // Stay on form and show exercises card
+    editandoAulaId=savedId;
+    document.getElementById('form-aula-titulo-page').textContent='Editar Aula';
+    document.getElementById('btn-salvar-aula').textContent='💾 Salvar Alterações';
+    document.getElementById('aula-exercicios-card').style.display='block';
+    renderExerciciosDaAula(savedId);
+  }catch(e){hideLoading();showToast('❌ Erro ao salvar aula.','red');console.error(e);}
+  finally{btn.disabled=false;}
+}
+
+function renderAulasProfessor(){
+  const el=document.getElementById('aulas-prof-lista');
+  if(!state.aulas.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">Nenhuma aula criada</div><div class="text-muted">Clique em "+ Nova Aula" para começar.</div></div>';return;}
+  el.innerHTML=state.aulas.map(a=>{
+    const exs=state.exercicios.filter(e=>e.aulaId===a.id);
+    const ts=(a.turmas||[]).map(t=>`<span class="badge badge-blue" style="margin:1px">${t}</span>`).join('');
+    const previewText=a.conteudo?a.conteudo.substring(0,120)+(a.conteudo.length>120?'...':''):'';
+    return`<div class="aula-card">
+      <div class="aula-titulo">${a.titulo}</div>
+      <div class="aula-meta"><span class="badge badge-teal">${a.disciplina}</span>${ts}${a.imagens?.length?`<span class="badge badge-purple">🖼 ${a.imagens.length} img</span>`:''}<span class="badge badge-yellow">🏋️ ${exs.length} exercício${exs.length!==1?'s':''}</span></div>
+      ${previewText?`<div class="aula-conteudo" style="font-size:13px;color:var(--muted);max-height:60px;overflow:hidden">${previewText}</div>`:''}
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-teal btn-sm" onclick="editarAula('${a.id}')">✏️ Editar Aula</button>
+        <button class="btn btn-secondary btn-sm" onclick="verAulaProfessor('${a.id}')">👁 Visualizar</button>
+        <button class="btn btn-danger btn-sm" onclick="deletarAula('${a.id}')">🗑 Excluir</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-/* ── ALUNO: PROVAS ── */
+function verAulaProfessor(id){
+  const a=state.aulas.find(x=>x.id===id);if(!a)return;
+  abrirModalAula(a,true);
+}
+
+async function deletarAula(id){
+  if(!confirm('Excluir esta aula e todos os exercícios vinculados?'))return;
+  showLoading('Excluindo...');
+  try{
+    const a=state.aulas.find(x=>x.id===id);
+    if(a){for(const url of(a.imagens||[]))await removeImg(url);for(const q of(a.questoes||[]))if(q.imagemUrl)await removeImg(q.imagemUrl);}
+    // Delete exercises and their responses
+    const exs=state.exercicios.filter(e=>e.aulaId===id);
+    for(const ex of exs){
+      for(const q of(ex.questoes||[]))if(q.imagemUrl)await removeImg(q.imagemUrl);
+      await sb.from('respostas_exercicios').delete().eq('exercicio_id',ex.id);
+      await sb.from('exercicios').delete().eq('id',ex.id);
+    }
+    await sb.from('aulas').delete().eq('id',id);
+    await loadAllData();renderAulasProfessor();showToast('🗑 Aula removida','red');
+  }catch(e){showToast('❌ Erro.','red');console.error(e);}finally{hideLoading();}
+}
+
+/* ══ EXERCÍCIOS ══ */
+let exQuestoes=[];
+function renderExerciciosDaAula(aulaId){
+  const exs=state.exercicios.filter(e=>e.aulaId===aulaId);
+  const el=document.getElementById('exercicios-da-aula');
+  if(!exs.length){el.innerHTML='<div class="text-muted text-sm" style="padding:10px 0">Nenhum exercício ainda. Adicione questões para os alunos praticar!</div>';return;}
+  el.innerHTML=exs.map(ex=>{
+    const rs=state.respostasEx.filter(r=>r.exercicioId===ex.id).length;
+    return`<div class="exercicio-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="text-muted text-sm mt-1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-yellow">${ex.questoes.length} questões</span><span class="badge badge-green">${rs} entrega${rs!==1?'s':''}</span></div></div>
+        <div style="display:flex;gap:5px"><button class="btn btn-warning btn-sm" onclick="editarExercicio('${ex.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="deletarExercicio('${ex.id}')">🗑</button></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function abrirModalNovoExercicio(){
+  aulaExEditandoId=null;exQuestoes=[];
+  document.getElementById('modal-ex-titulo-header').textContent='Novo Exercício';
+  document.getElementById('btn-salvar-ex').textContent='💾 Salvar Exercício';
+  ['ex-titulo','ex-descricao'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ex-pts').value='1';
+  document.getElementById('questoes-ex-container').innerHTML='';
+  addQuestaoEx();
+  document.getElementById('modal-novo-exercicio').classList.remove('hidden');
+}
+function editarExercicio(id){
+  const ex=state.exercicios.find(x=>x.id===id);if(!ex)return;
+  aulaExEditandoId=id;exQuestoes=[];
+  document.getElementById('modal-ex-titulo-header').textContent='Editar Exercício';
+  document.getElementById('btn-salvar-ex').textContent='💾 Salvar Alterações';
+  document.getElementById('ex-titulo').value=ex.titulo;
+  document.getElementById('ex-descricao').value=ex.descricao||'';
+  document.getElementById('ex-pts').value=ex.pontosPorQ;
+  document.getElementById('questoes-ex-container').innerHTML='';
+  ex.questoes.forEach((q,i)=>{exQuestoes.push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_renderQItem(i,q,'questoes-ex-container','exQuestoes');});
+  document.getElementById('modal-novo-exercicio').classList.remove('hidden');
+}
+function addQuestaoEx(){
+  const idx=exQuestoes.length;
+  exQuestoes.push({enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null});
+  _renderQItem(idx,{enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null},'questoes-ex-container','exQuestoes');
+}
+async function salvarExercicio(){
+  if(!editandoAulaId)return showToast('⚠️ Salve a aula primeiro!','yellow');
+  const titulo=document.getElementById('ex-titulo').value.trim();
+  const descricao=document.getElementById('ex-descricao').value.trim();
+  const pontosPorQ=parseFloat(document.getElementById('ex-pts').value)||1;
+  if(!titulo)return showToast('⚠️ Preencha o título!','yellow');
+  if(!exQuestoes.length)return showToast('⚠️ Adicione ao menos uma questão!','yellow');
+  if(exQuestoes.find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return showToast('⚠️ Preencha todas as questões!','yellow');
+  const btn=document.getElementById('btn-salvar-ex');btn.disabled=true;btn.textContent='Salvando...';
+  showLoading('Salvando exercício...');
+  try{
+    // Get turmas from parent aula
+    const aula=state.aulas.find(a=>a.id===editandoAulaId);
+    const payload={aula_id:editandoAulaId,titulo,descricao,turmas:aula?aula.turmas:[],questoes:exQuestoes.map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pontosPorQ,criada_em:new Date().toLocaleDateString('pt-BR')};
+    const{error}=aulaExEditandoId?await sb.from('exercicios').update(payload).eq('id',aulaExEditandoId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});
+    if(error)throw error;
+    await loadAllData();hideLoading();
+    closeModal('modal-novo-exercicio');renderExerciciosDaAula(editandoAulaId);
+    showToast('✅ Exercício salvo!','green');aulaExEditandoId=null;
+  }catch(e){hideLoading();showToast('❌ Erro ao salvar exercício.','red');console.error(e);}
+  finally{btn.disabled=false;}
+}
+async function deletarExercicio(id){
+  if(!confirm('Excluir este exercício e seus resultados?'))return;
+  showLoading('Excluindo...');
+  try{
+    const ex=state.exercicios.find(x=>x.id===id);
+    if(ex)for(const q of(ex.questoes||[]))if(q.imagemUrl)await removeImg(q.imagemUrl);
+    await sb.from('respostas_exercicios').delete().eq('exercicio_id',id);
+    await sb.from('exercicios').delete().eq('id',id);
+    await loadAllData();renderExerciciosDaAula(editandoAulaId);showToast('🗑 Exercício removido','red');
+  }catch(e){showToast('❌ Erro.','red');console.error(e);}finally{hideLoading();}
+}
+
+/* ══ ALUNO: AULAS ══ */
+function renderAlunoAulas(){
+  const u=state.user;
+  document.getElementById('aluno-aulas-label').textContent=`Turma ${u.turma}`;
+  const aulas=state.aulas.filter(a=>(a.turmas||[]).includes(u.turma));
+  const el=document.getElementById('aluno-aulas-lista');
+  if(!aulas.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">Nenhuma aula disponível</div><div class="text-muted">Seu professor ainda não publicou aulas para a turma ${u.turma}.</div></div>';return;}
+  el.innerHTML=aulas.map(a=>{
+    const exs=state.exercicios.filter(e=>e.aulaId===a.id&&(e.turmas||[]).includes(u.turma));
+    const exFeitos=exs.filter(e=>state.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;
+    return`<div class="aula-card" style="cursor:pointer" onclick="verAulaAluno('${a.id}')">
+      <div class="aula-titulo">${a.titulo}</div>
+      <div class="aula-meta">
+        <span class="badge badge-teal">${a.disciplina}</span>
+        ${a.imagens?.length?`<span class="badge badge-purple">🖼 ${a.imagens.length} imagem${a.imagens.length!==1?'ns':''}</span>`:''}
+        ${exs.length?`<span class="badge ${exFeitos===exs.length?'badge-green':'badge-yellow'}">🏋️ ${exFeitos}/${exs.length} exercício${exs.length!==1?'s':''}</span>`:''}
+        <span class="text-muted text-xs">${a.criadaEm}</span>
+      </div>
+      ${a.conteudo?`<div class="aula-conteudo" style="font-size:13px;color:var(--muted);max-height:60px;overflow:hidden">${a.conteudo.substring(0,120)}${a.conteudo.length>120?'...':''}</div>`:''}
+      <div style="margin-top:10px"><button class="btn btn-teal btn-sm" onclick="event.stopPropagation();verAulaAluno('${a.id}')">📖 Ver Aula Completa →</button></div>
+    </div>`;
+  }).join('');
+}
+
+function verAulaAluno(id){
+  const a=state.aulas.find(x=>x.id===id);if(!a)return;
+  abrirModalAula(a,false);
+}
+
+function abrirModalAula(a,isProfessor){
+  const u=state.user;
+  document.getElementById('modal-aula-titulo').textContent=a.titulo;
+  const exs=state.exercicios.filter(e=>e.aulaId===a.id);
+  let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><span class="badge badge-teal">${a.disciplina}</span>${(a.turmas||[]).map(t=>`<span class="badge badge-blue">${t}</span>`).join('')}<span class="text-muted text-sm">${a.criadaEm}</span></div>`;
+  if(a.conteudo){html+=`<div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="card-title">📄 Conteúdo</div><div style="font-size:14px;line-height:1.75;white-space:pre-wrap;color:var(--text)">${a.conteudo}</div></div>`;}
+  if(a.imagens?.length){
+    html+=`<div class="card-title">🖼 Imagens</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px">`;
+    html+=a.imagens.map(url=>`<img src="${url}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:zoom-in" onclick="verImgFull('${url}')" alt="img">`).join('');
+    html+=`</div>`;
+  }
+  if(exs.length){
+    html+=`<div class="card-title">🏋️ Exercícios</div>`;
+    exs.forEach(ex=>{
+      const feito=!isProfessor&&state.respostasEx.find(r=>r.exercicioId===ex.id&&r.alunoRA===u?.ra);
+      const max=ex.questoes.length*ex.pontosPorQ;
+      html+=`<div class="exercicio-card" style="margin-bottom:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="text-muted text-sm mt-1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge badge-yellow">${ex.questoes.length} questões</span><span class="badge badge-blue">Máx: ${max.toFixed(1)} pts</span></div></div>
+          <div>${isProfessor?'':(feito?`<div><span class="badge badge-green" style="padding:5px 12px">✅ Entregue</span><div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:${feito.nota>=max*0.6?'var(--green)':'var(--red)'}; margin-top:5px">${feito.nota.toFixed(1)}<span style="font-size:13px;color:var(--muted)">/${max.toFixed(1)}</span></div></div>`:`<button class="btn btn-teal btn-sm" onclick="abrirExercicio('${ex.id}')">✏️ Fazer</button>`)}</div>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('modal-aula-body').innerHTML=html;
+  document.getElementById('modal-ver-aula').classList.remove('hidden');
+}
+
+function verImgFull(url){
+  document.getElementById('img-fullscreen-src').src=url;
+  document.getElementById('img-fullscreen').classList.remove('hidden');
+}
+
+/* ══ ALUNO: PROVAS ══ */
 function renderAlunoProvas(){
   const u=state.user;
   document.getElementById('aluno-turma-label').textContent=`Turma ${u.turma} — ${u.nome}`;
@@ -889,70 +1143,74 @@ function renderAlunoProvas(){
   el.innerHTML=provas.map(p=>{
     const ent=state.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);
     const max=p.questoes.length*p.pontosPorQ;
-    const imgs=p.questoes.some(q=>q.imagemUrl);
     return`<div class="card" style="margin-bottom:14px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div style="flex:1;min-width:0">
-          <div style="font-family:var(--font-display);font-size:17px;font-weight:700">${p.titulo}</div>
-          <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
-            <span class="badge badge-purple">${p.disciplina}</span>
-            <span class="badge badge-yellow">${p.questoes.length} questões</span>
-            <span class="badge badge-blue">Máx: ${max.toFixed(1)} pts</span>
-            ${imgs?'<span class="badge badge-purple">🖼 Com imagens</span>':''}
-          </div>
+        <div style="flex:1;min-width:0"><div style="font-family:var(--font-display);font-size:17px;font-weight:700">${p.titulo}</div>
+          <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap"><span class="badge badge-purple">${p.disciplina}</span><span class="badge badge-yellow">${p.questoes.length} questões</span><span class="badge badge-blue">Máx: ${max.toFixed(1)} pts</span></div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          ${ent
-            ?`<div><span class="badge badge-green" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:7px;font-size:20px;font-family:var(--font-display);font-weight:800;color:${ent.nota>=max*0.6?'var(--green)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> / ${max.toFixed(1)}</span></div></div>`
-            :`<button class="btn btn-primary" style="width:auto;padding:10px 18px" onclick="abrirProva('${p.id}')">✏️ Fazer Prova</button>`}
-        </div>
-      </div>
-    </div>`;
+        <div style="text-align:right;flex-shrink:0">${ent?`<div><span class="badge badge-green" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:7px;font-size:20px;font-family:var(--font-display);font-weight:800;color:${ent.nota>=max*0.6?'var(--green)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> / ${max.toFixed(1)}</span></div></div>`:`<button class="btn btn-primary" style="width:auto;padding:10px 18px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer Prova</button>`}</div>
+      </div></div>`;
   }).join('');
 }
 
-/* ── FAZER PROVA ── */
-let provaAtiva=null,respostasAluno={};
-function abrirProva(id){
+/* ══ FAZER PROVA / EXERCÍCIO ══ */
+let atividadeAtiva=null,tipoAtividade=null,respostasAtividade={};
+function abrirProvaAluno(id){
   const p=state.provas.find(x=>x.id===id);if(!p)return;
-  provaAtiva=p;respostasAluno={};
+  atividadeAtiva=p;tipoAtividade='prova';respostasAtividade={};
   document.getElementById('modal-fazer-titulo').textContent=p.titulo;
   document.getElementById('modal-fazer-info').textContent=`${p.disciplina} · ${p.questoes.length} questões · ${p.questoes.length*p.pontosPorQ} pts`;
-  const L=['A','B','C','D'];
-  document.getElementById('modal-fazer-body').innerHTML=p.questoes.map((q,qi)=>`<div class="prova-questao">
-    <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Questão ${qi+1}</div>
-    <div class="prova-questao-enunciado">${q.enunciado}</div>
-    ${q.imagemUrl?`<img src="${q.imagemUrl}" class="prova-questao-img" alt="Imagem questão ${qi+1}">`:''}
-    ${q.opcoes.map((op,oi)=>`<div class="radio-opcao" id="ro-${qi}-${oi}" onclick="selOpcao(${qi},${oi})"><div class="radio-btn" id="rb-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}
-  </div>`).join('');
-  document.getElementById('btn-entregar').disabled=false;
+  renderQuestoesModal(p.questoes);
+  document.getElementById('btn-entregar').textContent='📨 Entregar Prova';
   document.getElementById('modal-fazer-prova').classList.remove('hidden');
 }
-function selOpcao(qi,oi){
-  provaAtiva.questoes[qi].opcoes.forEach((_,i)=>{document.getElementById(`ro-${qi}-${i}`).classList.remove('selected');document.getElementById(`rb-${qi}-${i}`).classList.remove('filled');});
-  document.getElementById(`ro-${qi}-${oi}`).classList.add('selected');
-  document.getElementById(`rb-${qi}-${oi}`).classList.add('filled');
-  respostasAluno[qi]=oi;
+function abrirExercicio(id){
+  const ex=state.exercicios.find(x=>x.id===id);if(!ex)return;
+  atividadeAtiva=ex;tipoAtividade='exercicio';respostasAtividade={};
+  document.getElementById('modal-fazer-titulo').textContent=ex.titulo;
+  document.getElementById('modal-fazer-info').textContent=`${ex.questoes.length} questões · ${ex.questoes.length*ex.pontosPorQ} pts`;
+  renderQuestoesModal(ex.questoes);
+  document.getElementById('btn-entregar').textContent='📨 Entregar Exercício';
+  document.getElementById('modal-fazer-prova').classList.remove('hidden');
 }
-async function entregarProva(){
-  const respondidas=Object.keys(respostasAluno).length,total=provaAtiva.questoes.length;
-  if(respondidas<total&&!confirm(`Você respondeu ${respondidas} de ${total} questões. Entregar assim mesmo?`))return;
+function renderQuestoesModal(questoes){
+  const L=['A','B','C','D'];
+  document.getElementById('modal-fazer-body').innerHTML=questoes.map((q,qi)=>`<div class="prova-questao">
+    <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div>
+    <div class="prova-questao-enunciado">${q.enunciado}</div>
+    ${q.imagemUrl?`<img src="${q.imagemUrl}" class="prova-questao-img" alt="Imagem Q${qi+1}">`:''}
+    ${q.opcoes.map((op,oi)=>`<div class="radio-opcao" id="aro-${qi}-${oi}" onclick="selResposta(${qi},${oi})"><div class="radio-btn" id="arb-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}
+  </div>`).join('');
+  document.getElementById('btn-entregar').disabled=false;
+}
+function selResposta(qi,oi){
+  atividadeAtiva.questoes[qi].opcoes.forEach((_,i)=>{document.getElementById(`aro-${qi}-${i}`).classList.remove('selected');document.getElementById(`arb-${qi}-${i}`).classList.remove('filled');});
+  document.getElementById(`aro-${qi}-${oi}`).classList.add('selected');
+  document.getElementById(`arb-${qi}-${oi}`).classList.add('filled');
+  respostasAtividade[qi]=oi;
+}
+async function entregarAtividade(){
+  const respondidas=Object.keys(respostasAtividade).length,total=atividadeAtiva.questoes.length;
+  if(respondidas<total&&!confirm(`Você respondeu ${respondidas} de ${total}. Entregar assim mesmo?`))return;
   let acertos=0;
-  provaAtiva.questoes.forEach((q,qi)=>{if(respostasAluno[qi]===q.correta)acertos++;});
-  const nota=acertos*provaAtiva.pontosPorQ,u=state.user;
-  const btn=document.getElementById('btn-entregar');
-  btn.disabled=true;btn.textContent='Enviando...';showLoading('Salvando respostas...');
+  atividadeAtiva.questoes.forEach((q,qi)=>{if(respostasAtividade[qi]===q.correta)acertos++;});
+  const nota=acertos*atividadeAtiva.pontosPorQ,u=state.user;
+  const btn=document.getElementById('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';showLoading('Salvando...');
   try{
-    const reg={id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:provaAtiva.id,respostas:{...respostasAluno},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')};
-    const{error}=await sb.from('respostas').insert(reg);if(error)throw error;
-    await loadAllData();hideLoading();
-    closeModal('modal-fazer-prova');
-    mostrarResultado({...reg,alunoRA:reg.aluno_ra,alunoNome:reg.aluno_nome,alunoTurma:reg.aluno_turma,provaId:reg.prova_id,entregueEm:reg.entregue_em},provaAtiva);
-  }catch(e){hideLoading();showToast('❌ Erro ao enviar prova.','red');console.error(e);}
-  finally{btn.disabled=false;btn.textContent='📨 Entregar Prova';}
+    if(tipoAtividade==='prova'){
+      const{error}=await sb.from('respostas').insert({id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:atividadeAtiva.id,respostas:{...respostasAtividade},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
+      if(error)throw error;
+    }else{
+      const{error}=await sb.from('respostas_exercicios').insert({id:Date.now().toString(),exercicio_id:atividadeAtiva.id,aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,respostas:{...respostasAtividade},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
+      if(error)throw error;
+    }
+    await loadAllData();hideLoading();closeModal('modal-fazer-prova');
+    mostrarResultadoAtividade({respostas:{...respostasAtividade},nota,acertos},atividadeAtiva);
+  }catch(e){hideLoading();showToast('❌ Erro ao enviar.','red');console.error(e);}
+  finally{btn.disabled=false;btn.textContent='📨 Entregar';}
 }
-function mostrarResultado(reg,prova){
-  const total=prova.questoes.length,max=total*prova.pontosPorQ,ok=reg.nota>=max*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
+function mostrarResultadoAtividade(reg,atividade){
+  const total=atividade.questoes.length,max=total*atividade.pontosPorQ,ok=reg.nota>=max*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
   let html=`<div class="resultado-score">
     <div class="resultado-num" style="color:${ok?'var(--green)':'var(--red)'}">${reg.nota.toFixed(1)}</div>
     <div style="color:var(--muted);font-size:14px;margin-top:6px">de ${max.toFixed(1)} pontos</div>
@@ -961,13 +1219,9 @@ function mostrarResultado(reg,prova){
   </div>
   <div class="progress-bar" style="margin:0 20px 20px;height:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
   <hr class="divider" style="margin:0 0 16px"><div style="padding:0 2px"><div class="card-title">📋 Gabarito</div>`;
-  prova.questoes.forEach((q,qi)=>{
+  atividade.questoes.forEach((q,qi)=>{
     const esc=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)],cor=q.correta,ac=esc===cor;
-    html+=`<div class="prova-questao">
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px">
-        <span class="questao-num" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--green)':'var(--red)'}">Q${qi+1}</span>
-        <span>${ac?'✅':'❌'}</span>
-      </div>
+    html+=`<div class="prova-questao"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="questao-num" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--green)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div>
       <div class="prova-questao-enunciado">${q.enunciado}</div>
       ${q.imagemUrl?`<img src="${q.imagemUrl}" class="prova-questao-img" alt="img">`:''}
       ${q.opcoes.map((op,oi)=>`<div class="radio-opcao ${oi===cor?'correct-answer':oi===esc&&!ac?'wrong-answer':''}">
@@ -982,38 +1236,45 @@ function mostrarResultado(reg,prova){
   document.getElementById('modal-resultado-body').innerHTML=html;
   document.getElementById('modal-resultado').classList.remove('hidden');
 }
-
-/* ── ALUNO: NOTAS ── */
-function renderAlunoNotas(){
-  const u=state.user,rs=state.respostas.filter(r=>r.alunoRA===u.ra);
-  const med=rs.length?(rs.reduce((s,r)=>s+r.nota,0)/rs.length).toFixed(1):'-';
-  const aprov=rs.filter(r=>{const p=state.provas.find(x=>x.id===r.provaId);return p&&r.nota>=p.questoes.length*p.pontosPorQ*0.6;}).length;
-  document.getElementById('aluno-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Realizadas</div><div class="stat-value">${rs.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Média Geral</div><div class="stat-value">${med}</div></div>
-    <div class="stat-card"><div class="stat-label">Aprovações</div><div class="stat-value">${aprov}</div></div>`;
-  const tbody=document.getElementById('aluno-notas-tbody');
-  if(!rs.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--muted)">Você ainda não fez nenhuma prova.</td></tr>';return;}
-  tbody.innerHTML=rs.map(r=>{
-    const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';
-    const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;
-    return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;
-  }).join('');
+function fecharResultado(){
+  closeModal('modal-resultado');
+  if(tipoAtividade==='prova')renderAlunoProvas();
+  else{closeModal('modal-ver-aula');renderAlunoAulas();}
 }
 
-/* ── UTILS ── */
+/* ══ ALUNO: NOTAS ══ */
+function renderAlunoNotas(){
+  const u=state.user,rs=state.respostas.filter(r=>r.alunoRA===u.ra),rsEx=state.respostasEx.filter(r=>r.alunoRA===u.ra);
+  const allNotas=[...rs.map(r=>{const p=state.provas.find(x=>x.id===r.provaId);return p?r.nota/( p.questoes.length*p.pontosPorQ)*10:null;}),...rsEx.map(r=>{const e=state.exercicios.find(x=>x.id===r.exercicioId);return e?r.nota/(e.questoes.length*e.pontosPorQ)*10:null;})].filter(n=>n!==null);
+  const med=allNotas.length?(allNotas.reduce((a,b)=>a+b,0)/allNotas.length).toFixed(1):'-';
+  const aprov=rs.filter(r=>{const p=state.provas.find(x=>x.id===r.provaId);return p&&r.nota>=p.questoes.length*p.pontosPorQ*0.6;}).length;
+  document.getElementById('aluno-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-label">Provas</div><div class="stat-value">${rs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Exercícios</div><div class="stat-value">${rsEx.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Aprovações</div><div class="stat-value">${aprov}</div></div>
+    <div class="stat-card"><div class="stat-label">Média</div><div class="stat-value">${med}</div></div>`;
+  const tbP=document.getElementById('aluno-notas-tbody');
+  tbP.innerHTML=rs.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhuma prova realizada.</td></tr>':rs.map(r=>{const p=state.provas.find(x=>x.id===r.provaId);if(!p)return'';const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+  const tbE=document.getElementById('aluno-exercicios-tbody');
+  tbE.innerHTML=rsEx.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhum exercício realizado.</td></tr>':rsEx.map(r=>{const ex=state.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=state.aulas.find(a=>a.id===ex.aulaId);const max=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+}
+
+/* ══ UTILS ══ */
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
 let toastTO;
 function showToast(msg,type='green'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
+  const t=document.getElementById('toast');t.textContent=msg;
   t.style.borderColor=type==='green'?'var(--green)':type==='red'?'var(--red)':'var(--yellow)';
   t.style.color=type==='green'?'var(--green)':type==='red'?'var(--red)':'var(--yellow)';
-  t.classList.remove('hidden');clearTimeout(toastTO);
-  toastTO=setTimeout(()=>t.classList.add('hidden'),4000);
+  t.classList.remove('hidden');clearTimeout(toastTO);toastTO=setTimeout(()=>t.classList.add('hidden'),4000);
 }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden');}));
-document.addEventListener('DOMContentLoaded',()=>{turmasSelecionadas=new Set();buildTurmasCheckGrid();addQuestao();});
+document.addEventListener('DOMContentLoaded',()=>{
+  turmasSel_turmas_check_grid_prova=new Set();turmasSel_turmas_check_grid_aula=new Set();
+  buildTurmasCheck('turmas-check-grid-prova','turmas-hint-prova',turmasSel_turmas_check_grid_prova);
+  buildTurmasCheck('turmas-check-grid-aula','turmas-hint-aula',turmasSel_turmas_check_grid_aula);
+  addQuestao();
+});
 </script>
 </body>
 </html>
