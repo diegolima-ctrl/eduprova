@@ -4,6 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>EduProva — Sistema Educacional</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4f7cff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EduProva">
+<meta name="application-name" content="EduProva">
+<meta name="description" content="Plataforma educacional com aulas, trilhas de aprendizagem, provas e frequência">
+<meta name="msapplication-TileColor" content="#4f7cff">
+<meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+<!-- Ícones Apple -->
+<link rel="apple-touch-icon" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72.png">
+<link rel="apple-touch-icon" sizes="96x96" href="icons/icon-96.png">
+<link rel="apple-touch-icon" sizes="128x128" href="icons/icon-128.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96.png">
+
+<!-- Splash screen iOS -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -304,8 +334,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="login-desc">Faça login para acessar o sistema.</div>
     <div class="tabs"><button class="tab-btn active" onclick="setLoginTab('professor')">👨‍🏫 Professor</button><button class="tab-btn" onclick="setLoginTab('aluno')">🎓 Aluno</button></div>
     <div id="login-professor-form">
-      <div class="form-group"><label class="form-label">Usuário</label><input class="form-input" id="prof-user" placeholder="professor" autocomplete="username"></div>
-      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="prof-pass" placeholder="••••••" autocomplete="current-password"></div>
+      <div class="form-group"><label class="form-label">Usuário</label><input class="form-input" id="prof-user" placeholder="Digite seu usuário" autocomplete="username"></div>
+      <div class="form-group"><label class="form-label">Senha</label><input class="form-input" type="password" id="prof-pass" placeholder="Digite sua senha" autocomplete="current-password"></div>
     </div>
     <div id="login-aluno-form" class="hidden">
       <div class="form-group"><label class="form-label">Turma</label>
@@ -556,7 +586,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="section" id="sec-aluno-notas">
         <div class="page-header"><div><div class="page-title">Minhas Notas</div></div></div>
         <div class="stats-grid" id="aluno-stats"></div>
-        <div class="card" style="margin-bottom:16px"><div class="card-title">📋 Provas</div><div class="table-wrap"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="aluno-notas-tbody"></tbody></table></div></div>
+        <div class="card" style="margin-bottom:16px"><div class="card-title">📋 Provas</div><div class="table-wrap"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="aluno-notas-tbody"></tbody></table></div></div>
         <div class="card"><div class="card-title">🏋️ Exercícios</div><div class="table-wrap"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="aluno-ex-tbody"></tbody></table></div></div>
       </div>
 
@@ -1402,7 +1432,7 @@ async function entregar(){
       }
     }
     await loadAllData();hideLoading();cm('m-fazer');
-    mostrarResultado({respostas:{...respostasAtiv},nota,acertos},ativAtiva);
+    mostrarResultadoComPrint({respostas:{...respostasAtiv},nota,acertos},ativAtiva);
   }catch(e){hideLoading();showToast('❌ Erro ao enviar.','red');console.error(e);}finally{btn.disabled=false;btn.textContent='📨 Entregar';}
 }
 function mostrarResultado(reg,atividade){
@@ -1432,6 +1462,107 @@ function fecharResultado(){
   if(tipoAtiv==='prova')renderAlunoProvas();
   else{if(trilhaIdAtiv){cm('m-ver-aula');renderAlunoTrilhas();}else renderAlunoAulas();}
 }
+function revisarProvaEntregue(provaId){
+  const p=S.provas.find(x=>x.id===provaId);if(!p)return;
+  const u=S.user;
+  const ent=S.respostas.find(r=>r.provaId===provaId&&r.alunoRA===u.ra);if(!ent)return;
+  // Montar objeto compatível com mostrarResultado
+  mostrarResultadoComPrint({respostas:ent.respostas,nota:ent.nota,acertos:ent.acertos,entregueEm:ent.entregueEm},p);
+}
+function mostrarResultadoComPrint(reg,atividade){
+  const total=atividade.questoes.length,max=total*atividade.pontosPorQ,ok=reg.nota>=max*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
+  const u=S.user;
+  let html=`<div class="resultado-score">
+    <div class="resultado-num" style="color:${ok?'var(--green)':'var(--red)'}">${reg.nota.toFixed(1)}</div>
+    <div style="color:var(--muted);font-size:14px;margin-top:5px">de ${max.toFixed(1)} pontos</div>
+    <div class="badge ${ok?'badge-green':'badge-red'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div>
+    <div class="text-muted mt-3 text-sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div>
+    ${reg.entregueEm?`<div class="text-muted mt-1 text-xs">Entregue em ${reg.entregueEm}</div>`:''}
+  </div>
+  <div class="progress-bar" style="margin:0 20px 16px;height:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="btn btn-secondary btn-sm" onclick="imprimirProva('${atividade.id}')">🖨️ Imprimir / Salvar PDF</button>
+  </div>
+  <hr class="divider" style="margin:0 0 16px"><div style="padding:0 2px"><div class="card-title">📋 Gabarito</div>`;
+  atividade.questoes.forEach((q,qi)=>{
+    const raw=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)];
+    const esc=raw!==undefined?parseInt(raw):undefined;
+    const cor=q.correta,ac=esc===cor;
+    html+=`<div class="prova-questao"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="questao-num" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--green)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div>
+      <div class="prova-questao-enunciado">${q.enunciado}</div>
+      ${q.imagemUrl?`<img src="${q.imagemUrl}" class="prova-questao-img" alt="img">`:''}
+      ${q.opcoes.map((op,oi)=>`<div class="radio-opcao ${oi===cor?'correct-answer':oi===esc&&!ac?'wrong-answer':''}">
+        <div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--green)':oi===esc&&!ac?'var(--red)':'var(--border)'};flex-shrink:0"></div>
+        <span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>
+        ${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--green);white-space:nowrap">✓ Correta</span>':''}
+        ${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}
+      </div>`).join('')}
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('m-resultado-body').innerHTML=html;
+  document.getElementById('m-resultado').classList.remove('hidden');
+}
+function imprimirProva(provaId){
+  const p=S.provas.find(x=>x.id===provaId);if(!p)return;
+  const u=S.user;
+  const ent=S.respostas.find(r=>r.provaId===provaId&&r.alunoRA===u.ra);if(!ent)return;
+  const L=['A','B','C','D'];
+  const total=p.questoes.length,max=total*p.pontosPorQ,ok=ent.nota>=max*0.6,pct=Math.round((ent.acertos/total)*100);
+  let corpo=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${p.titulo} — Resultado</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#fff;color:#111;padding:32px;max-width:800px;margin:0 auto}
+    h1{font-size:22px;font-weight:800;margin-bottom:4px}
+    .sub{color:#555;font-size:13px;margin-bottom:20px}
+    .info-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;padding:14px;background:#f5f5f5;border-radius:8px}
+    .info-item{text-align:center}.info-item .val{font-size:24px;font-weight:800;color:${ok?'#16a34a':'#dc2626'}}.info-item .lbl{font-size:11px;text-transform:uppercase;color:#777;letter-spacing:.5px}
+    .status{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:700;font-size:13px;margin-bottom:20px;background:${ok?'#dcfce7':'#fee2e2'};color:${ok?'#16a34a':'#dc2626'};border:1px solid ${ok?'#86efac':'#fca5a5'}}
+    .questao{border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:12px}
+    .q-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .q-num{background:${ok?'#dcfce7':'#fff'};border:1px solid #e5e7eb;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}
+    .q-enunciado{font-size:14px;line-height:1.6;margin-bottom:10px}
+    .opcao{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;margin-bottom:5px;font-size:13px}
+    .opcao.correta{background:#dcfce7;border:1px solid #86efac}
+    .opcao.errada{background:#fee2e2;border:1px solid #fca5a5}
+    .opcao.neutra{background:#f9fafb;border:1px solid #e5e7eb}
+    .letra{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
+    .letra.c{background:#16a34a;color:#fff}.letra.e{background:#dc2626;color:#fff}.letra.n{background:#e5e7eb;color:#555}
+    .label-right{margin-left:auto;font-size:11px;font-weight:700}
+    img{max-width:100%;max-height:220px;border-radius:6px;margin:8px 0;display:block}
+    .footer{margin-top:28px;padding-top:14px;border-top:1px solid #e5e7eb;font-size:11px;color:#999;text-align:center}
+    @media print{body{padding:16px}@page{margin:1cm}}
+  </style></head><body>
+  <h1>${p.titulo}</h1>
+  <div class="sub">${p.disciplina} · Aluno: ${u.nome} · Turma: ${u.turma} · Entregue: ${ent.entregueEm||'-'}</div>
+  <div class="info-row">
+    <div class="info-item"><div class="val">${ent.nota.toFixed(1)}</div><div class="lbl">Nota</div></div>
+    <div class="info-item"><div class="val">${max.toFixed(1)}</div><div class="lbl">Máximo</div></div>
+    <div class="info-item"><div class="val">${ent.acertos}/${total}</div><div class="lbl">Acertos</div></div>
+    <div class="info-item"><div class="val">${pct}%</div><div class="lbl">Aproveitamento</div></div>
+  </div>
+  <div class="status">${ok?'🎉 APROVADO':'😔 REPROVADO'}</div>
+  <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb">`;
+  p.questoes.forEach((q,qi)=>{
+    const raw=ent.respostas[qi]!==undefined?ent.respostas[qi]:ent.respostas[String(qi)];
+    const esc=raw!==undefined?parseInt(raw):undefined;
+    const cor=q.correta,ac=esc===cor;
+    corpo+=`<div class="questao"><div class="q-header"><span class="q-num">Questão ${qi+1}</span><span style="font-size:16px">${ac?'✅':'❌'}</span></div>
+      <div class="q-enunciado">${q.enunciado}</div>
+      ${q.imagemUrl?`<img src="${q.imagemUrl}" alt="imagem">`:''}`;
+    q.opcoes.forEach((op,oi)=>{
+      let cls='neutra',lClass='n',labelTxt='';
+      if(oi===cor){cls='correta';lClass='c';labelTxt='<span class="label-right" style="color:#16a34a">✓ Correta</span>';}
+      else if(oi===esc&&!ac){cls='errada';lClass='e';labelTxt='<span class="label-right" style="color:#dc2626">✗ Sua resposta</span>';}
+      corpo+=`<div class="opcao ${cls}"><div class="letra ${lClass}">${L[oi]}</div><span>${op}</span>${labelTxt}</div>`;
+    });
+    corpo+=`</div>`;
+  });
+  corpo+=`<div class="footer">EduProva — Sistema Educacional · Impresso em ${new Date().toLocaleString('pt-BR')}</div></body></html>`;
+  const win=window.open('','_blank');
+  win.document.write(corpo);win.document.close();
+  setTimeout(()=>win.print(),600);
+}
 
 /* ══ ALUNO AULAS / PROVAS / NOTAS ══ */
 function renderAlunoAulas(){
@@ -1453,7 +1584,31 @@ function renderAlunoProvas(){
   if(!provas.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Nenhuma prova disponível</div></div>';return;}
   el.innerHTML=provas.map(p=>{
     const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);const max=p.questoes.length*p.pontosPorQ;
-    return`<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--font-display);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge badge-purple">${p.disciplina}</span><span class="badge badge-yellow">${p.questoes.length} q.</span><span class="badge badge-blue">Máx: ${max.toFixed(1)}</span></div></div><div style="text-align:right;flex-shrink:0">${ent?`<div><span class="badge badge-green" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--font-display);font-weight:800;color:${ent.nota>=max*0.6?'var(--green)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> / ${max.toFixed(1)}</span></div></div>`:`<button class="btn btn-primary" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`}</div></div></div>`;
+    return`<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700">${p.titulo}</div>
+          <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
+            <span class="badge badge-purple">${p.disciplina}</span>
+            <span class="badge badge-yellow">${p.questoes.length} q.</span>
+            <span class="badge badge-blue">Máx: ${max.toFixed(1)}</span>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          ${ent
+            ?`<div>
+                <span class="badge badge-green" style="font-size:12px;padding:5px 12px">✅ Entregue</span>
+                <div style="margin-top:6px;font-size:20px;font-family:var(--font-display);font-weight:800;color:${ent.nota>=max*0.6?'var(--green)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> / ${max.toFixed(1)}</span></div>
+                <div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap">
+                  <button class="btn btn-secondary btn-sm" onclick="revisarProvaEntregue('${p.id}')">📋 Revisar</button>
+                  <button class="btn btn-secondary btn-sm" onclick="imprimirProva('${p.id}')">🖨️ Imprimir</button>
+                </div>
+              </div>`
+            :`<button class="btn btn-primary" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`
+          }
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 function renderAlunoNotas(){
@@ -1466,7 +1621,7 @@ function renderAlunoNotas(){
     <div class="stat-card"><div class="stat-label">Aprovações</div><div class="stat-value">${aprov}</div></div>
     <div class="stat-card"><div class="stat-label">XP Total</div><div class="stat-value">${totalXP}</div></div>`;
   const tbP=document.getElementById('aluno-notas-tbody');
-  tbP.innerHTML=rs.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhuma prova realizada.</td></tr>':rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+  tbP.innerHTML=rs.length===0?'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Nenhuma prova realizada.</td></tr>':rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge badge-purple">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm" onclick="revisarProvaEntregue('${p.id}')" title="Revisar">📋</button><button class="btn btn-secondary btn-sm" onclick="imprimirProva('${p.id}')" title="Imprimir">🖨️</button></div></td></tr>`;}).join('');
   const tbE=document.getElementById('aluno-ex-tbody');
   tbE.innerHTML=rsEx.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Nenhum exercício.</td></tr>':rsEx.map(r=>{const ex=S.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=S.aulas.find(al=>al.id===ex.aulaId);const max=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=max*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
 }
@@ -1542,7 +1697,101 @@ function renderResultados(){
   tbody.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const max=p.questoes.length*p.pontosPorQ,ok=r.nota>=max*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge badge-blue">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="progress-bar mt-1" style="width:60px"><div class="progress-fill" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="text-muted">/${max.toFixed(1)}</span></td><td><span class="badge ${ok?'badge-green':'badge-red'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
 }
 
-/* ══ INIT ══ */
+/* ══ PWA: SERVICE WORKER + INSTALL BANNER ══ */
+let deferredInstallPrompt = null;
+
+// Registra o Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => {
+        console.log('SW registrado:', reg.scope);
+        // Verifica se há update disponível
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner();
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('SW falhou:', err));
+  });
+}
+
+// Captura o prompt de instalação
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // Mostra o banner de instalação após 3 segundos se não estiver instalado
+  setTimeout(showInstallBanner, 3000);
+});
+
+// Banner de instalação do app
+function showInstallBanner() {
+  if (deferredInstallPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+    const banner = document.createElement('div');
+    banner.id = 'install-banner';
+    banner.style.cssText = `
+      position:fixed;bottom:0;left:0;right:0;
+      background:linear-gradient(135deg,#1e2230,#161920);
+      border-top:1px solid #2a2f42;
+      padding:14px 16px;z-index:10000;
+      display:flex;align-items:center;gap:12px;
+      box-shadow:0 -8px 32px rgba(0,0,0,.5);
+      animation:slideInUp .4s ease;
+    `;
+    banner.innerHTML = `
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,#4f7cff,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📚</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;color:#e8eaf2">Instalar EduProva</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:1px">Adicione à tela inicial para acesso rápido</div>
+      </div>
+      <button onclick="instalarApp()" style="background:#4f7cff;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0">Instalar</button>
+      <button onclick="document.getElementById('install-banner').remove()" style="background:transparent;border:none;color:#6b7280;font-size:22px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">×</button>
+    `;
+    document.body.appendChild(banner);
+  }
+}
+
+async function instalarApp() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if (outcome === 'accepted') {
+    showToast('✅ EduProva instalado com sucesso!', 'green');
+    const banner = document.getElementById('install-banner');
+    if (banner) banner.remove();
+  }
+  deferredInstallPrompt = null;
+}
+
+// Banner de atualização disponível
+function showUpdateBanner() {
+  const banner = document.createElement('div');
+  banner.style.cssText = `
+    position:fixed;top:16px;left:50%;transform:translateX(-50%);
+    background:#1e2230;border:1px solid #4f7cff;border-radius:10px;
+    padding:12px 20px;z-index:10000;display:flex;align-items:center;gap:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;
+  `;
+  banner.innerHTML = `
+    <span style="font-size:14px;color:#e8eaf2">🔄 Nova versão disponível!</span>
+    <button onclick="window.location.reload()" style="background:#4f7cff;color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">Atualizar</button>
+    <button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:#6b7280;font-size:18px;cursor:pointer;padding:0 2px">×</button>
+  `;
+  document.body.appendChild(banner);
+}
+
+// Esconde banner se já está instalado como PWA
+window.addEventListener('appinstalled', () => {
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.remove();
+  deferredInstallPrompt = null;
+  showToast('📱 App instalado! Abra pela tela inicial.', 'green');
+});
+
 document.addEventListener('DOMContentLoaded',()=>{
   buildTC('tcg-prova','th-prova','prova');
   buildTC('tcg-aula','th-aula','aula');
