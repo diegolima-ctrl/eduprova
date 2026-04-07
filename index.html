@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_3.html -->
+<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_4.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
@@ -331,9 +331,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
-<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Atualizando...</p></div>
+<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Carregando dados...</p></div>
 <div id="toast" class="hidden"></div>
-<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_3.html" alt=""></div>
+<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_4.html" alt=""></div>
 
 <!-- ═══ LOGIN ═══ -->
 <div id="scr-login" class="">
@@ -342,18 +342,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="ltit">Bem-vindo!</div>
     <div class="ldsc">Acesse com seu perfil.</div>
     <div class="tabs">
-      <button class="tbtn" onclick="setTab(&#39;prof&#39;)">👨‍🏫 Professor</button>
-      <button class="tbtn on" onclick="setTab(&#39;aluno&#39;)">🎓 Aluno</button>
+      <button class="tbtn on" onclick="setTab(&#39;prof&#39;)">👨‍🏫 Professor</button>
+      <button class="tbtn" onclick="setTab(&#39;aluno&#39;)">🎓 Aluno</button>
     </div>
     <!-- PROFESSOR -->
-    <div id="lf-prof" class="hidden">
+    <div id="lf-prof" class="">
       <div class="fg"><label class="fl">E-mail</label><input class="fi" id="lp-em" type="email" placeholder="seu@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Senha</label>
         <div class="pw-w"><input class="fi" id="lp-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;lp-pw&#39;,this)">👁</button></div>
       </div>
     </div>
     <!-- ALUNO -->
-    <div id="lf-aluno" class="">
+    <div id="lf-aluno" class="hidden">
       <div class="fg"><label class="fl">Turma</label>
         <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
       </div>
@@ -383,8 +383,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <nav class="snav" id="snav">
   <div class="nlbl">Aprender</div>
-  <div class="ni" id="ni-tri-a" onclick="nav(&#39;sec-a-trilhas&#39;,&#39;ni-tri-a&#39;,()=&gt;reload().then(renderAlunoTrilhas))"><span class="ic">🚀</span>Trilhas</div>
-  <div class="ni on" id="ni-aulas-a" onclick="nav(&#39;sec-a-aulas&#39;,&#39;ni-aulas-a&#39;,()=&gt;reload().then(renderAlunoAulas))"><span class="ic">📖</span>Aulas</div>
+  <div class="ni on" id="ni-tri-a" onclick="nav(&#39;sec-a-trilhas&#39;,&#39;ni-tri-a&#39;,()=&gt;reload().then(renderAlunoTrilhas))"><span class="ic">🚀</span>Trilhas</div>
+  <div class="ni" id="ni-aulas-a" onclick="nav(&#39;sec-a-aulas&#39;,&#39;ni-aulas-a&#39;,()=&gt;reload().then(renderAlunoAulas))"><span class="ic">📖</span>Aulas</div>
   <div class="nlbl">Avaliações</div>
   <div class="ni" id="ni-pv-a" onclick="nav(&#39;sec-a-provas&#39;,&#39;ni-pv-a&#39;,()=&gt;reload().then(renderAlunoProvas))"><span class="ic">📝</span>Provas</div>
   <div class="ni" id="ni-nt-a" onclick="nav(&#39;sec-a-notas&#39;,&#39;ni-nt-a&#39;,()=&gt;reload().then(renderAlunoNotas))"><span class="ic">🏆</span>Notas</div></nav>
@@ -397,11 +397,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
       <!-- Dashboard -->
       <div class="sec" id="sec-dash">
-        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral</div></div></div>
-        <div class="sg" id="dash-stats"></div>
+        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral da plataforma</div></div></div>
+        <div class="sg" id="dash-stats">
+    <div class="sc"><div class="slbl">Trilhas</div><div class="sv">1</div></div>
+    <div class="sc"><div class="slbl">Aulas</div><div class="sv">2</div></div>
+    <div class="sc"><div class="slbl">Provas</div><div class="sv">3</div></div>
+    <div class="sc"><div class="slbl">Presenças Hoje</div><div class="sv">12</div></div></div>
         <div class="g2">
-          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"></div></div>
-          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"></div></div>
+          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">2T1, 2T2, 2T3</div></div><span class="badge bb">62</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5</div></div><span class="badge bb">142</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1º AVALIAÇÃO BIMESTRAL</div><div class="mut xs">3M1, 3M2</div></div><span class="badge bb">29</span></div></div></div>
+          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">🚀 A Máquina Expressiva: Teatro, Dança e Sociedade</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5 · 2 aulas</div></div><span class="badge bo">36</span></div></div></div>
         </div>
       </div>
 
@@ -414,7 +418,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <!-- Turmas -->
       <div class="sec" id="sec-turmas">
         <div class="ph"><div><div class="ptit">Turmas</div><div class="psub">Gerencie alunos</div></div></div>
-        <div class="tg" id="tg-turmas"></div>
+        <div class="tg" id="tg-turmas"><div class="tc" onclick="verTurma(&#39;1M1&#39;)"><div class="tnm">1M1</div><div class="tal">41 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M2&#39;)"><div class="tnm">1M2</div><div class="tal">37 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M3&#39;)"><div class="tnm">1M3</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M4&#39;)"><div class="tnm">1M4</div><div class="tal">39 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M5&#39;)"><div class="tnm">1M5</div><div class="tal">28 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T1&#39;)"><div class="tnm">2T1</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T2&#39;)"><div class="tnm">2T2</div><div class="tal">22 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T3&#39;)"><div class="tnm">2T3</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;3M1&#39;)"><div class="tnm">3M1</div><div class="tal">1 aluno</div></div><div class="tc" onclick="verTurma(&#39;3M2&#39;)"><div class="tnm">3M2</div><div class="tal">34 alunos</div></div></div>
         <div class="card" id="turma-det" style="display:none">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" id="turma-det-t" style="margin:0"></div><button class="btn btn-warn btn-sm" onclick="expTurma()">📥 CSV</button></div>
           <div class="tw"><table><thead><tr><th>Nome</th><th>Provas</th><th>Média</th><th></th></tr></thead><tbody id="turma-tb"></tbody></table></div>
@@ -448,7 +452,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <!-- Aulas -->
       <div class="sec" id="sec-aulas">
         <div class="ph"><div><div class="ptit">Aulas</div><div class="psub">Conteúdo e exercícios</div></div><button class="btn btn-tel btn-sm" onclick="irNovaAula()">+ Nova Aula</button></div>
-        <div id="aulas-lista"></div>
+        <div id="aulas-lista"><div class="ac"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge by">🏋️ 1 ex.</span></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-tel btn-sm" onclick="editarAula(&#39;1775475440094&#39;)">✏️ Editar</button><button class="btn btn-sec btn-sm" onclick="verAula(&#39;1775475440094&#39;,true)">👁 Ver</button><button class="btn btn-dan btn-sm" onclick="delAula(&#39;1775475440094&#39;)">🗑</button></div></div><div class="ac"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge by">🏋️ 1 ex.</span></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-tel btn-sm" onclick="editarAula(&#39;1775483431719&#39;)">✏️ Editar</button><button class="btn btn-sec btn-sm" onclick="verAula(&#39;1775483431719&#39;,true)">👁 Ver</button><button class="btn btn-dan btn-sm" onclick="delAula(&#39;1775483431719&#39;)">🗑</button></div></div></div>
       </div>
 
       <!-- Nova/Editar Aula -->
@@ -598,19 +602,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div class="tr-ti">A Máquina Expressiva: Teatro, Dança e Sociedade</div><span class="nlvl">📖 Nível 2 — Aprendiz</span></div>
           <div class="tr-ds">Nesta trilha, vamos descobrir como o nosso corpo se transforma em uma poderosa ferramenta de arte e comunicação. Você vai mergulhar no universo do Teatro, conhecendo a revolucionária técnica da Biomecânica de Meyerhold, e explorar a Dança através de seus elementos fundamentais: níveis, fluidez e velocidade.  Por que fazer esta trilha?  Consciência Corporal: Entenda como cada gesto seu comunica uma ideia.  Cultura Viva: Veja como estilos modernos, como o passinho, se conectam com teorias clássicas da arte.  Foco no ENEM: Domine as habilidades de Linguagens que cobram a função social do corpo e o patrimônio cultural.  Desafio Final: Ao final da leitura, teste seus conhecimentos com 10 questões exclusivas no estilo ENEM e prepare-se para olhar para a cena (e para o seu próprio movimento) de um jeito totalmente novo! 🚀</div>
-          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge bt">ARTES</span><span class="badge bo">2 aulas</span><span class="badge bg">1 concluída</span></div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge bt">ARTES</span><span class="badge bo">2 aulas</span><span class="badge bg">2 concluídas</span></div>
         </div>
       </div>
-      <div class="xpw"><div class="xpl"><span class="mut xs">110 XP — próx. em 140</span><span class="sm" style="color:var(--yel);font-weight:700">⚡ 110 XP</span></div><div class="xpbg"><div class="xpf" style="width:7%;background:linear-gradient(90deg,#4f7cff,#4f7cff99)"></div></div></div>
-      <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px"><span>Progresso</span><span>50%</span></div><div class="pb"><div class="pf" style="width:50%;background:linear-gradient(90deg,#4f7cff,#4f7cff88)"></div></div></div>
-      <div class="tmap"><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div><div class="tstep"><div class="tdot cur" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">📖</div><div class="tsc cur" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="ts-s">ARTES · 🏋️ 1/1 · 📖 Em andamento</div><button class="btn btn-sm btn-tel" style="margin-top:8px" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">▶ Acessar</button></div></div></div>
+      <div class="xpw"><div class="xpl"><span class="mut xs">160 XP — próx. em 90</span><span class="sm" style="color:var(--yel);font-weight:700">⚡ 160 XP</span></div><div class="xpbg"><div class="xpf" style="width:40%;background:linear-gradient(90deg,#4f7cff,#4f7cff99)"></div></div></div>
+      <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px"><span>Progresso</span><span>100%</span></div><div class="pb"><div class="pf" style="width:100%;background:linear-gradient(90deg,#4f7cff,#4f7cff88)"></div></div></div>
+      <div class="tmap"><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div></div>
     </div></div></div>
 
       <!-- Aluno: Aulas -->
-      <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl">Turma 1M2</div></div></div><div id="a-aulas"><div class="ac" style="cursor:pointer" onclick="verAula(&#39;1775475440094&#39;,false)"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge bg">🏋️ 1/1</span></div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula(&#39;1775475440094&#39;,false)" style="margin-top:8px">📖 Ver Aula →</button></div><div class="ac" style="cursor:pointer" onclick="verAula(&#39;1775483431719&#39;,false)"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge bg">🏋️ 1/1</span></div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula(&#39;1775483431719&#39;,false)" style="margin-top:8px">📖 Ver Aula →</button></div></div></div>
+      <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl"></div></div></div><div id="a-aulas"></div></div>
 
       <!-- Aluno: Provas -->
-      <div class="sec" id="sec-a-provas"><div class="ph"><div><div class="ptit">Minhas Provas</div><div class="psub" id="a-pv-lbl">Turma 1M2 — atos</div></div></div><div id="a-provas"><div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">1ª AVALIAÇÃO BIMESTRAL</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge bp">ARTES</span><span class="badge by">10 q.</span><span class="badge bb">Máx: 5.0</span></div></div><div style="text-align:right;flex-shrink:0"><button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno(&#39;1774528835128&#39;)">✏️ Fazer</button></div></div></div></div></div>
+      <div class="sec" id="sec-a-provas"><div class="ph"><div><div class="ptit">Minhas Provas</div><div class="psub" id="a-pv-lbl"></div></div></div><div id="a-provas"></div></div>
 
       <!-- Aluno: Notas -->
       <div class="sec" id="sec-a-notas">
@@ -822,9 +826,27 @@ async function doLogin(){
       const senha=G('lp-pw').value.trim();
       if(!email||!senha){errEl.textContent='Preencha e-mail e senha.';errEl.classList.remove('hidden');return}
       shl('Verificando...');
+      // Primeiro verifica se a tabela professores existe
       const{data:prof,error}=await sb.from('professores').select('*').eq('email',email).eq('senha_hash',senha).eq('ativo',true).maybeSingle();
-      if(error)throw error;
-      if(!prof){hhl();errEl.textContent='E-mail ou senha incorretos.';errEl.classList.remove('hidden');return}
+      if(error){
+        hhl();
+        // Erro de tabela não encontrada
+        if(error.code==='42P01'||error.message?.includes('does not exist')){
+          errEl.innerHTML='⚠️ Tabela "professores" não encontrada no banco.<br><small>Execute o SQL de configuração no Supabase e tente novamente.</small>';
+        } else {
+          errEl.textContent=`Erro ao acessar banco: ${error.message}`;
+        }
+        errEl.classList.remove('hidden');return;
+      }
+      if(!prof){
+        hhl();
+        // Verifica se o email existe mas a senha está errada
+        const{data:existe}=await sb.from('professores').select('id,ativo').eq('email',email).maybeSingle();
+        if(!existe) errEl.textContent='E-mail não encontrado. Verifique ou peça ao administrador para cadastrar seu acesso.';
+        else if(existe&&!existe.ativo) errEl.textContent='Sua conta está desativada. Fale com o administrador.';
+        else errEl.textContent='Senha incorreta.';
+        errEl.classList.remove('hidden');return;
+      }
       S.prof=prof;
       S.user={tipo:'professor',nome:prof.nome,turma:null,ra:prof.id,isAdmin:prof.is_admin};
       await sb.from('professores').update({ultimo_acesso:new Date().toISOString()}).eq('id',prof.id);
@@ -844,7 +866,12 @@ async function doLogin(){
     hhl();
     G('scr-login').classList.add('hidden');G('scr-app').classList.remove('hidden');
     initApp();
-  }catch(e){hhl();errEl.textContent=`Erro: ${e.message||'tente novamente'}`;errEl.classList.remove('hidden');console.error(e)}
+  }catch(e){
+    hhl();
+    errEl.textContent=`Erro inesperado: ${e.message||JSON.stringify(e)}`;
+    errEl.classList.remove('hidden');
+    console.error('Login error:',e);
+  }
   finally{btn.disabled=false;btn.textContent='Entrar →'}
 }
 function doLogout(){
