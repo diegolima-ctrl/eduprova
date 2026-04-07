@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_2.html -->
+<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_3.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
@@ -332,8 +332,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </head>
 <body>
 <div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Atualizando...</p></div>
-<div id="toast" class="hidden" style="border-color: var(--grn); color: var(--grn);">⭐ Aula concluída! XP ganho.</div>
-<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_2.html" alt=""></div>
+<div id="toast" class="hidden"></div>
+<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_3.html" alt=""></div>
 
 <!-- ═══ LOGIN ═══ -->
 <div id="scr-login" class="">
@@ -397,67 +397,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
       <!-- Dashboard -->
       <div class="sec" id="sec-dash">
-        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral da plataforma</div></div></div>
-        <div class="sg" id="dash-stats">
-    <div class="sc"><div class="slbl">Trilhas</div><div class="sv">1</div></div>
-    <div class="sc"><div class="slbl">Aulas</div><div class="sv">2</div></div>
-    <div class="sc"><div class="slbl">Provas</div><div class="sv">3</div></div>
-    <div class="sc"><div class="slbl">Presenças Hoje</div><div class="sv">2</div></div></div>
+        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral</div></div></div>
+        <div class="sg" id="dash-stats"></div>
         <div class="g2">
-          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">2T1, 2T2, 2T3</div></div><span class="badge bb">62</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5</div></div><span class="badge bb">142</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1º AVALIAÇÃO BIMESTRAL</div><div class="mut xs">3M1, 3M2</div></div><span class="badge bb">29</span></div></div></div>
-          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">🚀 A Máquina Expressiva: Teatro, Dança e Sociedade</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5 · 2 aulas</div></div><span class="badge bo">34</span></div></div></div>
+          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"></div></div>
+          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"></div></div>
         </div>
       </div>
 
       <!-- Admin: Professores -->
       <div class="sec" id="sec-admin">
         <div class="ph"><div><div class="ptit">Gestão de Professores</div><div class="psub">Administração da plataforma</div></div><button class="btn btn-org btn-sm" onclick="abrirNovoProfessor()">+ Novo Professor</button></div>
-        <div id="admin-lista"><div class="prof-card">
-      <div class="prof-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">A</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:15px">ALEX BENÍCIO </div>
-        <div class="mut sm">alexbeniciosaldanhalima@gmail.com</div>
-        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="badge bb">Professor</span>
-          <span class="badge br">Inativo</span>
-          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 06/04/2026</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;prof-1775484196993&#39;)">✏️ Editar</button>
-        <button class="btn btn-grn btn-sm" onclick="toggleAtivo(&#39;prof-1775484196993&#39;,false)">Ativar</button>
-      </div>
-    </div><div class="prof-card">
-      <div class="prof-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">S</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:15px">SUELMA CRISTINA TEIXEIRA </div>
-        <div class="mut sm">profsuelmaalmeida@gmail.com</div>
-        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="badge bb">Professor</span>
-          <span class="badge bg">Ativo</span>
-          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 06/04/2026</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;prof-1775513311062&#39;)">✏️ Editar</button>
-        <button class="btn btn-dan btn-sm" onclick="toggleAtivo(&#39;prof-1775513311062&#39;,true)">Desativar</button>
-      </div>
-    </div><div class="prof-card">
-      <div class="prof-av" style="background:linear-gradient(135deg,var(--org),var(--yel))">A</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:15px">Administrador <span class="badge bp" style="font-size:10px">Você</span></div>
-        <div class="mut sm">admin@eduprova.com</div>
-        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="admin-tag">👑 Admin</span>
-          <span class="badge bg">Ativo</span>
-          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 07/04/2026</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;admin-001&#39;)">✏️ Editar</button>
-        
-      </div>
-    </div></div>
+        <div id="admin-lista"></div>
       </div>
 
       <!-- Turmas -->
@@ -664,9 +615,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <!-- Aluno: Notas -->
       <div class="sec" id="sec-a-notas">
         <div class="ph"><div><div class="ptit">Minhas Notas</div></div></div>
-        <div class="sg" id="a-stats"><div class="sc"><div class="slbl">Provas</div><div class="sv">0</div></div><div class="sc"><div class="slbl">Exercícios</div><div class="sv">2</div></div><div class="sc"><div class="slbl">Aprovações</div><div class="sv">0</div></div><div class="sc"><div class="slbl">XP Total</div><div class="sv">110</div></div></div>
-        <div class="card" style="margin-bottom:16px"><div class="ctit">📋 Provas</div><div class="tw"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-notas-tb"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr></tbody></table></div></div>
-        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="a-ex-tb"><tr><td><strong>EXERCÍCIO DE FIXAÇÃO</strong></td><td>O Corpo em Cena — Entre a Biomecânica e o Movimento</td><td>1/1</td><td><strong>1.0</strong><span class="mut">/1.0</span></td><td><span class="badge bg">✅</span></td></tr><tr><td><strong>EXERCÍCIO DE FIXAÇÃO</strong></td><td>O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</td><td>0/1</td><td><strong>0.0</strong><span class="mut">/1.0</span></td><td><span class="badge br">❌</span></td></tr></tbody></table></div></div>
+        <div class="sg" id="a-stats"></div>
+        <div class="card" style="margin-bottom:16px"><div class="ctit">📋 Provas</div><div class="tw"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-notas-tb"></tbody></table></div></div>
+        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="a-ex-tb"></tbody></table></div></div>
       </div>
 
     </main>
@@ -678,32 +629,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <div class="mov hidden" id="m-fazer">
   <div class="modal modal-lg">
-    <div class="mh"><div><div class="mt" id="mf-t">EXERCÍCIO DE FIXAÇÃO</div><div class="mut sm mt1" id="mf-i">1 q. · 1.0 pts</div></div><button class="mx" onclick="cm(&#39;m-fazer&#39;)">×</button></div>
-    <div class="mb" id="mf-b"><div class="pq">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-        <span style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase">Questão 1</span>
-        <span class="qtype-tag qtype-mult">Múltipla escolha</span>
-      </div>
-      <div class="pqe">Quando um coreógrafo pede que os bailarinos dancem apenas agachados ou rastejando pelo palco, ele está explorando qual nível da dança? </div>
-      
-      <div class="ro sel" id="ro-0-0" onclick="selR(0,0)"><div class="rc s" id="rc-0-0"></div><span><strong>A.</strong> A) Nível Alto. </span></div><div class="ro" id="ro-0-1" onclick="selR(0,1)"><div class="rc" id="rc-0-1"></div><span><strong>B.</strong> B) Nível Médio. </span></div><div class="ro" id="ro-0-2" onclick="selR(0,2)"><div class="rc" id="rc-0-2"></div><span><strong>C.</strong> C) Nível Baixo.  </span></div><div class="ro" id="ro-0-3" onclick="selR(0,3)"><div class="rc" id="rc-0-3"></div><span><strong>D.</strong> D) Nível Suspenso.</span></div>
-    </div></div>
+    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm(&#39;m-fazer&#39;)">×</button></div>
+    <div class="mb" id="mf-b"></div>
     <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-fazer&#39;)">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
   </div>
 </div>
 
-<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"><div class="res-score">
-    <div class="res-num" style="color:var(--red)">0.0</div>
-    <div class="mut sm" style="margin-top:5px">de 1.0 pts (múltipla escolha)</div>
-    
-    <div class="badge br" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">😔 REPROVADO</div>
-    <div class="mut mt3 sm">0 acertos de 1 (0%)</div>
-  </div>
-  <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:0%"></div></div>
-  <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-    <button class="btn btn-sec btn-sm" onclick="imprimirProva(&#39;1775494017212&#39;)">🖨️ Imprimir / PDF</button>
-  </div>
-  <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div><div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:rgba(248,113,113,.15);color:var(--red)">Q1</span><span>❌</span></div><div class="pqe">Quando um coreógrafo pede que os bailarinos dancem apenas agachados ou rastejando pelo palco, ele está explorando qual nível da dança? </div><div class="ro wa"><div style="width:16px;height:16px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="font-size:13px"><strong>A.</strong> A) Nível Alto. </span><span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span></div><div class="ro "><div style="width:16px;height:16px;border-radius:50%;background:var(--bdr);flex-shrink:0"></div><span style="font-size:13px"><strong>B.</strong> B) Nível Médio. </span></div><div class="ro ca"><div style="width:16px;height:16px;border-radius:50%;background:var(--grn);flex-shrink:0"></div><span style="font-size:13px"><strong>C.</strong> C) Nível Baixo.  </span><span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span></div><div class="ro "><div style="width:16px;height:16px;border-radius:50%;background:var(--bdr);flex-shrink:0"></div><span style="font-size:13px"><strong>D.</strong> D) Nível Suspenso.</span></div></div></div></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
+<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
 
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
@@ -726,7 +658,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><button class="mx" onclick="cm(&#39;m-aula&#39;)">×</button></div><div class="mb" id="m-aula-b"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="mut sm">06/04/2026</span></div><div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="ctit">📄 Conteúdo</div><div class="rc-view">ACESSE O LINK E APROFUNDE OS SEUS ESTUDOS:&nbsp;<div bis_skin_checked="1"><br></div><div bis_skin_checked="1" style="text-align: left;"><ul><li>https://gemini.google.com/share/e5d22b072080</li></ul></div></div></div><div class="ctit">🏋️ Exercícios</div><div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">EXERCÍCIO DE FIXAÇÃO</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">1 q.</span><span class="badge bb">Máx: 1.0</span></div></div><div><button class="btn btn-tel btn-sm" onclick="abrirEx(&#39;1775494017212&#39;,&#39;1775483431719&#39;,&#39;1775482398002&#39;)">✏️ Fazer</button></div></div></div><div style="margin-top:20px;text-align:center"><button class="btn btn-tel" style="width:auto;padding:12px 28px" onclick="concluirAula(&#39;1775483431719&#39;,&#39;1775482398002&#39;)">✅ Marcar como Concluída</button></div></div></div></div>
+<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm(&#39;m-aula&#39;)">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
 
 <div class="mov hidden" id="m-conf-aulas">
   <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm(&#39;m-conf-aulas&#39;)">×</button></div>
@@ -820,43 +752,45 @@ async function loadAllData(){
   const isAluno=S.user?.tipo==='aluno';
 
   // Regra de visibilidade:
-  // • Aluno → vê TUDO (de todos os professores) — filtra por turma na renderização
-  // • Professor normal → vê só os próprios dados (professor_id = pid)
-  // • Admin → vê tudo
+  // • Aluno       → vê TUDO (todos os professores) — filtra por turma na renderização
+  // • Professor   → vê só os próprios dados (professor_id = pid)
+  // • Admin       → vê tudo
   const verTudo = isAluno || isAdmin;
 
   const q=(tabela,order='criada_em')=> verTudo
     ? sb.from(tabela).select('*').order(order,{ascending:false})
     : sb.from(tabela).select('*').eq('professor_id',pid).order(order,{ascending:false});
 
-  const queries=[
-    q('provas'),
-    sb.from('alunos').select('*').order('nome',{ascending:true}),
-    sb.from('respostas').select('*'),
-    q('aulas'),
-    q('exercicios'),
-    sb.from('respostas_exercicios').select('*'),
-    q('trilhas'),
-    sb.from('progresso_trilha').select('*'),
-    sb.from('frequencia').select('*').order('data',{ascending:false}),
-    sb.from('aulas_configuracao').select('*'),
-    sb.from('professores').select('id,nome,email,is_admin,ativo,criado_em,ultimo_acesso')
-  ];
+  const safe = async (promise) => {
+    try { const r = await promise; return r.error ? {data:[]} : r; }
+    catch(e){ console.warn('query falhou:', e); return {data:[]}; }
+  };
 
-  const results=await Promise.all(queries);
-  results.forEach(r=>{if(r.error)throw r.error});
+  const [r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10] = await Promise.all([
+    safe(q('provas')),
+    safe(sb.from('alunos').select('*').order('nome',{ascending:true})),
+    safe(sb.from('respostas').select('*')),
+    safe(q('aulas')),
+    safe(q('exercicios')),
+    safe(sb.from('respostas_exercicios').select('*')),
+    safe(q('trilhas')),
+    safe(sb.from('progresso_trilha').select('*')),
+    safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
+    safe(sb.from('aulas_configuracao').select('*')),
+    safe(sb.from('professores').select('id,nome,email,is_admin,ativo,criado_em,ultimo_acesso'))
+  ]);
 
-  S.provas=results[0].data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,profId:p.professor_id}));
-  S.alunos=results[1].data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
-  S.respostas=results[2].data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.aulas=results[3].data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos),criadaEm:x.criada_em,profId:x.professor_id}));
-  S.exercicios=results[4].data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em,profId:x.professor_id}));
-  S.respostasEx=results[5].data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.trilhas=results[6].data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em,profId:t.professor_id}));
-  S.progresso=results[7].data.map(p=>({id:p.id,trilhaId:p.trilha_id,alunoRA:p.aluno_ra,concluidas:A(p.aulas_concluidas),xp:p.xp||0,nivel:p.nivel||1}));
-  S.frequencia=results[8].data.map(f=>({id:f.id,alunoRA:f.aluno_ra,alunoNome:f.aluno_nome,alunoTurma:f.aluno_turma,data:f.data,presente:f.presente}));
-  S.aulasConf=results[9].data.map(x=>({id:x.id,data:x.data,turma:x.turma,qtd:x.quantidade_aulas}));
-  S.professores=results[10].data;
+  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,profId:p.professor_id}));
+  S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
+  S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em,profId:x.professor_id}));
+  S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em,profId:x.professor_id}));
+  S.respostasEx=r5.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  S.trilhas=r6.data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em,profId:t.professor_id}));
+  S.progresso=r7.data.map(p=>({id:p.id,trilhaId:p.trilha_id,alunoRA:p.aluno_ra,concluidas:A(p.aulas_concluidas),xp:p.xp||0,nivel:p.nivel||1}));
+  S.frequencia=r8.data.map(f=>({id:f.id,alunoRA:f.aluno_ra,alunoNome:f.aluno_nome,alunoTurma:f.aluno_turma,data:f.data,presente:f.presente}));
+  S.aulasConf=r9.data.map(x=>({id:x.id,data:x.data,turma:x.turma,qtd:x.quantidade_aulas}));
+  S.professores=r10.data;
 }
 async function reload(){shl('Atualizando...');try{await loadAllData()}catch(e){console.error(e)}hhl()}
 
