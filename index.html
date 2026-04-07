@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_2.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>EduProva</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="file:///C:/Users/Diego%20Lima/Downloads/manifest.json">
 <meta name="theme-color" content="#4f7cff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EduProva">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="apple-touch-icon" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
+<link href="./index_files/css2" rel="stylesheet">
+<script src="./index_files/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0d0f14;--surf:#161920;--surf2:#1e2230;--bdr:#2a2f42;
@@ -268,6 +268,21 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .di.dg{opacity:.4;cursor:grabbing}
 .dh{color:var(--mut);font-size:16px;flex-shrink:0}
 
+/* YOUTUBE EMBED */
+.yt-wrap{position:relative;margin-bottom:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.yt-iframe-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+.yt-iframe-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.yt-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-top:1px solid var(--bdr)}
+.yt-title{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* QUESTÃO DISCURSIVA */
+.disc-resp{width:100%;background:var(--surf2);border:1px solid var(--acc);border-radius:8px;padding:10px 14px;color:var(--txt);font-family:var(--fb);font-size:14px;outline:none;resize:vertical;min-height:90px;line-height:1.6;margin-top:6px}
+.disc-resp:focus{border-color:var(--acc2)}
+.disc-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(167,139,250,.15);color:var(--acc2);border:1px solid rgba(167,139,250,.3);border-radius:20px;font-size:11px;font-weight:700;padding:2px 8px}
+.qtype-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px}
+.qtype-mult{background:rgba(79,124,255,.15);color:var(--acc)}
+.qtype-disc{background:rgba(167,139,250,.15);color:var(--acc2)}
+
 /* XP POP */
 .xpp{position:fixed;pointer-events:none;font-family:var(--fd);font-size:20px;font-weight:800;color:var(--yel);z-index:9000;animation:xpf 1.8s ease forwards}
 @keyframes xpf{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:translateY(-60px) scale(1.2)}100%{opacity:0;transform:translateY(-100px) scale(.8)}}
@@ -316,35 +331,35 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
-<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Carregando...</p></div>
-<div id="toast" class="hidden"></div>
-<div id="imgfs" class="hidden" onclick="this.classList.add('hidden')"><img id="imgfs-src" src="" alt=""></div>
+<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Atualizando...</p></div>
+<div id="toast" class="hidden" style="border-color: var(--grn); color: var(--grn);">⭐ Aula concluída! XP ganho.</div>
+<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_2.html" alt=""></div>
 
 <!-- ═══ LOGIN ═══ -->
-<div id="scr-login">
+<div id="scr-login" class="">
   <div class="lcard">
     <div class="logo"><div class="logo-ic">📚</div><div><div class="logo-tx">EduProva</div><div class="logo-sb">Sistema Educacional</div></div></div>
     <div class="ltit">Bem-vindo!</div>
     <div class="ldsc">Acesse com seu perfil.</div>
     <div class="tabs">
-      <button class="tbtn on" onclick="setTab('prof')">👨‍🏫 Professor</button>
-      <button class="tbtn" onclick="setTab('aluno')">🎓 Aluno</button>
+      <button class="tbtn" onclick="setTab(&#39;prof&#39;)">👨‍🏫 Professor</button>
+      <button class="tbtn on" onclick="setTab(&#39;aluno&#39;)">🎓 Aluno</button>
     </div>
     <!-- PROFESSOR -->
-    <div id="lf-prof">
+    <div id="lf-prof" class="hidden">
       <div class="fg"><label class="fl">E-mail</label><input class="fi" id="lp-em" type="email" placeholder="seu@email.com" autocomplete="email"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="lp-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('lp-pw',this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="lp-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;lp-pw&#39;,this)">👁</button></div>
       </div>
     </div>
     <!-- ALUNO -->
-    <div id="lf-aluno" class="hidden">
+    <div id="lf-aluno" class="">
       <div class="fg"><label class="fl">Turma</label>
         <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
       </div>
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="la-nm" placeholder="Seu nome completo" autocomplete="name"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('la-pw',this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;la-pw&#39;,this)">👁</button></div>
       </div>
     </div>
     <button class="btn btn-p" id="btn-login" onclick="doLogin()">Entrar →</button>
@@ -360,15 +375,21 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <aside class="sidebar" id="sidebar">
       <div class="sb-logo"><div class="logo-ic">📚</div><div><div class="logo-tx">EduProva</div></div></div>
       <div class="sb-user">
-        <div class="uav" id="sb-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">P</div>
+        <div class="uav" id="sb-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">A</div>
         <div style="min-width:0">
-          <div class="unm" id="sb-nm">Prof</div>
-          <span class="url-badge" id="sb-rl" style="background:rgba(79,124,255,.12);color:var(--acc)">Professor</span>
+          <div class="unm" id="sb-nm">atos</div>
+          <span class="url-badge" id="sb-rl" style="background: rgba(167, 139, 250, 0.12); color: var(--acc2);">1M2</span>
         </div>
       </div>
-      <nav class="snav" id="snav"></nav>
+      <nav class="snav" id="snav">
+  <div class="nlbl">Aprender</div>
+  <div class="ni" id="ni-tri-a" onclick="nav(&#39;sec-a-trilhas&#39;,&#39;ni-tri-a&#39;,()=&gt;reload().then(renderAlunoTrilhas))"><span class="ic">🚀</span>Trilhas</div>
+  <div class="ni on" id="ni-aulas-a" onclick="nav(&#39;sec-a-aulas&#39;,&#39;ni-aulas-a&#39;,()=&gt;reload().then(renderAlunoAulas))"><span class="ic">📖</span>Aulas</div>
+  <div class="nlbl">Avaliações</div>
+  <div class="ni" id="ni-pv-a" onclick="nav(&#39;sec-a-provas&#39;,&#39;ni-pv-a&#39;,()=&gt;reload().then(renderAlunoProvas))"><span class="ic">📝</span>Provas</div>
+  <div class="ni" id="ni-nt-a" onclick="nav(&#39;sec-a-notas&#39;,&#39;ni-nt-a&#39;,()=&gt;reload().then(renderAlunoNotas))"><span class="ic">🏆</span>Notas</div></nav>
       <div class="sb-foot">
-        <button class="btn btn-sec w100 btn-sm" onclick="showMinhaConta()" id="btn-conta">⚙️ Minha Conta</button>
+        <button class="btn btn-sec w100 btn-sm hidden" onclick="showMinhaConta()" id="btn-conta">⚙️ Minha Conta</button>
         <button class="btn btn-sec w100 btn-sm" onclick="doLogout()">⬅ Sair</button>
       </div>
     </aside>
@@ -376,18 +397,67 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
       <!-- Dashboard -->
       <div class="sec" id="sec-dash">
-        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral</div></div></div>
-        <div class="sg" id="dash-stats"></div>
+        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral da plataforma</div></div></div>
+        <div class="sg" id="dash-stats">
+    <div class="sc"><div class="slbl">Trilhas</div><div class="sv">1</div></div>
+    <div class="sc"><div class="slbl">Aulas</div><div class="sv">2</div></div>
+    <div class="sc"><div class="slbl">Provas</div><div class="sv">3</div></div>
+    <div class="sc"><div class="slbl">Presenças Hoje</div><div class="sv">2</div></div></div>
         <div class="g2">
-          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"></div></div>
-          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"></div></div>
+          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">2T1, 2T2, 2T3</div></div><span class="badge bb">62</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5</div></div><span class="badge bb">142</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1º AVALIAÇÃO BIMESTRAL</div><div class="mut xs">3M1, 3M2</div></div><span class="badge bb">29</span></div></div></div>
+          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">🚀 A Máquina Expressiva: Teatro, Dança e Sociedade</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5 · 2 aulas</div></div><span class="badge bo">34</span></div></div></div>
         </div>
       </div>
 
       <!-- Admin: Professores -->
       <div class="sec" id="sec-admin">
         <div class="ph"><div><div class="ptit">Gestão de Professores</div><div class="psub">Administração da plataforma</div></div><button class="btn btn-org btn-sm" onclick="abrirNovoProfessor()">+ Novo Professor</button></div>
-        <div id="admin-lista"></div>
+        <div id="admin-lista"><div class="prof-card">
+      <div class="prof-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">A</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px">ALEX BENÍCIO </div>
+        <div class="mut sm">alexbeniciosaldanhalima@gmail.com</div>
+        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge bb">Professor</span>
+          <span class="badge br">Inativo</span>
+          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 06/04/2026</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;prof-1775484196993&#39;)">✏️ Editar</button>
+        <button class="btn btn-grn btn-sm" onclick="toggleAtivo(&#39;prof-1775484196993&#39;,false)">Ativar</button>
+      </div>
+    </div><div class="prof-card">
+      <div class="prof-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">S</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px">SUELMA CRISTINA TEIXEIRA </div>
+        <div class="mut sm">profsuelmaalmeida@gmail.com</div>
+        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge bb">Professor</span>
+          <span class="badge bg">Ativo</span>
+          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 06/04/2026</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;prof-1775513311062&#39;)">✏️ Editar</button>
+        <button class="btn btn-dan btn-sm" onclick="toggleAtivo(&#39;prof-1775513311062&#39;,true)">Desativar</button>
+      </div>
+    </div><div class="prof-card">
+      <div class="prof-av" style="background:linear-gradient(135deg,var(--org),var(--yel))">A</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px">Administrador <span class="badge bp" style="font-size:10px">Você</span></div>
+        <div class="mut sm">admin@eduprova.com</div>
+        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="admin-tag">👑 Admin</span>
+          <span class="badge bg">Ativo</span>
+          <span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: 07/04/2026</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+        <button class="btn btn-sec btn-sm" onclick="editarProfessor(&#39;admin-001&#39;)">✏️ Editar</button>
+        
+      </div>
+    </div></div>
       </div>
 
       <!-- Turmas -->
@@ -409,10 +479,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <select class="fsel" id="freq-tu" onchange="renderFreq()"><option value="">Selecione</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="fpb on" id="fpb-dia" onclick="setFP('dia')">Dia</button>
-              <button class="fpb" id="fpb-semana" onclick="setFP('semana')">Semana</button>
-              <button class="fpb" id="fpb-mes" onclick="setFP('mes')">Mês</button>
-              <button class="fpb" id="fpb-periodo" onclick="setFP('periodo')">Período</button>
+              <button class="fpb on" id="fpb-dia" onclick="setFP(&#39;dia&#39;)">Dia</button>
+              <button class="fpb" id="fpb-semana" onclick="setFP(&#39;semana&#39;)">Semana</button>
+              <button class="fpb" id="fpb-mes" onclick="setFP(&#39;mes&#39;)">Mês</button>
+              <button class="fpb" id="fpb-periodo" onclick="setFP(&#39;periodo&#39;)">Período</button>
             </div>
           </div>
           <div id="freq-per-inp" style="display:none;gap:10px;flex-wrap:wrap;margin-top:12px">
@@ -438,32 +508,32 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Título</label><input class="fi" id="aula-t" placeholder="Ex: Introdução às Frações"></div>
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="aula-d" placeholder="Ex: Matemática"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"></div><div id="th-aula" class="mut sm mt2">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"><div class="tci" id="tcg-aula1M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-aula1M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-aula1M3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-aula1M4" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-aula1M5" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-aula2T1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-aula2T2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-aula2T3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-aula3M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-aula3M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-aula" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
           <div class="fg">
             <label class="fl">Conteúdo</label>
             <div class="rew">
               <div class="rtb-bar">
-                <select class="rsel" onchange="rte('formatBlock',this.value);this.value='p'"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
-                <select class="rsel" onchange="rte('fontSize',this.value);this.value='3'"><option value="2">Pequeno</option><option value="3" selected>Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
+                <select class="rsel" onchange="rte(&#39;formatBlock&#39;,this.value);this.value=&#39;p&#39;"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
+                <select class="rsel" onchange="rte(&#39;fontSize&#39;,this.value);this.value=&#39;3&#39;"><option value="2">Pequeno</option><option value="3" selected="">Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte('bold')"><b>B</b></button>
-                <button class="rb" onclick="rte('italic')"><i>I</i></button>
-                <button class="rb" onclick="rte('underline')"><u>U</u></button>
-                <button class="rb" onclick="rte('strikeThrough')"><s>S</s></button>
+                <button class="rb" onclick="rte(&#39;bold&#39;)"><b>B</b></button>
+                <button class="rb" onclick="rte(&#39;italic&#39;)"><i>I</i></button>
+                <button class="rb" onclick="rte(&#39;underline&#39;)"><u>U</u></button>
+                <button class="rb" onclick="rte(&#39;strikeThrough&#39;)"><s>S</s></button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte('justifyLeft')">⬅</button>
-                <button class="rb" onclick="rte('justifyCenter')">☰</button>
-                <button class="rb" onclick="rte('justifyRight')">➡</button>
+                <button class="rb" onclick="rte(&#39;justifyLeft&#39;)">⬅</button>
+                <button class="rb" onclick="rte(&#39;justifyCenter&#39;)">☰</button>
+                <button class="rb" onclick="rte(&#39;justifyRight&#39;)">➡</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte('insertUnorderedList')">•</button>
-                <button class="rb" onclick="rte('insertOrderedList')">1.</button>
-                <button class="rb" onclick="rte('formatBlock','blockquote')">❝</button>
+                <button class="rb" onclick="rte(&#39;insertUnorderedList&#39;)">•</button>
+                <button class="rb" onclick="rte(&#39;insertOrderedList&#39;)">1.</button>
+                <button class="rb" onclick="rte(&#39;formatBlock&#39;,&#39;blockquote&#39;)">❝</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="G('clrp').click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte('foreColor',this.value)"></button>
-                <button class="rb" onclick="rte('removeFormat')">✕</button>
+                <button class="rb" onclick="G(&#39;clrp&#39;).click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte(&#39;foreColor&#39;,this.value)"></button>
+                <button class="rb" onclick="rte(&#39;removeFormat&#39;)">✕</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte('undo')">↩</button>
-                <button class="rb" onclick="rte('redo')">↪</button>
+                <button class="rb" onclick="rte(&#39;undo&#39;)">↩</button>
+                <button class="rb" onclick="rte(&#39;redo&#39;)">↪</button>
               </div>
               <div class="re" id="aula-cont" contenteditable="true"></div>
             </div>
@@ -471,7 +541,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="fg">
             <label class="fl">Imagens</label>
             <div id="aula-imgs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:8px"></div>
-            <div class="iua"><input type="file" accept="image/*" multiple onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
+            <div class="iua"><input type="file" accept="image/*" multiple="" onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
+          </div>
+          <div class="fg">
+            <label class="fl">🎥 Vídeos do YouTube</label>
+            <div id="aula-videos" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:8px">
+              <input class="fi" id="yt-input" placeholder="Cole o link do YouTube (ex: https://youtu.be/abc ou https://www.youtube.com/watch?v=abc)" style="flex:1">
+              <button class="btn btn-sec btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="addVideo()">+ Adicionar</button>
+            </div>
           </div>
           <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
             <button class="btn btn-sec" style="min-width:110px" onclick="cancelarAula()">Cancelar</button>
@@ -503,7 +581,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Ícone (emoji)</label><input class="fi" id="tri-ic" placeholder="🚀" maxlength="4" style="font-size:20px;text-align:center"></div>
             <div class="fg" style="margin:0"><label class="fl">Cor</label><input type="color" id="tri-cor" value="#4f7cff" style="width:100%;height:44px;border-radius:9px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;padding:4px"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"></div><div id="th-trilha" class="mut sm mt2">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"><div class="tci" id="tcg-trilha1M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-trilha1M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-trilha1M3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-trilha1M4" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-trilha1M5" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-trilha2T1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-trilha2T2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-trilha2T3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-trilha3M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-trilha3M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-trilha" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
           <hr class="dv">
           <div class="ctit">📚 Aulas da Trilha <span class="mut sm" style="font-weight:400">(arraste para reordenar)</span></div>
           <div class="fg"><select class="fsel" id="tri-add-sel"><option value="">Selecione uma aula...</option></select><button class="btn btn-sec btn-sm" style="margin-top:8px" onclick="addAulaTr()">+ Adicionar</button></div>
@@ -525,10 +603,22 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="pv-d" placeholder="Ex: Matemática"></div>
           </div>
           <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"><div class="tci" id="tcg-prova1M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-prova1M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-prova1M3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-prova1M4" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-prova1M5" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-prova2T1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-prova2T2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-prova2T3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-prova3M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-prova3M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-prova" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
           <hr class="dv">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button></div>
-          <div id="qcP"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+            <div class="ctit" style="margin:0">📝 Questões</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-sec btn-sm" onclick="addQMult(&#39;qP&#39;,&#39;qcP&#39;)">+ Múltipla Escolha</button>
+              <button class="btn btn-sec btn-sm" onclick="addQDisc(&#39;qP&#39;,&#39;qcP&#39;)">+ Discursiva</button>
+            </div>
+          </div>
+          <div id="qcP"><div class="qi" id="qi-qP-0"><div class="qh"><span class="qnum">Q1</span><span class="qtype-tag qtype-mult">Múltipla escolha</span><button class="btn btn-dan btn-sm" onclick="rmQ(&#39;qP&#39;,&#39;qcP&#39;,0)">🗑</button></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD[&#39;qP&#39;][0].enunciado=this.value" value=""></div>
+    <label class="fl">Imagem (opcional)</label>
+    <div id="imgw-qP-0"><div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,&#39;qP&#39;,0)"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div></div>
+    <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
+    <ul class="ol-l"><li class="oi"><div class="oltr" id="ol-qP-0-0" onclick="setC(&#39;qP&#39;,0,0)">A</div><input class="fi" style="flex:1" placeholder="Alt. A..." oninput="QD[&#39;qP&#39;][0].opcoes[0]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-1" onclick="setC(&#39;qP&#39;,0,1)">B</div><input class="fi" style="flex:1" placeholder="Alt. B..." oninput="QD[&#39;qP&#39;][0].opcoes[1]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-2" onclick="setC(&#39;qP&#39;,0,2)">C</div><input class="fi" style="flex:1" placeholder="Alt. C..." oninput="QD[&#39;qP&#39;][0].opcoes[2]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-3" onclick="setC(&#39;qP&#39;,0,3)">D</div><input class="fi" style="flex:1" placeholder="Alt. D..." oninput="QD[&#39;qP&#39;][0].opcoes[3]=this.value" value=""></li></ul>
+    <div class="sm mt2" id="qh-qP-0" style="color:var(--mut)">⬆ Clique na letra para marcar a resposta correta</div></div></div>
           <div id="pv-err" class="hidden"></div>
           <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-sec" style="min-width:110px" onclick="cancelarProva()">Cancelar</button>
@@ -551,20 +641,32 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <!-- Aluno: Trilhas -->
-      <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl"></div></div></div><div id="a-trilhas"></div></div>
+      <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl">Turma 1M2</div></div></div><div id="a-trilhas"><div class="trc" style="--tc:#4f7cff">
+      <div class="tr-h">
+        <div class="tr-ic" style="background:#4f7cff22;border:2px solid #4f7cff44;font-size:26px">🚀</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div class="tr-ti">A Máquina Expressiva: Teatro, Dança e Sociedade</div><span class="nlvl">📖 Nível 2 — Aprendiz</span></div>
+          <div class="tr-ds">Nesta trilha, vamos descobrir como o nosso corpo se transforma em uma poderosa ferramenta de arte e comunicação. Você vai mergulhar no universo do Teatro, conhecendo a revolucionária técnica da Biomecânica de Meyerhold, e explorar a Dança através de seus elementos fundamentais: níveis, fluidez e velocidade.  Por que fazer esta trilha?  Consciência Corporal: Entenda como cada gesto seu comunica uma ideia.  Cultura Viva: Veja como estilos modernos, como o passinho, se conectam com teorias clássicas da arte.  Foco no ENEM: Domine as habilidades de Linguagens que cobram a função social do corpo e o patrimônio cultural.  Desafio Final: Ao final da leitura, teste seus conhecimentos com 10 questões exclusivas no estilo ENEM e prepare-se para olhar para a cena (e para o seu próprio movimento) de um jeito totalmente novo! 🚀</div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge bt">ARTES</span><span class="badge bo">2 aulas</span><span class="badge bg">1 concluída</span></div>
+        </div>
+      </div>
+      <div class="xpw"><div class="xpl"><span class="mut xs">110 XP — próx. em 140</span><span class="sm" style="color:var(--yel);font-weight:700">⚡ 110 XP</span></div><div class="xpbg"><div class="xpf" style="width:7%;background:linear-gradient(90deg,#4f7cff,#4f7cff99)"></div></div></div>
+      <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px"><span>Progresso</span><span>50%</span></div><div class="pb"><div class="pf" style="width:50%;background:linear-gradient(90deg,#4f7cff,#4f7cff88)"></div></div></div>
+      <div class="tmap"><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div><div class="tstep"><div class="tdot cur" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">📖</div><div class="tsc cur" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="ts-s">ARTES · 🏋️ 1/1 · 📖 Em andamento</div><button class="btn btn-sm btn-tel" style="margin-top:8px" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">▶ Acessar</button></div></div></div>
+    </div></div></div>
 
       <!-- Aluno: Aulas -->
-      <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl"></div></div></div><div id="a-aulas"></div></div>
+      <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl">Turma 1M2</div></div></div><div id="a-aulas"><div class="ac" style="cursor:pointer" onclick="verAula(&#39;1775475440094&#39;,false)"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge bg">🏋️ 1/1</span></div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula(&#39;1775475440094&#39;,false)" style="margin-top:8px">📖 Ver Aula →</button></div><div class="ac" style="cursor:pointer" onclick="verAula(&#39;1775483431719&#39;,false)"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge bg">🏋️ 1/1</span></div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula(&#39;1775483431719&#39;,false)" style="margin-top:8px">📖 Ver Aula →</button></div></div></div>
 
       <!-- Aluno: Provas -->
-      <div class="sec" id="sec-a-provas"><div class="ph"><div><div class="ptit">Minhas Provas</div><div class="psub" id="a-pv-lbl"></div></div></div><div id="a-provas"></div></div>
+      <div class="sec" id="sec-a-provas"><div class="ph"><div><div class="ptit">Minhas Provas</div><div class="psub" id="a-pv-lbl">Turma 1M2 — atos</div></div></div><div id="a-provas"><div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">1ª AVALIAÇÃO BIMESTRAL</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge bp">ARTES</span><span class="badge by">10 q.</span><span class="badge bb">Máx: 5.0</span></div></div><div style="text-align:right;flex-shrink:0"><button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno(&#39;1774528835128&#39;)">✏️ Fazer</button></div></div></div></div></div>
 
       <!-- Aluno: Notas -->
       <div class="sec" id="sec-a-notas">
         <div class="ph"><div><div class="ptit">Minhas Notas</div></div></div>
-        <div class="sg" id="a-stats"></div>
-        <div class="card" style="margin-bottom:16px"><div class="ctit">📋 Provas</div><div class="tw"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-notas-tb"></tbody></table></div></div>
-        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="a-ex-tb"></tbody></table></div></div>
+        <div class="sg" id="a-stats"><div class="sc"><div class="slbl">Provas</div><div class="sv">0</div></div><div class="sc"><div class="slbl">Exercícios</div><div class="sv">2</div></div><div class="sc"><div class="slbl">Aprovações</div><div class="sv">0</div></div><div class="sc"><div class="slbl">XP Total</div><div class="sv">110</div></div></div>
+        <div class="card" style="margin-bottom:16px"><div class="ctit">📋 Provas</div><div class="tw"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-notas-tb"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr></tbody></table></div></div>
+        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="a-ex-tb"><tr><td><strong>EXERCÍCIO DE FIXAÇÃO</strong></td><td>O Corpo em Cena — Entre a Biomecânica e o Movimento</td><td>1/1</td><td><strong>1.0</strong><span class="mut">/1.0</span></td><td><span class="badge bg">✅</span></td></tr><tr><td><strong>EXERCÍCIO DE FIXAÇÃO</strong></td><td>O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</td><td>0/1</td><td><strong>0.0</strong><span class="mut">/1.0</span></td><td><span class="badge br">❌</span></td></tr></tbody></table></div></div>
       </div>
 
     </main>
@@ -572,37 +674,62 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <!-- MODALS -->
-<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm('m-vp')">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
+<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm(&#39;m-vp&#39;)">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
 
 <div class="mov hidden" id="m-fazer">
   <div class="modal modal-lg">
-    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
-    <div class="mb" id="mf-b"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-fazer')">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
+    <div class="mh"><div><div class="mt" id="mf-t">EXERCÍCIO DE FIXAÇÃO</div><div class="mut sm mt1" id="mf-i">1 q. · 1.0 pts</div></div><button class="mx" onclick="cm(&#39;m-fazer&#39;)">×</button></div>
+    <div class="mb" id="mf-b"><div class="pq">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <span style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase">Questão 1</span>
+        <span class="qtype-tag qtype-mult">Múltipla escolha</span>
+      </div>
+      <div class="pqe">Quando um coreógrafo pede que os bailarinos dancem apenas agachados ou rastejando pelo palco, ele está explorando qual nível da dança? </div>
+      
+      <div class="ro sel" id="ro-0-0" onclick="selR(0,0)"><div class="rc s" id="rc-0-0"></div><span><strong>A.</strong> A) Nível Alto. </span></div><div class="ro" id="ro-0-1" onclick="selR(0,1)"><div class="rc" id="rc-0-1"></div><span><strong>B.</strong> B) Nível Médio. </span></div><div class="ro" id="ro-0-2" onclick="selR(0,2)"><div class="rc" id="rc-0-2"></div><span><strong>C.</strong> C) Nível Baixo.  </span></div><div class="ro" id="ro-0-3" onclick="selR(0,3)"><div class="rc" id="rc-0-3"></div><span><strong>D.</strong> D) Nível Suspenso.</span></div>
+    </div></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-fazer&#39;)">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
   </div>
 </div>
 
-<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
+<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"><div class="res-score">
+    <div class="res-num" style="color:var(--red)">0.0</div>
+    <div class="mut sm" style="margin-top:5px">de 1.0 pts (múltipla escolha)</div>
+    
+    <div class="badge br" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">😔 REPROVADO</div>
+    <div class="mut mt3 sm">0 acertos de 1 (0%)</div>
+  </div>
+  <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:0%"></div></div>
+  <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="btn btn-sec btn-sm" onclick="imprimirProva(&#39;1775494017212&#39;)">🖨️ Imprimir / PDF</button>
+  </div>
+  <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div><div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:rgba(248,113,113,.15);color:var(--red)">Q1</span><span>❌</span></div><div class="pqe">Quando um coreógrafo pede que os bailarinos dancem apenas agachados ou rastejando pelo palco, ele está explorando qual nível da dança? </div><div class="ro wa"><div style="width:16px;height:16px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="font-size:13px"><strong>A.</strong> A) Nível Alto. </span><span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span></div><div class="ro "><div style="width:16px;height:16px;border-radius:50%;background:var(--bdr);flex-shrink:0"></div><span style="font-size:13px"><strong>B.</strong> B) Nível Médio. </span></div><div class="ro ca"><div style="width:16px;height:16px;border-radius:50%;background:var(--grn);flex-shrink:0"></div><span style="font-size:13px"><strong>C.</strong> C) Nível Baixo.  </span><span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span></div><div class="ro "><div style="width:16px;height:16px;border-radius:50%;background:var(--bdr);flex-shrink:0"></div><span style="font-size:13px"><strong>D.</strong> D) Nível Suspenso.</span></div></div></div></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
 
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
-    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm('m-ex')">×</button></div>
+    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm(&#39;m-ex&#39;)">×</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Título</label><input class="fi" id="ex-t" placeholder="Ex: Exercícios de Fixação"></div>
       <div class="fg"><label class="fl">Descrição (opcional)</label><input class="fi" id="ex-d" placeholder="Instruções..."></div>
       <div class="fg" style="max-width:200px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="ex-p" value="1" min="0.1" step="0.1"></div>
       <hr class="dv">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('qE','qcE')">+ Questão</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div class="ctit" style="margin:0">📝 Questões</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sec btn-sm" onclick="addQMult(&#39;exQ&#39;,&#39;qcE&#39;)">+ Múltipla Escolha</button>
+          <button class="btn btn-sec btn-sm" onclick="addQDisc(&#39;exQ&#39;,&#39;qcE&#39;)">+ Discursiva</button>
+        </div>
+      </div>
       <div id="qcE"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-ex')">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-ex&#39;)">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
   </div>
 </div>
 
-<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
+<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><button class="mx" onclick="cm(&#39;m-aula&#39;)">×</button></div><div class="mb" id="m-aula-b"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="mut sm">06/04/2026</span></div><div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="ctit">📄 Conteúdo</div><div class="rc-view">ACESSE O LINK E APROFUNDE OS SEUS ESTUDOS:&nbsp;<div bis_skin_checked="1"><br></div><div bis_skin_checked="1" style="text-align: left;"><ul><li>https://gemini.google.com/share/e5d22b072080</li></ul></div></div></div><div class="ctit">🏋️ Exercícios</div><div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">EXERCÍCIO DE FIXAÇÃO</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">1 q.</span><span class="badge bb">Máx: 1.0</span></div></div><div><button class="btn btn-tel btn-sm" onclick="abrirEx(&#39;1775494017212&#39;,&#39;1775483431719&#39;,&#39;1775482398002&#39;)">✏️ Fazer</button></div></div></div><div style="margin-top:20px;text-align:center"><button class="btn btn-tel" style="width:auto;padding:12px 28px" onclick="concluirAula(&#39;1775483431719&#39;,&#39;1775482398002&#39;)">✅ Marcar como Concluída</button></div></div></div></div>
 
 <div class="mov hidden" id="m-conf-aulas">
-  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm('m-conf-aulas')">×</button></div>
+  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm(&#39;m-conf-aulas&#39;)">×</button></div>
     <div class="mb">
       <div class="g2" style="margin-bottom:16px">
         <div class="fg" style="margin:0"><label class="fl">Turma</label><select class="fsel" id="ca-tu"><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
@@ -610,19 +737,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="fg"><label class="fl">Qtd. de Aulas</label><input type="number" class="fi" id="ca-q" value="1" min="1" max="12"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-conf-aulas')">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-conf-aulas&#39;)">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
   </div>
 </div>
 
 <!-- Modal: Novo/Editar Professor (só Admin) -->
 <div class="mov hidden" id="m-prof">
   <div class="modal">
-    <div class="mh"><div class="mt" id="m-prof-t">Novo Professor</div><button class="mx" onclick="cm('m-prof')">×</button></div>
+    <div class="mh"><div class="mt" id="m-prof-t">Novo Professor</div><button class="mx" onclick="cm(&#39;m-prof&#39;)">×</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="pr-nm" placeholder="Ex: João Silva"></div>
       <div class="fg"><label class="fl">E-mail</label><input class="fi" id="pr-em" type="email" placeholder="joao@escola.com"></div>
       <div class="fg"><label class="fl">Senha <span id="pr-pw-hint" class="mut xs">(obrigatória para novo professor)</span></label>
-        <div class="pw-w"><input class="fi" id="pr-pw" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw('pr-pw',this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="pr-pw" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw(&#39;pr-pw&#39;,this)">👁</button></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
         <input type="checkbox" id="pr-adm" style="width:16px;height:16px;accent-color:var(--org)">
@@ -630,25 +757,25 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
     <div id="m-prof-err" class="lerr hidden"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-prof')">Cancelar</button><button class="btn btn-org" id="btn-sv-prof" onclick="salvarProfessor()" style="width:auto;min-width:150px">💾 Criar Professor</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-prof&#39;)">Cancelar</button><button class="btn btn-org" id="btn-sv-prof" onclick="salvarProfessor()" style="width:auto;min-width:150px">💾 Criar Professor</button></div>
   </div>
 </div>
 
 <!-- Modal: Minha Conta -->
 <div class="mov hidden" id="m-conta">
   <div class="modal">
-    <div class="mh"><div class="mt">⚙️ Minha Conta</div><button class="mx" onclick="cm('m-conta')">×</button></div>
+    <div class="mh"><div class="mt">⚙️ Minha Conta</div><button class="mx" onclick="cm(&#39;m-conta&#39;)">×</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Nome</label><input class="fi" id="mc-nm" placeholder="Seu nome"></div>
-      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="mc-em" type="email" disabled style="opacity:.6"></div>
+      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="mc-em" type="email" disabled="" style="opacity:.6"></div>
       <hr class="dv">
       <div class="ctit">🔐 Alterar Senha</div>
-      <div class="fg"><label class="fl">Senha atual</label><div class="pw-w"><input class="fi" id="mc-at" type="password" placeholder="••••••"><button class="pw-eye" onclick="togglePw('mc-at',this)">👁</button></div></div>
-      <div class="fg"><label class="fl">Nova senha</label><div class="pw-w"><input class="fi" id="mc-nv" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw('mc-nv',this)">👁</button></div></div>
-      <div class="fg"><label class="fl">Confirmar nova senha</label><div class="pw-w"><input class="fi" id="mc-cf" type="password" placeholder="Repita a nova senha"><button class="pw-eye" onclick="togglePw('mc-cf',this)">👁</button></div></div>
+      <div class="fg"><label class="fl">Senha atual</label><div class="pw-w"><input class="fi" id="mc-at" type="password" placeholder="••••••"><button class="pw-eye" onclick="togglePw(&#39;mc-at&#39;,this)">👁</button></div></div>
+      <div class="fg"><label class="fl">Nova senha</label><div class="pw-w"><input class="fi" id="mc-nv" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw(&#39;mc-nv&#39;,this)">👁</button></div></div>
+      <div class="fg"><label class="fl">Confirmar nova senha</label><div class="pw-w"><input class="fi" id="mc-cf" type="password" placeholder="Repita a nova senha"><button class="pw-eye" onclick="togglePw(&#39;mc-cf&#39;,this)">👁</button></div></div>
     </div>
     <div id="mc-err" class="lerr hidden"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-conta')">Cancelar</button><button class="btn btn-p" onclick="salvarConta()" style="width:auto;min-width:140px">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-conta&#39;)">Cancelar</button><button class="btn btn-p" onclick="salvarConta()" style="width:auto;min-width:140px">💾 Salvar</button></div>
   </div>
 </div>
 
@@ -686,24 +813,30 @@ function setNav(id){document.querySelectorAll('.ni').forEach(n=>n.classList.remo
 function nav(s,n,fn){closeSB();showSec(s);setNav(n);if(fn)fn()}
 document.querySelectorAll('.mov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden')}));
 
-/* ══ SUPABASE DATA — filtrado por professor_id ══ */
+/* ══ SUPABASE DATA ══ */
 async function loadAllData(){
   const pid=S.prof?.id;
   const isAdmin=S.prof?.is_admin;
+  const isAluno=S.user?.tipo==='aluno';
 
-  // Dados filtrados pelo professor_id (exceto alunos, respostas, frequência — compartilhados)
+  // Regra de visibilidade:
+  // • Aluno → vê TUDO (de todos os professores) — filtra por turma na renderização
+  // • Professor normal → vê só os próprios dados (professor_id = pid)
+  // • Admin → vê tudo
+  const verTudo = isAluno || isAdmin;
+
+  const q=(tabela,order='criada_em')=> verTudo
+    ? sb.from(tabela).select('*').order(order,{ascending:false})
+    : sb.from(tabela).select('*').eq('professor_id',pid).order(order,{ascending:false});
+
   const queries=[
-    isAdmin ? sb.from('provas').select('*').order('criada_em',{ascending:false})
-            : sb.from('provas').select('*').eq('professor_id',pid).order('criada_em',{ascending:false}),
+    q('provas'),
     sb.from('alunos').select('*').order('nome',{ascending:true}),
     sb.from('respostas').select('*'),
-    isAdmin ? sb.from('aulas').select('*').order('criada_em',{ascending:false})
-            : sb.from('aulas').select('*').eq('professor_id',pid).order('criada_em',{ascending:false}),
-    isAdmin ? sb.from('exercicios').select('*').order('criada_em',{ascending:false})
-            : sb.from('exercicios').select('*').eq('professor_id',pid).order('criada_em',{ascending:false}),
+    q('aulas'),
+    q('exercicios'),
     sb.from('respostas_exercicios').select('*'),
-    isAdmin ? sb.from('trilhas').select('*').order('criada_em',{ascending:false})
-            : sb.from('trilhas').select('*').eq('professor_id',pid).order('criada_em',{ascending:false}),
+    q('trilhas'),
     sb.from('progresso_trilha').select('*'),
     sb.from('frequencia').select('*').order('data',{ascending:false}),
     sb.from('aulas_configuracao').select('*'),
@@ -716,7 +849,7 @@ async function loadAllData(){
   S.provas=results[0].data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,profId:p.professor_id}));
   S.alunos=results[1].data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=results[2].data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.aulas=results[3].data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),criadaEm:x.criada_em,profId:x.professor_id}));
+  S.aulas=results[3].data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos),criadaEm:x.criada_em,profId:x.professor_id}));
   S.exercicios=results[4].data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em,profId:x.professor_id}));
   S.respostasEx=results[5].data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.trilhas=results[6].data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em,profId:t.professor_id}));
@@ -1037,28 +1170,111 @@ async function salvarConfAulas(){
 
 /* ══ QUESTÕES ══ */
 const QD={};
-function addQ(key,cid){if(!QD[key])QD[key]=[];const idx=QD[key].length;QD[key].push({enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null});_rQ(key,cid,idx,{enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null})}
+
+// Múltipla escolha
+function addQMult(key,cid){
+  if(!QD[key])QD[key]=[];
+  const idx=QD[key].length;
+  const q={tipo:'mult',enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null};
+  QD[key].push(q);_rQ(key,cid,idx,q);
+}
+// Discursiva
+function addQDisc(key,cid){
+  if(!QD[key])QD[key]=[];
+  const idx=QD[key].length;
+  const q={tipo:'disc',enunciado:'',gabarito:'',imagemUrl:null};
+  QD[key].push(q);_rQDisc(key,cid,idx,q);
+}
+// Compatibilidade: addQ antiga → múltipla
+function addQ(key,cid){addQMult(key,cid)}
+
 function _rQ(key,cid,idx,q){
   const L=['A','B','C','D'];const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
-  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
+  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><span class="qtype-tag qtype-mult">Múltipla escolha</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
     <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
     <label class="fl">Imagem (opcional)</label>
     <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}</div>
     <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
     <ul class="ol-l">${L.map((l,oi)=>`<li class="oi"><div class="oltr${q.correta===oi?' ok':''}" id="ol-${key}-${idx}-${oi}" onclick="setC('${key}',${idx},${oi})">${l}</div><input class="fi" style="flex:1" placeholder="Alt. ${l}..." oninput="QD['${key}'][${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}"></li>`).join('')}</ul>
-    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCD'[q.correta]}`:'⬆ Clique na letra para marcar a correta'}</div>`;
+    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCD'[q.correta]}`:'⬆ Clique na letra para marcar a resposta correta'}</div>`;
   G(cid).appendChild(div);
 }
+
+function _rQDisc(key,cid,idx,q){
+  const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
+  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><span class="qtype-tag qtype-disc">✏️ Discursiva</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado / Pergunta</label><input class="fi" placeholder="Digite a pergunta discursiva..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
+    <label class="fl">Imagem (opcional)</label>
+    <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}</div>
+    <div class="fg" style="margin-top:12px"><label class="fl">Gabarito / Resposta esperada <span class="mut xs">(visível só para o professor)</span></label><textarea class="fi" style="min-height:80px;resize:vertical;line-height:1.6" placeholder="Resposta esperada (referência para correção manual)..." oninput="QD['${key}'][${idx}].gabarito=this.value">${(q.gabarito||'').replace(/</g,'&lt;')}</textarea></div>
+    <div class="sm mt1" style="color:var(--acc2)">✏️ Questão discursiva — o aluno digita a resposta. Correção manual pelo professor.</div>`;
+  G(cid).appendChild(div);
+}
+
 function setC(key,qi,oi){QD[key][qi].correta=oi;['A','B','C','D'].forEach((_,i)=>G(`ol-${key}-${qi}-${i}`).classList.toggle('ok',i===oi));const h=G(`qh-${key}-${qi}`);h.textContent=`✅ Correta: ${'ABCD'[oi]}`;h.style.color='var(--grn)'}
 function rmQ(key,cid,idx){QD[key].splice(idx,1);rebQ(key,cid)}
-function rebQ(key,cid){G(cid).innerHTML='';const c=[...QD[key]];QD[key]=[];c.forEach((q,i)=>{QD[key].push({...q,opcoes:[...q.opcoes]});_rQ(key,cid,i,q)})}
+function rebQ(key,cid){
+  G(cid).innerHTML='';const c=[...QD[key]];QD[key]=[];
+  c.forEach((q,i)=>{
+    if(q.tipo==='disc'){QD[key].push({...q});_rQDisc(key,cid,i,q);}
+    else{QD[key].push({...q,opcoes:[...q.opcoes]});_rQ(key,cid,i,q);}
+  });
+}
 async function hIQ(event,key,idx){const file=event.target.files[0];if(!file)return;if(file.size>5*1024*1024){toast('⚠️ > 5MB!','yellow');return}const wrap=G(`imgw-${key}-${idx}`);wrap.innerHTML=`<div class="upl-spin"><div class="usp"></div>Enviando...</div>`;try{const url=await uploadImg(file,'q');QD[key][idx].imagemUrl=url;wrap.innerHTML=`<div class="ipw"><img class="ipv" src="${url}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`;toast('🖼 Enviada!','green')}catch(e){wrap.innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`;toast('❌ Erro.','red')}}
 async function rmIQ(key,idx){const url=QD[key][idx].imagemUrl;if(url)await removeImg(url);QD[key][idx].imagemUrl=null;G(`imgw-${key}-${idx}`).innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}
 
 /* ══ AULAS ══ */
-let editAulaId=null,aulaImgs=[];
-function irNovaAula(){editAulaId=null;aulaImgs=[];G('form-aula-tit').textContent='Nova Aula';G('btn-sv-aula').textContent='💾 Salvar Aula';['aula-t','aula-d'].forEach(id=>G(id).value='');G('aula-cont').innerHTML='';buildTC('tcg-aula','th-aula','aula');rAI();G('aula-ex-card').style.display='none';closeSB();showSec('sec-nova-aula');setNav('ni-aulas')}
-function editarAula(id){const al=S.aulas.find(x=>x.id===id);if(!al)return;editAulaId=id;aulaImgs=[...al.imagens];G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';G('aula-t').value=al.titulo;G('aula-d').value=al.disciplina;G('aula-cont').innerHTML=al.conteudo||'';buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));rAI();G('aula-ex-card').style.display='block';rExAula(id);closeSB();showSec('sec-nova-aula');setNav('ni-aulas')}
+let editAulaId=null,aulaImgs=[],aulaVideos=[];
+
+function ytId(url){
+  if(!url)return null;
+  const m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m?m[1]:null;
+}
+function addVideo(){
+  const inp=G('yt-input'),url=inp.value.trim();
+  if(!url)return;
+  const vid=ytId(url);
+  if(!vid){toast('⚠️ Link inválido. Use um link do YouTube válido.','yellow');return}
+  if(aulaVideos.includes(vid)){toast('⚠️ Vídeo já adicionado!','yellow');return}
+  aulaVideos.push(vid);inp.value='';rAV();toast('🎥 Vídeo adicionado!','green');
+}
+function rmVideo(idx){aulaVideos.splice(idx,1);rAV()}
+function rAV(){
+  const el=G('aula-videos');
+  if(!aulaVideos.length){el.innerHTML='';return}
+  el.innerHTML=aulaVideos.map((vid,i)=>`
+    <div class="yt-wrap">
+      <div class="yt-iframe-wrap">
+        <iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen loading="lazy" title="Vídeo ${i+1}"></iframe>
+      </div>
+      <div class="yt-bar">
+        <span class="yt-title">🎥 youtube.com/watch?v=${vid}</span>
+        <button class="btn btn-dan btn-sm" onclick="rmVideo(${i})">🗑 Remover</button>
+      </div>
+    </div>`).join('');
+}
+
+function irNovaAula(){
+  editAulaId=null;aulaImgs=[];aulaVideos=[];
+  G('form-aula-tit').textContent='Nova Aula';G('btn-sv-aula').textContent='💾 Salvar Aula';
+  ['aula-t','aula-d'].forEach(id=>G(id).value='');
+  G('aula-cont').innerHTML='';G('yt-input').value='';
+  buildTC('tcg-aula','th-aula','aula');rAI();rAV();
+  G('aula-ex-card').style.display='none';
+  closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
+}
+function editarAula(id){
+  const al=S.aulas.find(x=>x.id===id);if(!al)return;
+  editAulaId=id;aulaImgs=[...al.imagens];aulaVideos=[...(al.videos||[])];
+  G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
+  G('aula-t').value=al.titulo;G('aula-d').value=al.disciplina;
+  G('aula-cont').innerHTML=al.conteudo||'';G('yt-input').value='';
+  buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));
+  rAI();rAV();
+  G('aula-ex-card').style.display='block';rExAula(id);
+  closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
+}
 function cancelarAula(){editAulaId=null;showSec('sec-aulas');setNav('ni-aulas');renderAulasProfessor()}
 function rAI(){G('aula-imgs').innerHTML=aulaImgs.map((url,i)=>`<div style="position:relative"><img src="${url}" class="ait" onclick="verImg('${url}')" alt="img"><button class="irm" onclick="rmAImg(${i})">×</button></div>`).join('')}
 async function handleAulaImg(event){for(const file of Array.from(event.target.files)){if(file.size>5*1024*1024){toast('⚠️ > 5MB ignorada.','yellow');continue}shl('Enviando...');try{const url=await uploadImg(file,'aula');aulaImgs.push(url);rAI();toast('🖼 Adicionada!','green')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}event.target.value=''}
@@ -1070,11 +1286,13 @@ async function salvarAula(){
   const btn=G('btn-sv-aula');btn.disabled=true;shl('Salvando aula...');
   try{
     const pid=S.prof?.id;
-    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:pid};
+    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:pid};
     let sid=editAulaId;
     if(editAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editAulaId);if(error)throw error}
     else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;sid=id}
-    await loadAllData();hhl();editAulaId=sid;G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';G('aula-ex-card').style.display='block';rExAula(sid);toast('✅ Aula salva!','green');
+    await loadAllData();hhl();editAulaId=sid;
+    G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
+    G('aula-ex-card').style.display='block';rExAula(sid);toast('✅ Aula salva!','green');
   }catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 function renderAulasProfessor(){
@@ -1087,16 +1305,56 @@ async function delAula(id){if(!confirm('Excluir aula e exercícios?'))return;shl
 /* ══ EXERCÍCIOS ══ */
 let editExId=null;
 function rExAula(aulaId){const exs=S.exercicios.filter(e=>e.aulaId===aulaId);const el=G('exs-aula');if(!exs.length){el.innerHTML='<div class="mut sm" style="padding:8px 0">Nenhum exercício. Clique em "+ Exercício".</div>';return}el.innerHTML=exs.map(ex=>{const rs=S.respostasEx.filter(r=>r.exercicioId===ex.id).length;return`<div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="mut sm mt1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">${ex.questoes.length} q.</span><span class="badge bg">${rs} entrega${rs!==1?'s':''}</span></div></div><div style="display:flex;gap:5px"><button class="btn btn-warn btn-sm" onclick="editEx('${ex.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delEx('${ex.id}')">🗑</button></div></div></div>`}).join('')}
-function abrirModalEx(){editExId=null;QD['exQ']=[];G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';G('qcE').innerHTML='';addQ('exQ','qcE');G('m-ex').classList.remove('hidden')}
-function editEx(id){const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;editExId=id;QD['exQ']=[];G('m-ex-t').textContent='Editar Exercício';G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;G('qcE').innerHTML='';ex.questoes.forEach((q,i)=>{QD['exQ'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('exQ','qcE',i,q)});G('m-ex').classList.remove('hidden')}
+function abrirModalEx(){
+  editExId=null;QD['exQ']=[];
+  G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';
+  ['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';
+  G('qcE').innerHTML='';
+  // Começa com 1 questão múltipla escolha
+  addQMult('exQ','qcE');
+  G('m-ex').classList.remove('hidden');
+}
+function editEx(id){
+  const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;
+  editExId=id;QD['exQ']=[];
+  G('m-ex-t').textContent='Editar Exercício';
+  G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;
+  G('qcE').innerHTML='';
+  ex.questoes.forEach((q,i)=>{
+    if(q.tipo==='disc'){
+      QD['exQ'].push({tipo:'disc',enunciado:q.enunciado,gabarito:q.gabarito||'',imagemUrl:q.imagemUrl||null});
+      _rQDisc('exQ','qcE',i,QD['exQ'][i]);
+    }else{
+      QD['exQ'].push({tipo:'mult',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});
+      _rQ('exQ','qcE',i,QD['exQ'][i]);
+    }
+  });
+  G('m-ex').classList.remove('hidden');
+}
 async function salvarEx(){
   if(!editAulaId)return toast('⚠️ Salve a aula primeiro!','yellow');
   const titulo=G('ex-t').value.trim(),desc=G('ex-d').value.trim(),pts=parseFloat(G('ex-p').value)||1;
   if(!titulo)return toast('⚠️ Preencha o título!','yellow');
-  if(!QD['exQ']?.length)return toast('⚠️ Adicione questões!','yellow');
-  if(QD['exQ'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões!','yellow');
+  if(!QD['exQ']?.length)return toast('⚠️ Adicione ao menos uma questão!','yellow');
+  // Valida: múltipla precisa de enunciado + opcoes + correta; discursiva só enunciado
+  const invalid=QD['exQ'].find(q=>{
+    if(!q.enunciado)return true;
+    if(q.tipo==='mult'&&(q.opcoes.some(o=>!o)||q.correta===null))return true;
+    return false;
+  });
+  if(invalid)return toast('⚠️ Preencha todas as questões e marque as respostas corretas nas de múltipla escolha!','yellow');
   const btn=G('btn-sv-ex');btn.disabled=true;shl('Salvando...');
-  try{const aula=S.aulas.find(x=>x.id===editAulaId);const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes:QD['exQ'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pts,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:S.prof?.id};const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null}catch(e){hhl();toast('❌ Erro.','red')}finally{btn.disabled=false}
+  try{
+    const aula=S.aulas.find(x=>x.id===editAulaId);
+    const questoes=QD['exQ'].map(q=>{
+      if(q.tipo==='disc')return{tipo:'disc',enunciado:q.enunciado,gabarito:q.gabarito||'',imagemUrl:q.imagemUrl||null};
+      return{tipo:'mult',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null};
+    });
+    const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes,pontos_por_q:pts,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:S.prof?.id};
+    const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});
+    if(error)throw error;
+    await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null;
+  }catch(e){hhl();toast('❌ Erro: '+e.message,'red');console.error(e)}finally{btn.disabled=false}
 }
 async function delEx(id){if(!confirm('Excluir exercício?'))return;shl('Excluindo...');try{const ex=S.exercicios.find(x=>x.id===id);if(ex)for(const q of ex.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas_exercicios').delete().eq('exercicio_id',id);await sb.from('exercicios').delete().eq('id',id);await loadAllData();rExAula(editAulaId);toast('🗑 Removido','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
 
@@ -1190,6 +1448,10 @@ function verAula(aulaId,isProfessor,triId=null){
   let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><span class="badge bt">${al.disciplina}</span>${ts}<span class="mut sm">${al.criadaEm}</span></div>`;
   if(al.conteudo)html+=`<div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="ctit">📄 Conteúdo</div><div class="rc-view">${al.conteudo}</div></div>`;
   if(al.imagens?.length){html+=`<div class="ctit">🖼 Imagens</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px">${al.imagens.map(url=>`<img src="${url}" class="ait" onclick="verImg('${url}')" alt="img">`).join('')}</div>`}
+  if(al.videos?.length){
+    html+=`<div class="ctit">🎥 Vídeos</div>`;
+    html+=al.videos.map(vid=>`<div class="yt-wrap" style="margin-bottom:12px"><div class="yt-iframe-wrap"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen loading="lazy" title="Vídeo"></iframe></div></div>`).join('');
+  }
   if(exs.length){
     html+=`<div class="ctit">🏋️ Exercícios</div>`;
     exs.forEach(ex=>{
@@ -1253,12 +1515,36 @@ function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x
 let ativAtiva=null,tipoAtiv=null,triIdAtiv=null,respostasAtiv={};
 function abrirProvaAluno(id){const p=S.provas.find(x=>x.id===id);if(!p)return;ativAtiva=p;tipoAtiv='prova';triIdAtiv=null;respostasAtiv={};G('mf-t').textContent=p.titulo;G('mf-i').textContent=`${p.disciplina} · ${p.questoes.length} q. · ${(p.questoes.length*p.pontosPorQ).toFixed(1)} pts`;rQModal(p.questoes);G('btn-entregar').textContent='📨 Entregar Prova';G('m-fazer').classList.remove('hidden')}
 function abrirEx(exId,aulaId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;respostasAtiv={};G('mf-t').textContent=ex.titulo;G('mf-i').textContent=`${ex.questoes.length} q. · ${(ex.questoes.length*ex.pontosPorQ).toFixed(1)} pts`;rQModal(ex.questoes);G('btn-entregar').textContent='📨 Entregar';G('m-fazer').classList.remove('hidden')}
-function rQModal(qs){const L=['A','B','C','D'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
+function rQModal(qs){
+  const L=['A','B','C','D'];
+  G('mf-b').innerHTML=qs.map((q,qi)=>{
+    const isDisc=q.tipo==='disc';
+    return`<div class="pq">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <span style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase">Questão ${qi+1}</span>
+        <span class="qtype-tag ${isDisc?'qtype-disc':'qtype-mult'}">${isDisc?'✏️ Discursiva':'Múltipla escolha'}</span>
+      </div>
+      <div class="pqe">${q.enunciado}</div>
+      ${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}
+      ${isDisc
+        ? `<textarea class="disc-resp" id="disc-${qi}" placeholder="Digite sua resposta aqui..." oninput="respostasAtiv[${qi}]=this.value"></textarea>`
+        : q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')
+      }
+    </div>`;
+  }).join('');
+  G('btn-entregar').disabled=false;
+}
 function selR(qi,oi){ativAtiva.questoes[qi].opcoes.forEach((_,i)=>{const r=G(`ro-${qi}-${i}`),c=G(`rc-${qi}-${i}`);if(r)r.classList.remove('sel');if(c)c.classList.remove('s')});const r=G(`ro-${qi}-${oi}`),c=G(`rc-${qi}-${oi}`);if(r)r.classList.add('sel');if(c)c.classList.add('s');respostasAtiv[qi]=oi}
 async function entregar(){
-  const respondidas=Object.keys(respostasAtiv).length,total=ativAtiva.questoes.length;
+  const total=ativAtiva.questoes.length;
+  const multQs=ativAtiva.questoes.filter(q=>q.tipo!=='disc');
+  const respondidas=Object.keys(respostasAtiv).length;
   if(respondidas<total&&!confirm(`Respondeu ${respondidas} de ${total}. Entregar assim mesmo?`))return;
-  let acertos=0;ativAtiva.questoes.forEach((q,qi)=>{if(respostasAtiv[qi]===q.correta)acertos++});
+  let acertos=0;
+  multQs.forEach((q,_)=>{
+    const qi=ativAtiva.questoes.indexOf(q);
+    if(respostasAtiv[qi]===q.correta)acertos++;
+  });
   const nota=acertos*ativAtiva.pontosPorQ,u=S.user;
   const btn=G('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';shl('Salvando...');
   try{
@@ -1274,8 +1560,21 @@ async function entregar(){
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
 function mostrarResult(reg,atv){
-  const total=atv.questoes.length,mx=total*atv.pontosPorQ,ok=reg.nota>=mx*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
-  let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div></div>
+  const multQs=atv.questoes.filter(q=>q.tipo!=='disc');
+  const discQs=atv.questoes.filter(q=>q.tipo==='disc');
+  const multTotal=multQs.length;
+  const mx=multTotal*atv.pontosPorQ;
+  const ok=reg.nota>=mx*0.6;
+  const pct=multTotal>0?Math.round((reg.acertos/multTotal)*100):100;
+  const L=['A','B','C','D'];
+  const hasDisc=discQs.length>0;
+  let html=`<div class="res-score">
+    <div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div>
+    <div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pts (múltipla escolha)</div>
+    ${hasDisc?`<div style="margin-top:6px;font-size:12px;color:var(--acc2)">✏️ ${discQs.length} questão(ões) discursiva(s) — aguardam correção manual</div>`:''}
+    <div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div>
+    <div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${multTotal} (${pct}%)</div>
+  </div>
   <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:${pct}%"></div></div>
   <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
     <button class="btn btn-sec btn-sm" onclick="imprimirProva('${atv.id}')">🖨️ Imprimir / PDF</button>
@@ -1283,8 +1582,26 @@ function mostrarResult(reg,atv){
   <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div>`;
   atv.questoes.forEach((q,qi)=>{
     const raw=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)];
-    const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
-    html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
+    if(q.tipo==='disc'){
+      const resp=raw||'';
+      html+=`<div class="pq">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <span class="qnum" style="background:rgba(167,139,250,.15);color:var(--acc2)">Q${qi+1}</span>
+          <span class="qtype-tag qtype-disc">✏️ Discursiva</span>
+          <span style="font-size:12px;color:var(--acc2)">Aguarda correção</span>
+        </div>
+        <div class="pqe">${q.enunciado}</div>
+        ${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}
+        <div style="background:var(--surf2);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px;line-height:1.6;border:1px solid var(--bdr)">
+          <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Sua resposta:</div>
+          ${resp?`<div>${resp}</div>`:`<div class="mut" style="font-style:italic">Não respondida</div>`}
+        </div>
+        ${q.gabarito?`<div style="background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px"><div style="font-size:11px;color:var(--grn);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Resposta esperada:</div><div>${q.gabarito}</div></div>`:''}
+      </div>`;
+    }else{
+      const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
+      html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
+    }
   });
   html+=`</div>`;G('mr-b').innerHTML=html;G('m-result').classList.remove('hidden');
 }
@@ -1360,5 +1677,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   G('fp-ini').value=today();G('fp-fim').value=today();G('ca-dt').value=today();
 });
 </script>
-</body>
-</html>
+
+
+</body></html>
