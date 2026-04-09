@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_4.html -->
-<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>EduProva</title>
-<link rel="manifest" href="file:///C:/Users/Diego%20Lima/Downloads/manifest.json">
+<title>EduProva — Sistema Educacional</title>
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4f7cff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EduProva">
-<link rel="apple-touch-icon" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
-<link href="./index_files/css2" rel="stylesheet">
-<script src="./index_files/supabase-js@2"></script>
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0d0f14;--surf:#161920;--surf2:#1e2230;--bdr:#2a2f42;
@@ -88,7 +88,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100v
 .ham{background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);padding:7px 10px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}
 .sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;backdrop-filter:blur(2px)}
 .sov.show{display:block}
-.app-body{display:flex;flex:1;overflow:hidden}
+.app-body{display:flex;flex:1}
 .sidebar{width:var(--sw);background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;top:0;height:100vh;z-index:160;transition:transform .3s ease;overflow-y:auto}
 .sb-logo{padding:20px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0}
 .sb-logo .logo-ic{width:32px;height:32px;font-size:15px;border-radius:8px}
@@ -96,14 +96,14 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100v
 .sb-user{padding:14px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0}
 .uav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
 .unm{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.url-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;margin-top:2px;display:inline-block}
+.url-b{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;margin-top:2px;display:inline-block}
 .snav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
 .nlbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);padding:8px 10px 5px;margin-top:6px}
 .ni{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;cursor:pointer;color:var(--mut);font-size:13px;font-weight:500;transition:all .2s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
 .ni:hover{background:var(--surf2);color:var(--txt)}
 .ni.on{background:rgba(79,124,255,.12);color:var(--acc);border-color:rgba(79,124,255,.2)}
 .ni .ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.sb-foot{padding:14px 10px;border-top:1px solid var(--bdr);flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--bdr);flex-shrink:0}
 .mc{flex:1;margin-left:var(--sw);padding:28px 32px;overflow-y:auto;min-height:100vh}
 
 /* PAGE */
@@ -116,6 +116,11 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100v
 .sc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:18px}
 .slbl{font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .sv{font-family:var(--fd);font-size:30px;font-weight:800;margin:5px 0 2px;background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:20px}
+.tc{background:var(--surf2);border:2px solid var(--bdr);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.tc:hover,.tc.on{border-color:var(--acc);background:rgba(79,124,255,.08)}
+.tnm{font-family:var(--fd);font-size:18px;font-weight:800}
+.tal{font-size:11px;color:var(--mut);margin-top:3px}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;min-width:460px}
 th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);padding:9px 12px;border-bottom:1px solid var(--bdr)}
@@ -137,13 +142,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .tci:hover{border-color:var(--acc)}
 .tci.on{border-color:var(--acc);background:rgba(79,124,255,.12);color:var(--acc)}
 .tci span{font-family:var(--fd);font-size:14px;font-weight:800}
-
-/* TURMAS GRID */
-.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:20px}
-.tc{background:var(--surf2);border:2px solid var(--bdr);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
-.tc:hover,.tc.on{border-color:var(--acc);background:rgba(79,124,255,.08)}
-.tnm{font-family:var(--fd);font-size:18px;font-weight:800}
-.tal{font-size:11px;color:var(--mut);margin-top:3px}
 
 /* MODALS */
 .mov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(5px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fdi .2s ease}
@@ -171,7 +169,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .oltr.ok{background:var(--grn);border-color:var(--grn);color:var(--bg)}
 .oltr:hover{border-color:var(--grn)}
 
-/* IMAGE UPLOAD */
+/* IMAGE */
 .iua{border:2px dashed var(--bdr);border-radius:10px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-top:8px}
 .iua:hover{border-color:var(--acc);background:rgba(79,124,255,.05)}
 .iua input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -203,17 +201,16 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .am{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
 .ait{width:100%;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--bdr);cursor:zoom-in;transition:opacity .2s}
 .ait:hover{opacity:.85}
-/* rich content display */
-.rc-view{font-size:14px;line-height:1.75;color:var(--txt)}
-.rc-view h1{font-family:var(--fd);font-size:22px;font-weight:800;margin:12px 0 8px}
-.rc-view h2{font-family:var(--fd);font-size:18px;font-weight:700;margin:10px 0 6px}
-.rc-view h3{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--acc2);margin:8px 0 4px}
-.rc-view ul,.rc-view ol{padding-left:20px;margin:6px 0}
-.rc-view blockquote{border-left:3px solid var(--acc);padding-left:12px;color:var(--mut);font-style:italic;margin:8px 0}
+.rc-v{font-size:14px;line-height:1.75;color:var(--txt)}
+.rc-v h1{font-family:var(--fd);font-size:22px;font-weight:800;margin:12px 0 8px}
+.rc-v h2{font-family:var(--fd);font-size:18px;font-weight:700;margin:10px 0 6px}
+.rc-v h3{font-family:var(--fd);font-size:15px;font-weight:700;color:var(--acc2);margin:8px 0 4px}
+.rc-v ul,.rc-v ol{padding-left:20px;margin:6px 0}
+.rc-v blockquote{border-left:3px solid var(--acc);padding-left:12px;color:var(--mut);font-style:italic;margin:8px 0}
 /* rich editor */
 .rew{border:1px solid var(--bdr);border-radius:9px;overflow:hidden;transition:border-color .2s}
 .rew:focus-within{border-color:var(--acc)}
-.rtb-bar{display:flex;align-items:center;gap:2px;padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--bdr);flex-wrap:wrap}
+.rtb{display:flex;align-items:center;gap:2px;padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--bdr);flex-wrap:wrap}
 .rb{background:transparent;border:none;color:var(--mut);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
 .rb:hover{background:var(--surf2);color:var(--acc)}
 .rs{width:1px;height:18px;background:var(--bdr);margin:0 3px;flex-shrink:0}
@@ -268,21 +265,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .di.dg{opacity:.4;cursor:grabbing}
 .dh{color:var(--mut);font-size:16px;flex-shrink:0}
 
-/* YOUTUBE EMBED */
-.yt-wrap{position:relative;margin-bottom:12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
-.yt-iframe-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
-.yt-iframe-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-.yt-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-top:1px solid var(--bdr)}
-.yt-title{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* QUESTÃO DISCURSIVA */
-.disc-resp{width:100%;background:var(--surf2);border:1px solid var(--acc);border-radius:8px;padding:10px 14px;color:var(--txt);font-family:var(--fb);font-size:14px;outline:none;resize:vertical;min-height:90px;line-height:1.6;margin-top:6px}
-.disc-resp:focus{border-color:var(--acc2)}
-.disc-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(167,139,250,.15);color:var(--acc2);border:1px solid rgba(167,139,250,.3);border-radius:20px;font-size:11px;font-weight:700;padding:2px 8px}
-.qtype-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px}
-.qtype-mult{background:rgba(79,124,255,.15);color:var(--acc)}
-.qtype-disc{background:rgba(167,139,250,.15);color:var(--acc2)}
-
 /* XP POP */
 .xpp{position:fixed;pointer-events:none;font-family:var(--fd);font-size:20px;font-weight:800;color:var(--yel);z-index:9000;animation:xpf 1.8s ease forwards}
 @keyframes xpf{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1;transform:translateY(-60px) scale(1.2)}100%{opacity:0;transform:translateY(-100px) scale(.8)}}
@@ -302,13 +284,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .err-box{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-top:10px;font-family:monospace;word-break:break-all}
 #imgfs{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:5000;display:flex;align-items:center;justify-content:center;cursor:zoom-out}
 #imgfs img{max-width:94vw;max-height:90vh;border-radius:10px;object-fit:contain}
-
-/* ADMIN PANEL */
-.prof-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.prof-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:16px;color:#fff;flex-shrink:0}
-.admin-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(251,146,60,.15);color:var(--org);border:1px solid rgba(251,146,60,.3);border-radius:20px;font-size:10px;font-weight:700;padding:2px 8px}
-
-/* RESULTADO */
 .res-score{text-align:center;padding:28px 16px}
 .res-num{font-family:var(--fd);font-size:72px;font-weight:800;line-height:1}
 
@@ -331,94 +306,108 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
-<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Carregando dados...</p></div>
+<div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Carregando...</p></div>
 <div id="toast" class="hidden"></div>
-<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_4.html" alt=""></div>
+<div id="imgfs" class="hidden" onclick="this.classList.add('hidden')"><img id="imgfs-src" src="" alt=""></div>
 
-<!-- ═══ LOGIN ═══ -->
-<div id="scr-login" class="">
+<!-- LOGIN -->
+<div id="scr-login">
   <div class="lcard">
     <div class="logo"><div class="logo-ic">📚</div><div><div class="logo-tx">EduProva</div><div class="logo-sb">Sistema Educacional</div></div></div>
     <div class="ltit">Bem-vindo!</div>
     <div class="ldsc">Acesse com seu perfil.</div>
     <div class="tabs">
-      <button class="tbtn on" onclick="setTab(&#39;prof&#39;)">👨‍🏫 Professor</button>
-      <button class="tbtn" onclick="setTab(&#39;aluno&#39;)">🎓 Aluno</button>
+      <button class="tbtn on" onclick="setTab('prof')">👨‍🏫 Professor</button>
+      <button class="tbtn" onclick="setTab('aluno')">🎓 Aluno</button>
     </div>
-    <!-- PROFESSOR -->
-    <div id="lf-prof" class="">
-      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="lp-em" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+    <div id="lf-prof">
+      <div class="fg"><label class="fl">Usuário</label><input class="fi" id="lp-u" placeholder="professor" autocomplete="username"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="lp-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;lp-pw&#39;,this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="lp-p" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('lp-p',this)">👁</button></div>
       </div>
     </div>
-    <!-- ALUNO -->
     <div id="lf-aluno" class="hidden">
       <div class="fg"><label class="fl">Turma</label>
         <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
       </div>
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="la-nm" placeholder="Seu nome completo" autocomplete="name"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;la-pw&#39;,this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('la-pw',this)">👁</button></div>
       </div>
     </div>
     <button class="btn btn-p" id="btn-login" onclick="doLogin()">Entrar →</button>
     <div id="lerr" class="lerr hidden"></div>
+
+    <!-- RECUPERAR SENHA ALUNO — aparece só quando senha errada -->
+    <div id="box-rec" class="hidden" style="margin-top:16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:18px">🔐</span>
+        <div style="font-weight:700;font-size:14px">Esqueceu sua senha?</div>
+      </div>
+      <div class="mut sm" style="margin-bottom:14px">Cadastre uma nova senha para <strong id="rec-nome-label"></strong>.</div>
+
+      <!-- Passo 1: nova senha -->
+      <div id="rec-p1">
+        <div class="fg" style="margin-bottom:10px">
+          <label class="fl">Nova senha</label>
+          <div class="pw-w">
+            <input class="fi" id="rec-nova" type="password" placeholder="Mínimo 4 caracteres">
+            <button class="pw-eye" onclick="togglePw('rec-nova',this)">👁</button>
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:12px">
+          <label class="fl">Confirmar nova senha</label>
+          <div class="pw-w">
+            <input class="fi" id="rec-conf" type="password" placeholder="Repita a senha">
+            <button class="pw-eye" onclick="togglePw('rec-conf',this)">👁</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sec btn-sm" style="flex:1" onclick="fecharRec()">Cancelar</button>
+          <button class="btn btn-grn btn-sm" style="flex:2" id="btn-salvar-rec" onclick="salvarNovaSenha()">✅ Salvar Nova Senha</button>
+        </div>
+      </div>
+
+      <!-- Passo 2: sucesso -->
+      <div id="rec-p2" class="hidden" style="text-align:center;padding:8px 0">
+        <div style="font-size:32px;margin-bottom:8px">🎉</div>
+        <div style="font-weight:700;color:var(--grn);margin-bottom:4px">Senha alterada!</div>
+        <div class="mut sm">Entrando automaticamente...</div>
+      </div>
+
+      <div id="rec-err" class="lerr hidden" style="margin-top:10px"></div>
+    </div>
+
   </div>
 </div>
 
-<!-- ═══ APP ═══ -->
+<!-- APP -->
 <div id="scr-app" class="hidden">
   <div class="topbar"><div class="tbar-logo"><div class="logo-ic">📚</div>EduProva</div><button class="ham" onclick="toggleSB()">☰</button></div>
   <div class="sov" id="sov" onclick="closeSB()"></div>
   <div class="app-body">
     <aside class="sidebar" id="sidebar">
       <div class="sb-logo"><div class="logo-ic">📚</div><div><div class="logo-tx">EduProva</div></div></div>
-      <div class="sb-user">
-        <div class="uav" id="sb-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">A</div>
-        <div style="min-width:0">
-          <div class="unm" id="sb-nm">atos</div>
-          <span class="url-badge" id="sb-rl" style="background: rgba(167, 139, 250, 0.12); color: var(--acc2);">1M2</span>
-        </div>
-      </div>
-      <nav class="snav" id="snav">
-  <div class="nlbl">Aprender</div>
-  <div class="ni on" id="ni-tri-a" onclick="nav(&#39;sec-a-trilhas&#39;,&#39;ni-tri-a&#39;,()=&gt;reload().then(renderAlunoTrilhas))"><span class="ic">🚀</span>Trilhas</div>
-  <div class="ni" id="ni-aulas-a" onclick="nav(&#39;sec-a-aulas&#39;,&#39;ni-aulas-a&#39;,()=&gt;reload().then(renderAlunoAulas))"><span class="ic">📖</span>Aulas</div>
-  <div class="nlbl">Avaliações</div>
-  <div class="ni" id="ni-pv-a" onclick="nav(&#39;sec-a-provas&#39;,&#39;ni-pv-a&#39;,()=&gt;reload().then(renderAlunoProvas))"><span class="ic">📝</span>Provas</div>
-  <div class="ni" id="ni-nt-a" onclick="nav(&#39;sec-a-notas&#39;,&#39;ni-nt-a&#39;,()=&gt;reload().then(renderAlunoNotas))"><span class="ic">🏆</span>Notas</div></nav>
-      <div class="sb-foot">
-        <button class="btn btn-sec w100 btn-sm hidden" onclick="showMinhaConta()" id="btn-conta">⚙️ Minha Conta</button>
-        <button class="btn btn-sec w100 btn-sm" onclick="doLogout()">⬅ Sair</button>
-      </div>
+      <div class="sb-user"><div class="uav" id="sb-av" style="background:linear-gradient(135deg,var(--acc),var(--acc2))">P</div><div style="min-width:0"><div class="unm" id="sb-nm">Prof</div><span class="url-b" id="sb-rl" style="background:rgba(79,124,255,.12);color:var(--acc)">Professor</span></div></div>
+      <nav class="snav" id="snav"></nav>
+      <div class="sb-foot"><button class="btn btn-sec w100 btn-sm" onclick="doLogout()">⬅ Sair</button></div>
     </aside>
     <main class="mc" id="mc">
 
       <!-- Dashboard -->
       <div class="sec" id="sec-dash">
-        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub" id="dash-sub">Visão geral da plataforma</div></div></div>
-        <div class="sg" id="dash-stats">
-    <div class="sc"><div class="slbl">Trilhas</div><div class="sv">1</div></div>
-    <div class="sc"><div class="slbl">Aulas</div><div class="sv">2</div></div>
-    <div class="sc"><div class="slbl">Provas</div><div class="sv">3</div></div>
-    <div class="sc"><div class="slbl">Presenças Hoje</div><div class="sv">12</div></div></div>
+        <div class="ph"><div><div class="ptit">Dashboard</div><div class="psub">Visão geral</div></div></div>
+        <div class="sg" id="dash-stats"></div>
         <div class="g2">
-          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">2T1, 2T2, 2T3</div></div><span class="badge bb">62</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1ª AVALIAÇÃO BIMESTRAL</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5</div></div><span class="badge bb">142</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">1º AVALIAÇÃO BIMESTRAL</div><div class="mut xs">3M1, 3M2</div></div><span class="badge bb">29</span></div></div></div>
-          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">🚀 A Máquina Expressiva: Teatro, Dança e Sociedade</div><div class="mut xs">1M1, 1M2, 1M3, 1M4, 1M5 · 2 aulas</div></div><span class="badge bo">36</span></div></div></div>
+          <div class="card"><div class="ctit">📋 Provas Recentes</div><div id="dash-provas"></div></div>
+          <div class="card"><div class="ctit">🚀 Trilhas Ativas</div><div id="dash-trilhas"></div></div>
         </div>
-      </div>
-
-      <!-- Admin: Professores -->
-      <div class="sec" id="sec-admin">
-        <div class="ph"><div><div class="ptit">Gestão de Professores</div><div class="psub">Administração da plataforma</div></div><button class="btn btn-org btn-sm" onclick="abrirNovoProfessor()">+ Novo Professor</button></div>
-        <div id="admin-lista"></div>
       </div>
 
       <!-- Turmas -->
       <div class="sec" id="sec-turmas">
         <div class="ph"><div><div class="ptit">Turmas</div><div class="psub">Gerencie alunos</div></div></div>
-        <div class="tg" id="tg-turmas"><div class="tc" onclick="verTurma(&#39;1M1&#39;)"><div class="tnm">1M1</div><div class="tal">41 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M2&#39;)"><div class="tnm">1M2</div><div class="tal">37 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M3&#39;)"><div class="tnm">1M3</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M4&#39;)"><div class="tnm">1M4</div><div class="tal">39 alunos</div></div><div class="tc" onclick="verTurma(&#39;1M5&#39;)"><div class="tnm">1M5</div><div class="tal">28 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T1&#39;)"><div class="tnm">2T1</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T2&#39;)"><div class="tnm">2T2</div><div class="tal">22 alunos</div></div><div class="tc" onclick="verTurma(&#39;2T3&#39;)"><div class="tnm">2T3</div><div class="tal">23 alunos</div></div><div class="tc" onclick="verTurma(&#39;3M1&#39;)"><div class="tnm">3M1</div><div class="tal">1 aluno</div></div><div class="tc" onclick="verTurma(&#39;3M2&#39;)"><div class="tnm">3M2</div><div class="tal">34 alunos</div></div></div>
+        <div class="tg" id="tg-turmas"></div>
         <div class="card" id="turma-det" style="display:none">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" id="turma-det-t" style="margin:0"></div><button class="btn btn-warn btn-sm" onclick="expTurma()">📥 CSV</button></div>
           <div class="tw"><table><thead><tr><th>Nome</th><th>Provas</th><th>Média</th><th></th></tr></thead><tbody id="turma-tb"></tbody></table></div>
@@ -434,10 +423,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <select class="fsel" id="freq-tu" onchange="renderFreq()"><option value="">Selecione</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="fpb on" id="fpb-dia" onclick="setFP(&#39;dia&#39;)">Dia</button>
-              <button class="fpb" id="fpb-semana" onclick="setFP(&#39;semana&#39;)">Semana</button>
-              <button class="fpb" id="fpb-mes" onclick="setFP(&#39;mes&#39;)">Mês</button>
-              <button class="fpb" id="fpb-periodo" onclick="setFP(&#39;periodo&#39;)">Período</button>
+              <button class="fpb on" id="fpb-dia" onclick="setFP('dia')">Dia</button>
+              <button class="fpb" id="fpb-semana" onclick="setFP('semana')">Semana</button>
+              <button class="fpb" id="fpb-mes" onclick="setFP('mes')">Mês</button>
+              <button class="fpb" id="fpb-periodo" onclick="setFP('periodo')">Período</button>
             </div>
           </div>
           <div id="freq-per-inp" style="display:none;gap:10px;flex-wrap:wrap;margin-top:12px">
@@ -452,7 +441,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <!-- Aulas -->
       <div class="sec" id="sec-aulas">
         <div class="ph"><div><div class="ptit">Aulas</div><div class="psub">Conteúdo e exercícios</div></div><button class="btn btn-tel btn-sm" onclick="irNovaAula()">+ Nova Aula</button></div>
-        <div id="aulas-lista"><div class="ac"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge by">🏋️ 1 ex.</span></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-tel btn-sm" onclick="editarAula(&#39;1775475440094&#39;)">✏️ Editar</button><button class="btn btn-sec btn-sm" onclick="verAula(&#39;1775475440094&#39;,true)">👁 Ver</button><button class="btn btn-dan btn-sm" onclick="delAula(&#39;1775475440094&#39;)">🗑</button></div></div><div class="ac"><div class="at">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="am"><span class="badge bt">ARTES</span><span class="badge bb" style="margin:1px">1M1</span><span class="badge bb" style="margin:1px">1M2</span><span class="badge bb" style="margin:1px">1M3</span><span class="badge bb" style="margin:1px">1M4</span><span class="badge bb" style="margin:1px">1M5</span><span class="badge by">🏋️ 1 ex.</span></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-tel btn-sm" onclick="editarAula(&#39;1775483431719&#39;)">✏️ Editar</button><button class="btn btn-sec btn-sm" onclick="verAula(&#39;1775483431719&#39;,true)">👁 Ver</button><button class="btn btn-dan btn-sm" onclick="delAula(&#39;1775483431719&#39;)">🗑</button></div></div></div>
+        <div id="aulas-lista"></div>
       </div>
 
       <!-- Nova/Editar Aula -->
@@ -463,32 +452,32 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Título</label><input class="fi" id="aula-t" placeholder="Ex: Introdução às Frações"></div>
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="aula-d" placeholder="Ex: Matemática"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"><div class="tci" id="tcg-aula1M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-aula1M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-aula1M3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-aula1M4" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-aula1M5" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-aula2T1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-aula2T2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-aula2T3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-aula3M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-aula3M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-aula" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"></div><div id="th-aula" class="mut sm mt2">Nenhuma turma selecionada</div></div>
           <div class="fg">
             <label class="fl">Conteúdo</label>
             <div class="rew">
-              <div class="rtb-bar">
-                <select class="rsel" onchange="rte(&#39;formatBlock&#39;,this.value);this.value=&#39;p&#39;"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
-                <select class="rsel" onchange="rte(&#39;fontSize&#39;,this.value);this.value=&#39;3&#39;"><option value="2">Pequeno</option><option value="3" selected="">Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
+              <div class="rtb">
+                <select class="rsel" onchange="rte('formatBlock',this.value);this.value='p'"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
+                <select class="rsel" onchange="rte('fontSize',this.value);this.value='3'"><option value="2">Pequeno</option><option value="3" selected>Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;bold&#39;)"><b>B</b></button>
-                <button class="rb" onclick="rte(&#39;italic&#39;)"><i>I</i></button>
-                <button class="rb" onclick="rte(&#39;underline&#39;)"><u>U</u></button>
-                <button class="rb" onclick="rte(&#39;strikeThrough&#39;)"><s>S</s></button>
+                <button class="rb" onclick="rte('bold')"><b>B</b></button>
+                <button class="rb" onclick="rte('italic')"><i>I</i></button>
+                <button class="rb" onclick="rte('underline')"><u>U</u></button>
+                <button class="rb" onclick="rte('strikeThrough')"><s>S</s></button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;justifyLeft&#39;)">⬅</button>
-                <button class="rb" onclick="rte(&#39;justifyCenter&#39;)">☰</button>
-                <button class="rb" onclick="rte(&#39;justifyRight&#39;)">➡</button>
+                <button class="rb" onclick="rte('justifyLeft')">⬅</button>
+                <button class="rb" onclick="rte('justifyCenter')">☰</button>
+                <button class="rb" onclick="rte('justifyRight')">➡</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;insertUnorderedList&#39;)">•</button>
-                <button class="rb" onclick="rte(&#39;insertOrderedList&#39;)">1.</button>
-                <button class="rb" onclick="rte(&#39;formatBlock&#39;,&#39;blockquote&#39;)">❝</button>
+                <button class="rb" onclick="rte('insertUnorderedList')">•</button>
+                <button class="rb" onclick="rte('insertOrderedList')">1.</button>
+                <button class="rb" onclick="rte('formatBlock','blockquote')">❝</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="G(&#39;clrp&#39;).click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte(&#39;foreColor&#39;,this.value)"></button>
-                <button class="rb" onclick="rte(&#39;removeFormat&#39;)">✕</button>
+                <button class="rb" onclick="G('clrp').click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte('foreColor',this.value)"></button>
+                <button class="rb" onclick="rte('removeFormat')">✕</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;undo&#39;)">↩</button>
-                <button class="rb" onclick="rte(&#39;redo&#39;)">↪</button>
+                <button class="rb" onclick="rte('undo')">↩</button>
+                <button class="rb" onclick="rte('redo')">↪</button>
               </div>
               <div class="re" id="aula-cont" contenteditable="true"></div>
             </div>
@@ -496,15 +485,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="fg">
             <label class="fl">Imagens</label>
             <div id="aula-imgs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:8px"></div>
-            <div class="iua"><input type="file" accept="image/*" multiple="" onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
-          </div>
-          <div class="fg">
-            <label class="fl">🎥 Vídeos do YouTube</label>
-            <div id="aula-videos" style="margin-bottom:8px"></div>
-            <div style="display:flex;gap:8px">
-              <input class="fi" id="yt-input" placeholder="Cole o link do YouTube (ex: https://youtu.be/abc ou https://www.youtube.com/watch?v=abc)" style="flex:1">
-              <button class="btn btn-sec btn-sm" style="white-space:nowrap;flex-shrink:0" onclick="addVideo()">+ Adicionar</button>
-            </div>
+            <div class="iua"><input type="file" accept="image/*" multiple onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
           </div>
           <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
             <button class="btn btn-sec" style="min-width:110px" onclick="cancelarAula()">Cancelar</button>
@@ -517,7 +498,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </div>
       </div>
 
-      <!-- Trilhas (professor) -->
+      <!-- Trilhas -->
       <div class="sec" id="sec-trilhas">
         <div class="ph"><div><div class="ptit">Trilhas</div><div class="psub">Jornadas gamificadas</div></div><button class="btn btn-org btn-sm" onclick="irNovaTrilha()">+ Nova Trilha</button></div>
         <div id="trilhas-lista"></div>
@@ -536,7 +517,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Ícone (emoji)</label><input class="fi" id="tri-ic" placeholder="🚀" maxlength="4" style="font-size:20px;text-align:center"></div>
             <div class="fg" style="margin:0"><label class="fl">Cor</label><input type="color" id="tri-cor" value="#4f7cff" style="width:100%;height:44px;border-radius:9px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;padding:4px"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"><div class="tci" id="tcg-trilha1M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-trilha1M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-trilha1M3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-trilha1M4" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-trilha1M5" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-trilha2T1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-trilha2T2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-trilha2T3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-trilha3M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-trilha3M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-trilha" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"></div><div id="th-trilha" class="mut sm mt2">Nenhuma turma selecionada</div></div>
           <hr class="dv">
           <div class="ctit">📚 Aulas da Trilha <span class="mut sm" style="font-weight:400">(arraste para reordenar)</span></div>
           <div class="fg"><select class="fsel" id="tri-add-sel"><option value="">Selecione uma aula...</option></select><button class="btn btn-sec btn-sm" style="margin-top:8px" onclick="addAulaTr()">+ Adicionar</button></div>
@@ -558,22 +539,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="pv-d" placeholder="Ex: Matemática"></div>
           </div>
           <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"><div class="tci" id="tcg-prova1M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-prova1M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-prova1M3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-prova1M4" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-prova1M5" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-prova2T1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-prova2T2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-prova2T3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-prova3M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-prova3M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-prova" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
           <hr class="dv">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-            <div class="ctit" style="margin:0">📝 Questões</div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="btn btn-sec btn-sm" onclick="addQMult(&#39;qP&#39;,&#39;qcP&#39;)">+ Múltipla Escolha</button>
-              <button class="btn btn-sec btn-sm" onclick="addQDisc(&#39;qP&#39;,&#39;qcP&#39;)">+ Discursiva</button>
-            </div>
-          </div>
-          <div id="qcP"><div class="qi" id="qi-qP-0"><div class="qh"><span class="qnum">Q1</span><span class="qtype-tag qtype-mult">Múltipla escolha</span><button class="btn btn-dan btn-sm" onclick="rmQ(&#39;qP&#39;,&#39;qcP&#39;,0)">🗑</button></div>
-    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD[&#39;qP&#39;][0].enunciado=this.value" value=""></div>
-    <label class="fl">Imagem (opcional)</label>
-    <div id="imgw-qP-0"><div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,&#39;qP&#39;,0)"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div></div>
-    <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
-    <ul class="ol-l"><li class="oi"><div class="oltr" id="ol-qP-0-0" onclick="setC(&#39;qP&#39;,0,0)">A</div><input class="fi" style="flex:1" placeholder="Alt. A..." oninput="QD[&#39;qP&#39;][0].opcoes[0]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-1" onclick="setC(&#39;qP&#39;,0,1)">B</div><input class="fi" style="flex:1" placeholder="Alt. B..." oninput="QD[&#39;qP&#39;][0].opcoes[1]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-2" onclick="setC(&#39;qP&#39;,0,2)">C</div><input class="fi" style="flex:1" placeholder="Alt. C..." oninput="QD[&#39;qP&#39;][0].opcoes[2]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-3" onclick="setC(&#39;qP&#39;,0,3)">D</div><input class="fi" style="flex:1" placeholder="Alt. D..." oninput="QD[&#39;qP&#39;][0].opcoes[3]=this.value" value=""></li></ul>
-    <div class="sm mt2" id="qh-qP-0" style="color:var(--mut)">⬆ Clique na letra para marcar a resposta correta</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button></div>
+          <div id="qcP"></div>
           <div id="pv-err" class="hidden"></div>
           <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-sec" style="min-width:110px" onclick="cancelarProva()">Cancelar</button>
@@ -596,19 +565,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <!-- Aluno: Trilhas -->
-      <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl">Turma 1M2</div></div></div><div id="a-trilhas"><div class="trc" style="--tc:#4f7cff">
-      <div class="tr-h">
-        <div class="tr-ic" style="background:#4f7cff22;border:2px solid #4f7cff44;font-size:26px">🚀</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div class="tr-ti">A Máquina Expressiva: Teatro, Dança e Sociedade</div><span class="nlvl">📖 Nível 2 — Aprendiz</span></div>
-          <div class="tr-ds">Nesta trilha, vamos descobrir como o nosso corpo se transforma em uma poderosa ferramenta de arte e comunicação. Você vai mergulhar no universo do Teatro, conhecendo a revolucionária técnica da Biomecânica de Meyerhold, e explorar a Dança através de seus elementos fundamentais: níveis, fluidez e velocidade.  Por que fazer esta trilha?  Consciência Corporal: Entenda como cada gesto seu comunica uma ideia.  Cultura Viva: Veja como estilos modernos, como o passinho, se conectam com teorias clássicas da arte.  Foco no ENEM: Domine as habilidades de Linguagens que cobram a função social do corpo e o patrimônio cultural.  Desafio Final: Ao final da leitura, teste seus conhecimentos com 10 questões exclusivas no estilo ENEM e prepare-se para olhar para a cena (e para o seu próprio movimento) de um jeito totalmente novo! 🚀</div>
-          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge bt">ARTES</span><span class="badge bo">2 aulas</span><span class="badge bg">2 concluídas</span></div>
-        </div>
-      </div>
-      <div class="xpw"><div class="xpl"><span class="mut xs">160 XP — próx. em 90</span><span class="sm" style="color:var(--yel);font-weight:700">⚡ 160 XP</span></div><div class="xpbg"><div class="xpf" style="width:40%;background:linear-gradient(90deg,#4f7cff,#4f7cff99)"></div></div></div>
-      <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px"><span>Progresso</span><span>100%</span></div><div class="pb"><div class="pf" style="width:100%;background:linear-gradient(90deg,#4f7cff,#4f7cff88)"></div></div></div>
-      <div class="tmap"><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775475440094&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div><div class="tstep"><div class="tdot done" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">✅<div class="dck">✓</div></div><div class="tsc done" style="margin-top:6px"><div class="ts-t">O Corpo em Cena — Entre a Biomecânica e o Movimento - AULA 1</div><div class="ts-s">ARTES · 🏋️ 1/1 · ✅ Concluída</div><button class="btn btn-sm btn-sec" style="margin-top:8px" onclick="verAula(&#39;1775483431719&#39;,false,&#39;1775482398002&#39;)">📖 Rever</button></div></div></div>
-    </div></div></div>
+      <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl"></div></div></div><div id="a-trilhas"></div></div>
 
       <!-- Aluno: Aulas -->
       <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl"></div></div></div><div id="a-aulas"></div></div>
@@ -629,13 +586,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <!-- MODALS -->
-<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm(&#39;m-vp&#39;)">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
+<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm('m-vp')">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
 
 <div class="mov hidden" id="m-fazer">
   <div class="modal modal-lg">
-    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm(&#39;m-fazer&#39;)">×</button></div>
+    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
     <div class="mb" id="mf-b"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-fazer&#39;)">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-fazer')">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
   </div>
 </div>
 
@@ -643,29 +600,23 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
-    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm(&#39;m-ex&#39;)">×</button></div>
+    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm('m-ex')">×</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Título</label><input class="fi" id="ex-t" placeholder="Ex: Exercícios de Fixação"></div>
       <div class="fg"><label class="fl">Descrição (opcional)</label><input class="fi" id="ex-d" placeholder="Instruções..."></div>
       <div class="fg" style="max-width:200px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="ex-p" value="1" min="0.1" step="0.1"></div>
       <hr class="dv">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <div class="ctit" style="margin:0">📝 Questões</div>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-sec btn-sm" onclick="addQMult(&#39;exQ&#39;,&#39;qcE&#39;)">+ Múltipla Escolha</button>
-          <button class="btn btn-sec btn-sm" onclick="addQDisc(&#39;exQ&#39;,&#39;qcE&#39;)">+ Discursiva</button>
-        </div>
-      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('exQ','qcE')">+ Questão</button></div>
       <div id="qcE"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-ex&#39;)">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-ex')">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
   </div>
 </div>
 
-<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm(&#39;m-aula&#39;)">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
+<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
 
 <div class="mov hidden" id="m-conf-aulas">
-  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm(&#39;m-conf-aulas&#39;)">×</button></div>
+  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm('m-conf-aulas')">×</button></div>
     <div class="mb">
       <div class="g2" style="margin-bottom:16px">
         <div class="fg" style="margin:0"><label class="fl">Turma</label><select class="fsel" id="ca-tu"><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
@@ -673,45 +624,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="fg"><label class="fl">Qtd. de Aulas</label><input type="number" class="fi" id="ca-q" value="1" min="1" max="12"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-conf-aulas&#39;)">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
-  </div>
-</div>
-
-<!-- Modal: Novo/Editar Professor (só Admin) -->
-<div class="mov hidden" id="m-prof">
-  <div class="modal">
-    <div class="mh"><div class="mt" id="m-prof-t">Novo Professor</div><button class="mx" onclick="cm(&#39;m-prof&#39;)">×</button></div>
-    <div class="mb">
-      <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="pr-nm" placeholder="Ex: João Silva"></div>
-      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="pr-em" type="email" placeholder="joao@escola.com"></div>
-      <div class="fg"><label class="fl">Senha <span id="pr-pw-hint" class="mut xs">(obrigatória para novo professor)</span></label>
-        <div class="pw-w"><input class="fi" id="pr-pw" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw(&#39;pr-pw&#39;,this)">👁</button></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
-        <input type="checkbox" id="pr-adm" style="width:16px;height:16px;accent-color:var(--org)">
-        <label for="pr-adm" style="font-size:14px;cursor:pointer">Conceder privilégios de <strong>Administrador</strong></label>
-      </div>
-    </div>
-    <div id="m-prof-err" class="lerr hidden"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-prof&#39;)">Cancelar</button><button class="btn btn-org" id="btn-sv-prof" onclick="salvarProfessor()" style="width:auto;min-width:150px">💾 Criar Professor</button></div>
-  </div>
-</div>
-
-<!-- Modal: Minha Conta -->
-<div class="mov hidden" id="m-conta">
-  <div class="modal">
-    <div class="mh"><div class="mt">⚙️ Minha Conta</div><button class="mx" onclick="cm(&#39;m-conta&#39;)">×</button></div>
-    <div class="mb">
-      <div class="fg"><label class="fl">Nome</label><input class="fi" id="mc-nm" placeholder="Seu nome"></div>
-      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="mc-em" type="email" disabled="" style="opacity:.6"></div>
-      <hr class="dv">
-      <div class="ctit">🔐 Alterar Senha</div>
-      <div class="fg"><label class="fl">Senha atual</label><div class="pw-w"><input class="fi" id="mc-at" type="password" placeholder="••••••"><button class="pw-eye" onclick="togglePw(&#39;mc-at&#39;,this)">👁</button></div></div>
-      <div class="fg"><label class="fl">Nova senha</label><div class="pw-w"><input class="fi" id="mc-nv" type="password" placeholder="Mínimo 6 caracteres"><button class="pw-eye" onclick="togglePw(&#39;mc-nv&#39;,this)">👁</button></div></div>
-      <div class="fg"><label class="fl">Confirmar nova senha</label><div class="pw-w"><input class="fi" id="mc-cf" type="password" placeholder="Repita a nova senha"><button class="pw-eye" onclick="togglePw(&#39;mc-cf&#39;,this)">👁</button></div></div>
-    </div>
-    <div id="mc-err" class="lerr hidden"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-conta&#39;)">Cancelar</button><button class="btn btn-p" onclick="salvarConta()" style="width:auto;min-width:140px">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-conf-aulas')">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
   </div>
 </div>
 
@@ -725,7 +638,7 @@ const TURMAS=['1M1','1M2','1M3','1M4','1M5','2T1','2T2','2T3','3M1','3M2'];
 const XP_AULA=50,XP_EX=30;
 const NIVEIS=[{n:1,xp:0,l:'Iniciante',e:'🌱'},{n:2,xp:100,l:'Aprendiz',e:'📖'},{n:3,xp:250,l:'Estudante',e:'🎓'},{n:4,xp:500,l:'Especialista',e:'⭐'},{n:5,xp:1000,l:'Mestre',e:'🏆'}];
 
-let S={user:null,prof:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[],trilhas:[],progresso:[],frequencia:[],aulasConf:[],professores:[]};
+let S={user:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[],trilhas:[],progresso:[],frequencia:[],aulasConf:[]};
 
 /* ══ UTILS ══ */
 const G=id=>document.getElementById(id);
@@ -741,7 +654,8 @@ function closeSB(){G('sidebar').classList.remove('open');G('sov').classList.remo
 function cm(id){G(id).classList.add('hidden')}
 function rte(cmd,val=null){G('aula-cont').focus();document.execCommand(cmd,false,val)}
 function togglePw(id,btn){const el=G(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈'}
-let _tt;function toast(msg,t='green'){const el=G('toast');el.textContent=msg;el.style.borderColor=t==='green'?'var(--grn)':t==='red'?'var(--red)':'var(--yel)';el.style.color=t==='green'?'var(--grn)':t==='red'?'var(--red)':'var(--yel)';el.classList.remove('hidden');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.add('hidden'),4500)}
+let _tt;
+function toast(msg,t='green'){const el=G('toast');el.textContent=msg;el.style.borderColor=t==='green'?'var(--grn)':t==='red'?'var(--red)':'var(--yel)';el.style.color=t==='green'?'var(--grn)':t==='red'?'var(--red)':'var(--yel)';el.classList.remove('hidden');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.add('hidden'),4500)}
 function xpPop(txt){const d=document.createElement('div');d.className='xpp';d.textContent=txt;d.style.cssText=`top:${window.innerHeight/2-60}px;left:50%;transform:translateX(-50%)`;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 function verImg(url){G('imgfs-src').src=url;G('imgfs').classList.remove('hidden')}
 function showSec(id){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));G(id).classList.add('on')}
@@ -749,52 +663,31 @@ function setNav(id){document.querySelectorAll('.ni').forEach(n=>n.classList.remo
 function nav(s,n,fn){closeSB();showSec(s);setNav(n);if(fn)fn()}
 document.querySelectorAll('.mov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden')}));
 
-/* ══ SUPABASE DATA ══ */
+/* ══ DADOS ══ */
 async function loadAllData(){
-  const pid=S.prof?.id;
-  const isAdmin=S.prof?.is_admin;
-  const isAluno=S.user?.tipo==='aluno';
-
-  // Regra de visibilidade:
-  // • Aluno       → vê TUDO (todos os professores) — filtra por turma na renderização
-  // • Professor   → vê só os próprios dados (professor_id = pid)
-  // • Admin       → vê tudo
-  const verTudo = isAluno || isAdmin;
-
-  const q=(tabela,order='criada_em')=> verTudo
-    ? sb.from(tabela).select('*').order(order,{ascending:false})
-    : sb.from(tabela).select('*').eq('professor_id',pid).order(order,{ascending:false});
-
-  const safe = async (promise) => {
-    try { const r = await promise; return r.error ? {data:[]} : r; }
-    catch(e){ console.warn('query falhou:', e); return {data:[]}; }
-  };
-
-  const [r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10] = await Promise.all([
-    safe(q('provas')),
+  const safe=async(p)=>{try{const r=await p;return r.error?{data:[]}:r}catch(e){return{data:[]}}};
+  const[r0,r1,r2,r3,r4,r5,r6,r7,r8,r9]=await Promise.all([
+    safe(sb.from('provas').select('*').order('criada_em',{ascending:false})),
     safe(sb.from('alunos').select('*').order('nome',{ascending:true})),
     safe(sb.from('respostas').select('*')),
-    safe(q('aulas')),
-    safe(q('exercicios')),
+    safe(sb.from('aulas').select('*').order('criada_em',{ascending:false})),
+    safe(sb.from('exercicios').select('*').order('criada_em',{ascending:false})),
     safe(sb.from('respostas_exercicios').select('*')),
-    safe(q('trilhas')),
+    safe(sb.from('trilhas').select('*').order('criada_em',{ascending:false})),
     safe(sb.from('progresso_trilha').select('*')),
     safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
-    safe(sb.from('aulas_configuracao').select('*')),
-    safe(sb.from('professores').select('id,nome,email,is_admin,ativo,criado_em,ultimo_acesso'))
+    safe(sb.from('aulas_configuracao').select('*'))
   ]);
-
-  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,profId:p.professor_id}));
+  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em,profId:x.professor_id}));
-  S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em,profId:x.professor_id}));
+  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),criadaEm:x.criada_em}));
+  S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em}));
   S.respostasEx=r5.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.trilhas=r6.data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em,profId:t.professor_id}));
+  S.trilhas=r6.data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em}));
   S.progresso=r7.data.map(p=>({id:p.id,trilhaId:p.trilha_id,alunoRA:p.aluno_ra,concluidas:A(p.aulas_concluidas),xp:p.xp||0,nivel:p.nivel||1}));
   S.frequencia=r8.data.map(f=>({id:f.id,alunoRA:f.aluno_ra,alunoNome:f.aluno_nome,alunoTurma:f.aluno_turma,data:f.data,presente:f.presente}));
   S.aulasConf=r9.data.map(x=>({id:x.id,data:x.data,turma:x.turma,qtd:x.quantidade_aulas}));
-  S.professores=r10.data;
 }
 async function reload(){shl('Atualizando...');try{await loadAllData()}catch(e){console.error(e)}hhl()}
 
@@ -817,39 +710,19 @@ function setTab(t){
   G('lf-aluno').classList.toggle('hidden',t!=='aluno');
   G('lerr').classList.add('hidden');
 }
+/* dados do aluno aguardando troca de senha */
+let _recAluno=null;
+
 async function doLogin(){
   const errEl=G('lerr'),btn=G('btn-login');
-  errEl.classList.add('hidden');btn.disabled=true;btn.textContent='Entrando...';
+  errEl.classList.add('hidden');G('box-rec').classList.add('hidden');
+  btn.disabled=true;btn.textContent='Entrando...';
   try{
     if(loginTab==='prof'){
-      const email=G('lp-em').value.trim().toLowerCase();
-      const senha=G('lp-pw').value.trim();
-      if(!email||!senha){errEl.textContent='Preencha e-mail e senha.';errEl.classList.remove('hidden');return}
-      shl('Verificando...');
-      // Primeiro verifica se a tabela professores existe
-      const{data:prof,error}=await sb.from('professores').select('*').eq('email',email).eq('senha_hash',senha).eq('ativo',true).maybeSingle();
-      if(error){
-        hhl();
-        // Erro de tabela não encontrada
-        if(error.code==='42P01'||error.message?.includes('does not exist')){
-          errEl.innerHTML='⚠️ Tabela "professores" não encontrada no banco.<br><small>Execute o SQL de configuração no Supabase e tente novamente.</small>';
-        } else {
-          errEl.textContent=`Erro ao acessar banco: ${error.message}`;
-        }
-        errEl.classList.remove('hidden');return;
-      }
-      if(!prof){
-        hhl();
-        // Verifica se o email existe mas a senha está errada
-        const{data:existe}=await sb.from('professores').select('id,ativo').eq('email',email).maybeSingle();
-        if(!existe) errEl.textContent='E-mail não encontrado. Verifique ou peça ao administrador para cadastrar seu acesso.';
-        else if(existe&&!existe.ativo) errEl.textContent='Sua conta está desativada. Fale com o administrador.';
-        else errEl.textContent='Senha incorreta.';
-        errEl.classList.remove('hidden');return;
-      }
-      S.prof=prof;
-      S.user={tipo:'professor',nome:prof.nome,turma:null,ra:prof.id,isAdmin:prof.is_admin};
-      await sb.from('professores').update({ultimo_acesso:new Date().toISOString()}).eq('id',prof.id);
+      const u=G('lp-u').value.trim(),p=G('lp-p').value.trim();
+      if(!u||!p){errEl.textContent='Preencha usuário e senha.';errEl.classList.remove('hidden');return}
+      if(u!=='professor'||p!=='1234'){errEl.textContent='Usuário ou senha incorretos.';errEl.classList.remove('hidden');return}
+      S.user={tipo:'professor',nome:'Professor(a)',turma:null,ra:'prof'};
     }else{
       const turma=G('la-tu').value,nome=G('la-nm').value.trim(),senha=G('la-pw').value.trim();
       if(!turma||!nome||!senha){errEl.textContent='Preencha todos os campos.';errEl.classList.remove('hidden');return}
@@ -857,28 +730,92 @@ async function doLogin(){
       const alunoId=nome.toLowerCase().replace(/\s+/g,'.')+'_'+turma;
       const{data:ex,error:e1}=await sb.from('alunos').select('*').eq('aluno_id',alunoId).maybeSingle();
       if(e1)throw e1;
-      if(ex){if(ex.senha!==senha){hhl();errEl.textContent='Senha incorreta.';errEl.classList.remove('hidden');return}S.user={tipo:'aluno',nome:ex.nome,turma:ex.turma,ra:ex.aluno_id}}
-      else{const{error:e2}=await sb.from('alunos').insert({aluno_id:alunoId,nome,turma,senha});if(e2)throw e2;S.user={tipo:'aluno',nome,turma,ra:alunoId}}
-      S.prof=null;
+      if(ex){
+        if(ex.senha!==senha){
+          // ── Senha errada: mostra o box de recuperação ──
+          hhl();
+          _recAluno={id:ex.aluno_id,nome:ex.nome,turma:ex.turma};
+          G('rec-nome-label').textContent=ex.nome;
+          ['rec-nova','rec-conf'].forEach(id=>G(id).value='');
+          G('rec-err').classList.add('hidden');
+          G('rec-p1').classList.remove('hidden');
+          G('rec-p2').classList.add('hidden');
+          G('box-rec').classList.remove('hidden');
+          // Rola suavemente até o box
+          setTimeout(()=>G('box-rec').scrollIntoView({behavior:'smooth',block:'center'}),100);
+          errEl.textContent='Senha incorreta. Veja abaixo para cadastrar uma nova senha.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        S.user={tipo:'aluno',nome:ex.nome,turma:ex.turma,ra:ex.aluno_id};
+      }else{
+        // Novo aluno — cria conta
+        const{error:e2}=await sb.from('alunos').insert({aluno_id:alunoId,nome,turma,senha});
+        if(e2)throw e2;
+        S.user={tipo:'aluno',nome,turma,ra:alunoId};
+      }
     }
-    shl('Carregando dados...');await loadAllData();
+    shl('Carregando dados...');
+    await loadAllData();
     if(S.user.tipo==='aluno')await registrarFreq();
     hhl();
     G('scr-login').classList.add('hidden');G('scr-app').classList.remove('hidden');
     initApp();
-  }catch(e){
-    hhl();
-    errEl.textContent=`Erro inesperado: ${e.message||JSON.stringify(e)}`;
-    errEl.classList.remove('hidden');
-    console.error('Login error:',e);
-  }
+  }catch(e){hhl();errEl.textContent=`Erro: ${e.message||'tente novamente'}`;errEl.classList.remove('hidden');console.error(e)}
   finally{btn.disabled=false;btn.textContent='Entrar →'}
 }
+
+function fecharRec(){
+  G('box-rec').classList.add('hidden');
+  _recAluno=null;
+  ['rec-nova','rec-conf'].forEach(id=>G(id).value='');
+  G('rec-err').classList.add('hidden');
+}
+
+async function salvarNovaSenha(){
+  if(!_recAluno)return;
+  const nova=G('rec-nova').value.trim();
+  const conf=G('rec-conf').value.trim();
+  const errEl=G('rec-err');
+  errEl.classList.add('hidden');
+
+  if(!nova||!conf){errEl.textContent='Preencha os dois campos.';errEl.classList.remove('hidden');return}
+  if(nova.length<4){errEl.textContent='A senha deve ter pelo menos 4 caracteres.';errEl.classList.remove('hidden');return}
+  if(nova!==conf){errEl.textContent='As senhas não coincidem.';errEl.classList.remove('hidden');return}
+
+  const btn=G('btn-salvar-rec');btn.disabled=true;btn.textContent='Salvando...';
+  try{
+    const{error}=await sb.from('alunos').update({senha:nova}).eq('aluno_id',_recAluno.id);
+    if(error)throw error;
+
+    // Mostra sucesso
+    G('rec-p1').classList.add('hidden');
+    G('rec-p2').classList.remove('hidden');
+    G('lerr').classList.add('hidden');
+
+    // Faz login automático após 1.5s
+    setTimeout(async()=>{
+      shl('Carregando dados...');
+      S.user={tipo:'aluno',nome:_recAluno.nome,turma:_recAluno.turma,ra:_recAluno.id};
+      await loadAllData();
+      await registrarFreq();
+      hhl();
+      G('scr-login').classList.add('hidden');G('scr-app').classList.remove('hidden');
+      G('box-rec').classList.add('hidden');
+      _recAluno=null;
+      initApp();
+    },1500);
+  }catch(e){
+    errEl.textContent=`Erro ao salvar: ${e.message}`;
+    errEl.classList.remove('hidden');
+    btn.disabled=false;btn.textContent='✅ Salvar Nova Senha';
+  }
+}
 function doLogout(){
-  S={user:null,prof:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[],trilhas:[],progresso:[],frequencia:[],aulasConf:[],professores:[]};
+  S={user:null,provas:[],alunos:[],respostas:[],aulas:[],exercicios:[],respostasEx:[],trilhas:[],progresso:[],frequencia:[],aulasConf:[]};
   G('scr-login').classList.remove('hidden');G('scr-app').classList.add('hidden');
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
-  ['lp-em','lp-pw','la-nm','la-pw'].forEach(id=>G(id).value='');
+  ['lp-u','lp-p','la-nm','la-pw'].forEach(id=>G(id).value='');
   G('la-tu').value='';closeSB();
 }
 
@@ -888,35 +825,22 @@ function initApp(){
   G('sb-av').textContent=u.nome[0].toUpperCase();
   G('sb-nm').textContent=u.nome;
   const rl=G('sb-rl');
-  if(u.tipo==='professor'){
-    if(u.isAdmin){rl.textContent='👑 Admin';rl.style.cssText='background:rgba(251,146,60,.12);color:var(--org)'}
-    else{rl.textContent='Professor';rl.style.cssText='background:rgba(79,124,255,.12);color:var(--acc)'}
-    G('btn-conta').classList.remove('hidden');
-    buildProfNav();nav('sec-dash','ni-dash',renderDashboard);
-  }else{
-    rl.textContent=u.turma;rl.style.cssText='background:rgba(167,139,250,.12);color:var(--acc2)';
-    G('btn-conta').classList.add('hidden');
-    buildAlunoNav();nav('sec-a-trilhas','ni-tri-a',renderAlunoTrilhas);
-  }
+  if(u.tipo==='professor'){rl.textContent='Professor';rl.style.cssText='background:rgba(79,124,255,.12);color:var(--acc)';buildProfNav();nav('sec-dash','ni-dash',renderDashboard)}
+  else{rl.textContent=u.turma;rl.style.cssText='background:rgba(167,139,250,.12);color:var(--acc2)';buildAlunoNav();nav('sec-a-trilhas','ni-tri-a',renderAlunoTrilhas)}
 }
-
-function buildProfNav(){
-  const adm=S.user?.isAdmin;
-  G('snav').innerHTML=`
-    <div class="nlbl">Principal</div>
-    <div class="ni" id="ni-dash" onclick="nav('sec-dash','ni-dash',renderDashboard)"><span class="ic">🏠</span>Dashboard</div>
-    ${adm?`<div class="ni" id="ni-admin" onclick="nav('sec-admin','ni-admin',()=>reload().then(renderAdmin))"><span class="ic">👑</span>Professores</div>`:''}
-    <div class="nlbl">Conteúdo</div>
-    <div class="ni" id="ni-aulas" onclick="nav('sec-aulas','ni-aulas',()=>reload().then(renderAulasProfessor))"><span class="ic">📖</span>Aulas</div>
-    <div class="ni" id="ni-trilhas" onclick="nav('sec-trilhas','ni-trilhas',()=>reload().then(renderTrilhasProfessor))"><span class="ic">🚀</span>Trilhas</div>
-    <div class="nlbl">Avaliações</div>
-    <div class="ni" id="ni-np" onclick="irNovaProva()"><span class="ic">➕</span>Nova Prova</div>
-    <div class="ni" id="ni-provas" onclick="nav('sec-provas','ni-provas',()=>reload().then(renderProvas))"><span class="ic">📋</span>Provas</div>
-    <div class="ni" id="ni-res" onclick="nav('sec-resultados','ni-res',()=>reload().then(renderResultados))"><span class="ic">📊</span>Resultados</div>
-    <div class="nlbl">Gestão</div>
-    <div class="ni" id="ni-freq" onclick="nav('sec-freq','ni-freq',()=>reload().then(renderFreq))"><span class="ic">📅</span>Frequência</div>
-    <div class="ni" id="ni-turmas" onclick="nav('sec-turmas','ni-turmas',()=>reload().then(renderTurmas))"><span class="ic">🏫</span>Turmas</div>`;
-}
+function buildProfNav(){G('snav').innerHTML=`
+  <div class="nlbl">Principal</div>
+  <div class="ni" id="ni-dash" onclick="nav('sec-dash','ni-dash',renderDashboard)"><span class="ic">🏠</span>Dashboard</div>
+  <div class="nlbl">Conteúdo</div>
+  <div class="ni" id="ni-aulas" onclick="nav('sec-aulas','ni-aulas',()=>reload().then(renderAulasProfessor))"><span class="ic">📖</span>Aulas</div>
+  <div class="ni" id="ni-trilhas" onclick="nav('sec-trilhas','ni-trilhas',()=>reload().then(renderTrilhasProfessor))"><span class="ic">🚀</span>Trilhas</div>
+  <div class="nlbl">Avaliações</div>
+  <div class="ni" id="ni-np" onclick="irNovaProva()"><span class="ic">➕</span>Nova Prova</div>
+  <div class="ni" id="ni-provas" onclick="nav('sec-provas','ni-provas',()=>reload().then(renderProvas))"><span class="ic">📋</span>Provas</div>
+  <div class="ni" id="ni-res" onclick="nav('sec-resultados','ni-res',()=>reload().then(renderResultados))"><span class="ic">📊</span>Resultados</div>
+  <div class="nlbl">Gestão</div>
+  <div class="ni" id="ni-freq" onclick="nav('sec-freq','ni-freq',()=>reload().then(renderFreq))"><span class="ic">📅</span>Frequência</div>
+  <div class="ni" id="ni-turmas" onclick="nav('sec-turmas','ni-turmas',()=>reload().then(renderTurmas))"><span class="ic">🏫</span>Turmas</div>`}
 function buildAlunoNav(){G('snav').innerHTML=`
   <div class="nlbl">Aprender</div>
   <div class="ni" id="ni-tri-a" onclick="nav('sec-a-trilhas','ni-tri-a',()=>reload().then(renderAlunoTrilhas))"><span class="ic">🚀</span>Trilhas</div>
@@ -925,97 +849,8 @@ function buildAlunoNav(){G('snav').innerHTML=`
   <div class="ni" id="ni-pv-a" onclick="nav('sec-a-provas','ni-pv-a',()=>reload().then(renderAlunoProvas))"><span class="ic">📝</span>Provas</div>
   <div class="ni" id="ni-nt-a" onclick="nav('sec-a-notas','ni-nt-a',()=>reload().then(renderAlunoNotas))"><span class="ic">🏆</span>Notas</div>`}
 
-/* ══ MINHA CONTA ══ */
-function showMinhaConta(){
-  const p=S.prof;G('mc-nm').value=p.nome||'';G('mc-em').value=p.email||'';
-  ['mc-at','mc-nv','mc-cf'].forEach(id=>G(id).value='');G('mc-err').classList.add('hidden');
-  G('m-conta').classList.remove('hidden');
-}
-async function salvarConta(){
-  const nome=G('mc-nm').value.trim(),at=G('mc-at').value.trim(),nv=G('mc-nv').value.trim(),cf=G('mc-cf').value.trim();
-  const err=G('mc-err');err.classList.add('hidden');
-  if(!nome){err.textContent='Nome não pode ser vazio.';err.classList.remove('hidden');return}
-  const upd={nome};
-  if(nv||at){
-    if(!at){err.textContent='Informe a senha atual.';err.classList.remove('hidden');return}
-    if(at!==S.prof.senha_hash){err.textContent='Senha atual incorreta.';err.classList.remove('hidden');return}
-    if(nv.length<6){err.textContent='Nova senha mínima de 6 caracteres.';err.classList.remove('hidden');return}
-    if(nv!==cf){err.textContent='As senhas não coincidem.';err.classList.remove('hidden');return}
-    upd.senha_hash=nv;
-  }
-  shl('Salvando...');
-  try{const{error}=await sb.from('professores').update(upd).eq('id',S.prof.id);if(error)throw error;S.prof={...S.prof,...upd};S.user.nome=nome;G('sb-av').textContent=nome[0].toUpperCase();G('sb-nm').textContent=nome;hhl();cm('m-conta');toast('✅ Conta atualizada!','green')}
-  catch(e){hhl();err.textContent=`Erro: ${e.message}`;err.classList.remove('hidden')}
-}
-
-/* ══ ADMIN: GESTÃO DE PROFESSORES ══ */
-let editProfId=null;
-function abrirNovoProfessor(){
-  editProfId=null;G('m-prof-t').textContent='Novo Professor';G('btn-sv-prof').textContent='💾 Criar Professor';
-  G('pr-pw-hint').textContent='(obrigatória para novo professor)';
-  ['pr-nm','pr-em','pr-pw'].forEach(id=>G(id).value='');G('pr-adm').checked=false;
-  G('m-prof-err').classList.add('hidden');G('m-prof').classList.remove('hidden');
-}
-function editarProfessor(id){
-  const p=S.professores.find(x=>x.id===id);if(!p)return;
-  editProfId=id;G('m-prof-t').textContent='Editar Professor';G('btn-sv-prof').textContent='💾 Salvar';
-  G('pr-pw-hint').textContent='(deixe em branco para manter)';
-  G('pr-nm').value=p.nome;G('pr-em').value=p.email;G('pr-pw').value='';G('pr-adm').checked=!!p.is_admin;
-  G('m-prof-err').classList.add('hidden');G('m-prof').classList.remove('hidden');
-}
-async function salvarProfessor(){
-  const nome=G('pr-nm').value.trim(),email=G('pr-em').value.trim().toLowerCase(),senha=G('pr-pw').value.trim(),isAdm=G('pr-adm').checked;
-  const err=G('m-prof-err');err.classList.add('hidden');
-  if(!nome||!email){err.textContent='Nome e e-mail são obrigatórios.';err.classList.remove('hidden');return}
-  if(!editProfId&&senha.length<6){err.textContent='Senha mínima de 6 caracteres.';err.classList.remove('hidden');return}
-  shl('Salvando...');
-  try{
-    if(editProfId){
-      const upd={nome,is_admin:isAdm};if(senha)upd.senha_hash=senha;
-      const{error}=await sb.from('professores').update(upd).eq('id',editProfId);if(error)throw error;
-    }else{
-      const{data:ex}=await sb.from('professores').select('id').eq('email',email).maybeSingle();
-      if(ex){hhl();err.textContent='E-mail já cadastrado.';err.classList.remove('hidden');return}
-      const{error}=await sb.from('professores').insert({id:`prof-${Date.now()}`,nome,email,senha_hash:senha,is_admin:isAdm,ativo:true,criado_em:new Date().toISOString()});
-      if(error)throw error;
-    }
-    await loadAllData();hhl();cm('m-prof');renderAdmin();toast('✅ Professor salvo!','green');
-  }catch(e){hhl();err.textContent=`Erro: ${e.message}`;err.classList.remove('hidden')}
-}
-async function toggleAtivo(id,ativo){
-  shl('Atualizando...');
-  try{await sb.from('professores').update({ativo:!ativo}).eq('id',id);await loadAllData();renderAdmin();toast(ativo?'Professor desativado':'Professor ativado','green')}
-  catch(e){toast('❌ Erro.','red')}finally{hhl()}
-}
-function renderAdmin(){
-  const el=G('admin-lista');
-  if(!S.professores.length){el.innerHTML='<div class="es"><div class="ei">👤</div><div class="et">Nenhum professor</div></div>';return}
-  el.innerHTML=S.professores.map(p=>{
-    const isMe=p.id===S.prof?.id;
-    const cor=p.is_admin?'linear-gradient(135deg,var(--org),var(--yel))':'linear-gradient(135deg,var(--acc),var(--acc2))';
-    return`<div class="prof-card">
-      <div class="prof-av" style="background:${cor}">${p.nome[0].toUpperCase()}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:15px">${p.nome} ${isMe?'<span class="badge bp" style="font-size:10px">Você</span>':''}</div>
-        <div class="mut sm">${p.email}</div>
-        <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
-          ${p.is_admin?'<span class="admin-tag">👑 Admin</span>':'<span class="badge bb">Professor</span>'}
-          <span class="badge ${p.ativo?'bg':'br'}">${p.ativo?'Ativo':'Inativo'}</span>
-          ${p.ultimo_acesso?`<span class="badge" style="background:var(--surf2);color:var(--mut)">Último acesso: ${new Date(p.ultimo_acesso).toLocaleDateString('pt-BR')}</span>`:''}
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-        <button class="btn btn-sec btn-sm" onclick="editarProfessor('${p.id}')">✏️ Editar</button>
-        ${!isMe?`<button class="btn ${p.ativo?'btn-dan':'btn-grn'} btn-sm" onclick="toggleAtivo('${p.id}',${p.ativo})">${p.ativo?'Desativar':'Ativar'}</button>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
 /* ══ DASHBOARD ══ */
 function renderDashboard(){
-  const nomeProf=S.user?.nome||'';
-  G('dash-sub').textContent=S.user?.isAdmin?'Visão geral da plataforma':`Seus dados — ${nomeProf}`;
   const freqHoje=S.frequencia.filter(f=>f.data===today()).length;
   G('dash-stats').innerHTML=`
     <div class="sc"><div class="slbl">Trilhas</div><div class="sv">${S.trilhas.length}</div></div>
@@ -1030,11 +865,7 @@ function renderDashboard(){
 
 /* ══ TURMAS CHECK ══ */
 const SS={};
-function buildTC(gid,hid,key,init=new Set()){
-  SS[key]=new Set(init);
-  G(gid).innerHTML=TURMAS.map(t=>`<div class="tci${SS[key].has(t)?' on':''}" id="${gid}${t}" onclick="togTC('${gid}','${hid}','${key}','${t}')"><span>${t}</span></div>`).join('');
-  updH(hid,key);
-}
+function buildTC(gid,hid,key,init=new Set()){SS[key]=new Set(init);G(gid).innerHTML=TURMAS.map(t=>`<div class="tci${SS[key].has(t)?' on':''}" id="${gid}${t}" onclick="togTC('${gid}','${hid}','${key}','${t}')"><span>${t}</span></div>`).join('');updH(hid,key)}
 function togTC(gid,hid,key,t){SS[key].has(t)?SS[key].delete(t):SS[key].add(t);G(`${gid}${t}`).classList.toggle('on',SS[key].has(t));updH(hid,key)}
 function updH(hid,key){const h=G(hid);if(!SS[key]?.size){h.textContent='Nenhuma turma selecionada';h.style.color='var(--mut)'}else{h.textContent=`✅ ${[...SS[key]].join(', ')}`;h.style.color='var(--grn)'}}
 
@@ -1070,7 +901,7 @@ function expResultados(){
   let res=[...S.respostas];if(ft)res=res.filter(r=>r.alunoTurma===ft);if(fp)res=res.filter(r=>r.provaId===fp);
   const hdr=['Aluno','Turma','Prova','Disciplina','Acertos','Total','Nota','Máximo','Status','Data'];
   const rows=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return[];const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return[r.alunoNome,r.alunoTurma,p.titulo,p.disciplina,r.acertos,p.questoes.length,r.nota.toFixed(1),mx.toFixed(1),ok?'Aprovado':'Reprovado',r.entregueEm||'']}).filter(r=>r.length);
-  csvDL(`resultados.csv`,[hdr,...rows]);
+  csvDL('resultados.csv',[hdr,...rows]);
 }
 function csvDL(fn,rows){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')],{type:'text/csv;charset=utf-8;'}));a.download=fn;a.click();toast('📥 CSV exportado!','green')}
 
@@ -1124,118 +955,33 @@ function abrirConfAulas(){G('ca-dt').value=today();G('ca-q').value=1;G('m-conf-a
 async function salvarConfAulas(){
   const turma=G('ca-tu').value,data=G('ca-dt').value,qtd=parseInt(G('ca-q').value)||1;
   if(!data)return toast('⚠️ Informe a data!','yellow');
-  shl('Salvando...');
-  try{await sb.from('aulas_configuracao').upsert({id:`${data}_${turma}`,data,turma,quantidade_aulas:qtd,professor_id:S.prof?.id},{onConflict:'data,turma'});await loadAllData();cm('m-conf-aulas');renderFreq();toast('✅ Configuração salva!','green')}
-  catch(e){toast('❌ Erro.','red')}finally{hhl()}
+  shl('Salvando...');try{await sb.from('aulas_configuracao').upsert({id:`${data}_${turma}`,data,turma,quantidade_aulas:qtd},{onConflict:'data,turma'});await loadAllData();cm('m-conf-aulas');renderFreq();toast('✅ Configuração salva!','green')}catch(e){toast('❌ Erro.','red')}finally{hhl()}
 }
 
 /* ══ QUESTÕES ══ */
 const QD={};
-
-// Múltipla escolha
-function addQMult(key,cid){
-  if(!QD[key])QD[key]=[];
-  const idx=QD[key].length;
-  const q={tipo:'mult',enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null};
-  QD[key].push(q);_rQ(key,cid,idx,q);
-}
-// Discursiva
-function addQDisc(key,cid){
-  if(!QD[key])QD[key]=[];
-  const idx=QD[key].length;
-  const q={tipo:'disc',enunciado:'',gabarito:'',imagemUrl:null};
-  QD[key].push(q);_rQDisc(key,cid,idx,q);
-}
-// Compatibilidade: addQ antiga → múltipla
-function addQ(key,cid){addQMult(key,cid)}
-
+function addQ(key,cid){if(!QD[key])QD[key]=[];const idx=QD[key].length;const q={enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null};QD[key].push(q);_rQ(key,cid,idx,q)}
 function _rQ(key,cid,idx,q){
   const L=['A','B','C','D'];const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
-  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><span class="qtype-tag qtype-mult">Múltipla escolha</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
+  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
     <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
     <label class="fl">Imagem (opcional)</label>
-    <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}</div>
+    <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`}</div>
     <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
     <ul class="ol-l">${L.map((l,oi)=>`<li class="oi"><div class="oltr${q.correta===oi?' ok':''}" id="ol-${key}-${idx}-${oi}" onclick="setC('${key}',${idx},${oi})">${l}</div><input class="fi" style="flex:1" placeholder="Alt. ${l}..." oninput="QD['${key}'][${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}"></li>`).join('')}</ul>
-    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCD'[q.correta]}`:'⬆ Clique na letra para marcar a resposta correta'}</div>`;
+    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCD'[q.correta]}`:'⬆ Clique na letra para marcar a correta'}</div>`;
   G(cid).appendChild(div);
 }
-
-function _rQDisc(key,cid,idx,q){
-  const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
-  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><span class="qtype-tag qtype-disc">✏️ Discursiva</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
-    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado / Pergunta</label><input class="fi" placeholder="Digite a pergunta discursiva..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
-    <label class="fl">Imagem (opcional)</label>
-    <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}</div>
-    <div class="fg" style="margin-top:12px"><label class="fl">Gabarito / Resposta esperada <span class="mut xs">(visível só para o professor)</span></label><textarea class="fi" style="min-height:80px;resize:vertical;line-height:1.6" placeholder="Resposta esperada (referência para correção manual)..." oninput="QD['${key}'][${idx}].gabarito=this.value">${(q.gabarito||'').replace(/</g,'&lt;')}</textarea></div>
-    <div class="sm mt1" style="color:var(--acc2)">✏️ Questão discursiva — o aluno digita a resposta. Correção manual pelo professor.</div>`;
-  G(cid).appendChild(div);
-}
-
 function setC(key,qi,oi){QD[key][qi].correta=oi;['A','B','C','D'].forEach((_,i)=>G(`ol-${key}-${qi}-${i}`).classList.toggle('ok',i===oi));const h=G(`qh-${key}-${qi}`);h.textContent=`✅ Correta: ${'ABCD'[oi]}`;h.style.color='var(--grn)'}
 function rmQ(key,cid,idx){QD[key].splice(idx,1);rebQ(key,cid)}
-function rebQ(key,cid){
-  G(cid).innerHTML='';const c=[...QD[key]];QD[key]=[];
-  c.forEach((q,i)=>{
-    if(q.tipo==='disc'){QD[key].push({...q});_rQDisc(key,cid,i,q);}
-    else{QD[key].push({...q,opcoes:[...q.opcoes]});_rQ(key,cid,i,q);}
-  });
-}
-async function hIQ(event,key,idx){const file=event.target.files[0];if(!file)return;if(file.size>5*1024*1024){toast('⚠️ > 5MB!','yellow');return}const wrap=G(`imgw-${key}-${idx}`);wrap.innerHTML=`<div class="upl-spin"><div class="usp"></div>Enviando...</div>`;try{const url=await uploadImg(file,'q');QD[key][idx].imagemUrl=url;wrap.innerHTML=`<div class="ipw"><img class="ipv" src="${url}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`;toast('🖼 Enviada!','green')}catch(e){wrap.innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`;toast('❌ Erro.','red')}}
-async function rmIQ(key,idx){const url=QD[key][idx].imagemUrl;if(url)await removeImg(url);QD[key][idx].imagemUrl=null;G(`imgw-${key}-${idx}`).innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong> para imagem</div></div>`}
+function rebQ(key,cid){G(cid).innerHTML='';const c=[...QD[key]];QD[key]=[];c.forEach((q,i)=>{QD[key].push({...q,opcoes:[...q.opcoes]});_rQ(key,cid,i,q)})}
+async function hIQ(event,key,idx){const file=event.target.files[0];if(!file)return;if(file.size>5*1024*1024){toast('⚠️ > 5MB!','yellow');return}const wrap=G(`imgw-${key}-${idx}`);wrap.innerHTML=`<div class="upl-spin"><div class="usp"></div>Enviando...</div>`;try{const url=await uploadImg(file,'q');QD[key][idx].imagemUrl=url;wrap.innerHTML=`<div class="ipw"><img class="ipv" src="${url}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`;toast('🖼 Enviada!','green')}catch(e){wrap.innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`;toast('❌ Erro.','red')}}
+async function rmIQ(key,idx){const url=QD[key][idx].imagemUrl;if(url)await removeImg(url);QD[key][idx].imagemUrl=null;G(`imgw-${key}-${idx}`).innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`}
 
 /* ══ AULAS ══ */
-let editAulaId=null,aulaImgs=[],aulaVideos=[];
-
-function ytId(url){
-  if(!url)return null;
-  const m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
-  return m?m[1]:null;
-}
-function addVideo(){
-  const inp=G('yt-input'),url=inp.value.trim();
-  if(!url)return;
-  const vid=ytId(url);
-  if(!vid){toast('⚠️ Link inválido. Use um link do YouTube válido.','yellow');return}
-  if(aulaVideos.includes(vid)){toast('⚠️ Vídeo já adicionado!','yellow');return}
-  aulaVideos.push(vid);inp.value='';rAV();toast('🎥 Vídeo adicionado!','green');
-}
-function rmVideo(idx){aulaVideos.splice(idx,1);rAV()}
-function rAV(){
-  const el=G('aula-videos');
-  if(!aulaVideos.length){el.innerHTML='';return}
-  el.innerHTML=aulaVideos.map((vid,i)=>`
-    <div class="yt-wrap">
-      <div class="yt-iframe-wrap">
-        <iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen loading="lazy" title="Vídeo ${i+1}"></iframe>
-      </div>
-      <div class="yt-bar">
-        <span class="yt-title">🎥 youtube.com/watch?v=${vid}</span>
-        <button class="btn btn-dan btn-sm" onclick="rmVideo(${i})">🗑 Remover</button>
-      </div>
-    </div>`).join('');
-}
-
-function irNovaAula(){
-  editAulaId=null;aulaImgs=[];aulaVideos=[];
-  G('form-aula-tit').textContent='Nova Aula';G('btn-sv-aula').textContent='💾 Salvar Aula';
-  ['aula-t','aula-d'].forEach(id=>G(id).value='');
-  G('aula-cont').innerHTML='';G('yt-input').value='';
-  buildTC('tcg-aula','th-aula','aula');rAI();rAV();
-  G('aula-ex-card').style.display='none';
-  closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
-}
-function editarAula(id){
-  const al=S.aulas.find(x=>x.id===id);if(!al)return;
-  editAulaId=id;aulaImgs=[...al.imagens];aulaVideos=[...(al.videos||[])];
-  G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
-  G('aula-t').value=al.titulo;G('aula-d').value=al.disciplina;
-  G('aula-cont').innerHTML=al.conteudo||'';G('yt-input').value='';
-  buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));
-  rAI();rAV();
-  G('aula-ex-card').style.display='block';rExAula(id);
-  closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
-}
+let editAulaId=null,aulaImgs=[];
+function irNovaAula(){editAulaId=null;aulaImgs=[];G('form-aula-tit').textContent='Nova Aula';G('btn-sv-aula').textContent='💾 Salvar Aula';['aula-t','aula-d'].forEach(id=>G(id).value='');G('aula-cont').innerHTML='';buildTC('tcg-aula','th-aula','aula');rAI();G('aula-ex-card').style.display='none';closeSB();showSec('sec-nova-aula');setNav('ni-aulas')}
+function editarAula(id){const al=S.aulas.find(x=>x.id===id);if(!al)return;editAulaId=id;aulaImgs=[...al.imagens];G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';G('aula-t').value=al.titulo;G('aula-d').value=al.disciplina;G('aula-cont').innerHTML=al.conteudo||'';buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));rAI();G('aula-ex-card').style.display='block';rExAula(id);closeSB();showSec('sec-nova-aula');setNav('ni-aulas')}
 function cancelarAula(){editAulaId=null;showSec('sec-aulas');setNav('ni-aulas');renderAulasProfessor()}
 function rAI(){G('aula-imgs').innerHTML=aulaImgs.map((url,i)=>`<div style="position:relative"><img src="${url}" class="ait" onclick="verImg('${url}')" alt="img"><button class="irm" onclick="rmAImg(${i})">×</button></div>`).join('')}
 async function handleAulaImg(event){for(const file of Array.from(event.target.files)){if(file.size>5*1024*1024){toast('⚠️ > 5MB ignorada.','yellow');continue}shl('Enviando...');try{const url=await uploadImg(file,'aula');aulaImgs.push(url);rAI();toast('🖼 Adicionada!','green')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}event.target.value=''}
@@ -1246,14 +992,11 @@ async function salvarAula(){
   if(!SS['aula']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
   const btn=G('btn-sv-aula');btn.disabled=true;shl('Salvando aula...');
   try{
-    const pid=S.prof?.id;
-    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:pid};
+    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,criada_em:new Date().toLocaleDateString('pt-BR')};
     let sid=editAulaId;
     if(editAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editAulaId);if(error)throw error}
     else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;sid=id}
-    await loadAllData();hhl();editAulaId=sid;
-    G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
-    G('aula-ex-card').style.display='block';rExAula(sid);toast('✅ Aula salva!','green');
+    await loadAllData();hhl();editAulaId=sid;G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';G('aula-ex-card').style.display='block';rExAula(sid);toast('✅ Aula salva!','green');
   }catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 function renderAulasProfessor(){
@@ -1266,56 +1009,16 @@ async function delAula(id){if(!confirm('Excluir aula e exercícios?'))return;shl
 /* ══ EXERCÍCIOS ══ */
 let editExId=null;
 function rExAula(aulaId){const exs=S.exercicios.filter(e=>e.aulaId===aulaId);const el=G('exs-aula');if(!exs.length){el.innerHTML='<div class="mut sm" style="padding:8px 0">Nenhum exercício. Clique em "+ Exercício".</div>';return}el.innerHTML=exs.map(ex=>{const rs=S.respostasEx.filter(r=>r.exercicioId===ex.id).length;return`<div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="mut sm mt1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">${ex.questoes.length} q.</span><span class="badge bg">${rs} entrega${rs!==1?'s':''}</span></div></div><div style="display:flex;gap:5px"><button class="btn btn-warn btn-sm" onclick="editEx('${ex.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delEx('${ex.id}')">🗑</button></div></div></div>`}).join('')}
-function abrirModalEx(){
-  editExId=null;QD['exQ']=[];
-  G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';
-  ['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';
-  G('qcE').innerHTML='';
-  // Começa com 1 questão múltipla escolha
-  addQMult('exQ','qcE');
-  G('m-ex').classList.remove('hidden');
-}
-function editEx(id){
-  const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;
-  editExId=id;QD['exQ']=[];
-  G('m-ex-t').textContent='Editar Exercício';
-  G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;
-  G('qcE').innerHTML='';
-  ex.questoes.forEach((q,i)=>{
-    if(q.tipo==='disc'){
-      QD['exQ'].push({tipo:'disc',enunciado:q.enunciado,gabarito:q.gabarito||'',imagemUrl:q.imagemUrl||null});
-      _rQDisc('exQ','qcE',i,QD['exQ'][i]);
-    }else{
-      QD['exQ'].push({tipo:'mult',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});
-      _rQ('exQ','qcE',i,QD['exQ'][i]);
-    }
-  });
-  G('m-ex').classList.remove('hidden');
-}
+function abrirModalEx(){editExId=null;QD['exQ']=[];G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';G('qcE').innerHTML='';addQ('exQ','qcE');G('m-ex').classList.remove('hidden')}
+function editEx(id){const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;editExId=id;QD['exQ']=[];G('m-ex-t').textContent='Editar Exercício';G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;G('qcE').innerHTML='';ex.questoes.forEach((q,i)=>{QD['exQ'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('exQ','qcE',i,q)});G('m-ex').classList.remove('hidden')}
 async function salvarEx(){
   if(!editAulaId)return toast('⚠️ Salve a aula primeiro!','yellow');
   const titulo=G('ex-t').value.trim(),desc=G('ex-d').value.trim(),pts=parseFloat(G('ex-p').value)||1;
   if(!titulo)return toast('⚠️ Preencha o título!','yellow');
   if(!QD['exQ']?.length)return toast('⚠️ Adicione ao menos uma questão!','yellow');
-  // Valida: múltipla precisa de enunciado + opcoes + correta; discursiva só enunciado
-  const invalid=QD['exQ'].find(q=>{
-    if(!q.enunciado)return true;
-    if(q.tipo==='mult'&&(q.opcoes.some(o=>!o)||q.correta===null))return true;
-    return false;
-  });
-  if(invalid)return toast('⚠️ Preencha todas as questões e marque as respostas corretas nas de múltipla escolha!','yellow');
+  if(QD['exQ'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões e marque as corretas!','yellow');
   const btn=G('btn-sv-ex');btn.disabled=true;shl('Salvando...');
-  try{
-    const aula=S.aulas.find(x=>x.id===editAulaId);
-    const questoes=QD['exQ'].map(q=>{
-      if(q.tipo==='disc')return{tipo:'disc',enunciado:q.enunciado,gabarito:q.gabarito||'',imagemUrl:q.imagemUrl||null};
-      return{tipo:'mult',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null};
-    });
-    const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes,pontos_por_q:pts,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:S.prof?.id};
-    const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});
-    if(error)throw error;
-    await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null;
-  }catch(e){hhl();toast('❌ Erro: '+e.message,'red');console.error(e)}finally{btn.disabled=false}
+  try{const aula=S.aulas.find(x=>x.id===editAulaId);const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes:QD['exQ'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pts,criada_em:new Date().toLocaleDateString('pt-BR')};const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null}catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 async function delEx(id){if(!confirm('Excluir exercício?'))return;shl('Excluindo...');try{const ex=S.exercicios.find(x=>x.id===id);if(ex)for(const q of ex.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas_exercicios').delete().eq('exercicio_id',id);await sb.from('exercicios').delete().eq('id',id);await loadAllData();rExAula(editAulaId);toast('🗑 Removido','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
 
@@ -1345,7 +1048,7 @@ async function salvarTrilha(){
   if(!SS['trilha']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
   if(!triAulas.length)return toast('⚠️ Adicione ao menos uma aula!','yellow');
   const btn=G('btn-sv-tri');btn.disabled=true;shl('Salvando trilha...');
-  try{const payload={titulo,descricao:desc,disciplina:disc,turmas:[...SS['trilha']],ordem_aulas:triAulas,cor,icone,criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:S.prof?.id};const{error}=editTriId?await sb.from('trilhas').update(payload).eq('id',editTriId):await sb.from('trilhas').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();if(editTriId)rTriDash(editTriId);else{editTriId=null;showSec('sec-trilhas');setNav('ni-trilhas');renderTrilhasProfessor()}toast('✅ Trilha salva!','green')}
+  try{const payload={titulo,descricao:desc,disciplina:disc,turmas:[...SS['trilha']],ordem_aulas:triAulas,cor,icone,criada_em:new Date().toLocaleDateString('pt-BR')};const{error}=editTriId?await sb.from('trilhas').update(payload).eq('id',editTriId):await sb.from('trilhas').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();if(editTriId)rTriDash(editTriId);else{editTriId=null;showSec('sec-trilhas');setNav('ni-trilhas');renderTrilhasProfessor()}toast('✅ Trilha salva!','green')}
   catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 function renderTrilhasProfessor(){
@@ -1369,9 +1072,9 @@ async function salvarProva(){
   if(QD['qP'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões!','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toLocaleDateString('pt-BR'),professor_id:S.prof?.id};
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toLocaleDateString('pt-BR')};
     const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
-    if(error){errDiv.className='err-box';errDiv.textContent=`Supabase: ${error.message} (${error.code})`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
+    if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
   }catch(e){hhl();errDiv.className='err-box';errDiv.textContent=`JS: ${e.message}`;errDiv.classList.remove('hidden');toast('❌ Erro.','red')}
   finally{btn.disabled=false}
@@ -1407,12 +1110,8 @@ function verAula(aulaId,isProfessor,triId=null){
   const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');
   const exs=S.exercicios.filter(e=>e.aulaId===aulaId);
   let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><span class="badge bt">${al.disciplina}</span>${ts}<span class="mut sm">${al.criadaEm}</span></div>`;
-  if(al.conteudo)html+=`<div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="ctit">📄 Conteúdo</div><div class="rc-view">${al.conteudo}</div></div>`;
+  if(al.conteudo)html+=`<div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:16px"><div class="ctit">📄 Conteúdo</div><div class="rc-v">${al.conteudo}</div></div>`;
   if(al.imagens?.length){html+=`<div class="ctit">🖼 Imagens</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px">${al.imagens.map(url=>`<img src="${url}" class="ait" onclick="verImg('${url}')" alt="img">`).join('')}</div>`}
-  if(al.videos?.length){
-    html+=`<div class="ctit">🎥 Vídeos</div>`;
-    html+=al.videos.map(vid=>`<div class="yt-wrap" style="margin-bottom:12px"><div class="yt-iframe-wrap"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen loading="lazy" title="Vídeo"></iframe></div></div>`).join('');
-  }
   if(exs.length){
     html+=`<div class="ctit">🏋️ Exercícios</div>`;
     exs.forEach(ex=>{
@@ -1438,7 +1137,7 @@ async function concluirAula(aulaId,triId){
     if(pg)await sb.from('progresso_trilha').update({aulas_concluidas:novasConcl,xp:novoXP,nivel:novoNv,atualizado_em:new Date().toISOString()}).eq('id',pg.id);
     else await sb.from('progresso_trilha').insert({id:Date.now().toString(),trilha_id:triId,aluno_ra:u.ra,aulas_concluidas:novasConcl,xp:novoXP,nivel:novoNv,atualizado_em:new Date().toISOString()});
     await loadAllData();hhl();cm('m-aula');xpPop(`+${XP_AULA} XP ⚡`);
-    if(getNv(novoXP).n>getNv(oldXp).n)setTimeout(()=>toast(`🎉 Subiu para Nível ${novoNv} — ${getNv(novoXP).l} ${getNv(novoXP).e}!`,'green'),800);
+    if(novoNv>getNv(oldXp).n)setTimeout(()=>toast(`🎉 Subiu para Nível ${novoNv} — ${getNv(novoXP).l} ${getNv(novoXP).e}!`,'green'),800);
     else toast('⭐ Aula concluída! XP ganho.','green');
     renderAlunoTrilhas();
   }catch(e){hhl();toast('❌ Erro.','red')}
@@ -1470,42 +1169,18 @@ function renderAlunoTrilhas(){
     </div>`;
   }).join('');
 }
-function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x=>x.id===aid);if(!al)return'';const feita=pg.concluidas.includes(aid);const anterior=i===0||pg.concluidas.includes(t.ordemAulas[i-1]);const isCur=!feita&&anterior;const lck=!feita&&!anterior;const exs=S.exercicios.filter(e=>e.aulaId===aid&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const dotC=feita?'done':isCur?'cur':'lck';const em=feita?'✅':isCur?'📖':'🔒';const ok=feita||isCur;return`<div class="tstep"><div class="tdot ${dotC}" ${ok?`onclick="verAula('${aid}',false,'${t.id}')"`:''} >${em}${feita?'<div class="dck">✓</div>':''}</div><div class="tsc ${feita?'done':isCur?'cur':'lck'}" style="margin-top:6px"><div class="ts-t">${al.titulo}</div><div class="ts-s">${al.disciplina}${exs.length?` · 🏋️ ${exF}/${exs.length}`:''}${feita?' · ✅ Concluída':isCur?' · 📖 Em andamento':' · 🔒 Bloqueada'}</div>${ok?`<button class="btn btn-sm ${feita?'btn-sec':'btn-tel'}" style="margin-top:8px" onclick="verAula('${aid}',false,'${t.id}')">${feita?'📖 Rever':'▶ Acessar'}</button>`:''}</div></div>`}).join('')}
+function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x=>x.id===aid);if(!al)return'';const feita=pg.concluidas.includes(aid);const anterior=i===0||pg.concluidas.includes(t.ordemAulas[i-1]);const isCur=!feita&&anterior,lck=!feita&&!anterior;const exs=S.exercicios.filter(e=>e.aulaId===aid&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const dotC=feita?'done':isCur?'cur':'lck';const em=feita?'✅':isCur?'📖':'🔒';const ok=feita||isCur;return`<div class="tstep"><div class="tdot ${dotC}" ${ok?`onclick="verAula('${aid}',false,'${t.id}')"`:''} >${em}${feita?'<div class="dck">✓</div>':''}</div><div class="tsc ${feita?'done':isCur?'cur':'lck'}" style="margin-top:6px"><div class="ts-t">${al.titulo}</div><div class="ts-s">${al.disciplina}${exs.length?` · 🏋️ ${exF}/${exs.length}`:''}${feita?' · ✅ Concluída':isCur?' · 📖 Em andamento':' · 🔒 Bloqueada'}</div>${ok?`<button class="btn btn-sm ${feita?'btn-sec':'btn-tel'}" style="margin-top:8px" onclick="verAula('${aid}',false,'${t.id}')">${feita?'📖 Rever':'▶ Acessar'}</button>`:''}</div></div>`}).join('')}
 
-/* ══ ALUNO: PROVAS E ATIVIDADES ══ */
+/* ══ PROVA/EXERCÍCIO ALUNO ══ */
 let ativAtiva=null,tipoAtiv=null,triIdAtiv=null,respostasAtiv={};
 function abrirProvaAluno(id){const p=S.provas.find(x=>x.id===id);if(!p)return;ativAtiva=p;tipoAtiv='prova';triIdAtiv=null;respostasAtiv={};G('mf-t').textContent=p.titulo;G('mf-i').textContent=`${p.disciplina} · ${p.questoes.length} q. · ${(p.questoes.length*p.pontosPorQ).toFixed(1)} pts`;rQModal(p.questoes);G('btn-entregar').textContent='📨 Entregar Prova';G('m-fazer').classList.remove('hidden')}
 function abrirEx(exId,aulaId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;respostasAtiv={};G('mf-t').textContent=ex.titulo;G('mf-i').textContent=`${ex.questoes.length} q. · ${(ex.questoes.length*ex.pontosPorQ).toFixed(1)} pts`;rQModal(ex.questoes);G('btn-entregar').textContent='📨 Entregar';G('m-fazer').classList.remove('hidden')}
-function rQModal(qs){
-  const L=['A','B','C','D'];
-  G('mf-b').innerHTML=qs.map((q,qi)=>{
-    const isDisc=q.tipo==='disc';
-    return`<div class="pq">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-        <span style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase">Questão ${qi+1}</span>
-        <span class="qtype-tag ${isDisc?'qtype-disc':'qtype-mult'}">${isDisc?'✏️ Discursiva':'Múltipla escolha'}</span>
-      </div>
-      <div class="pqe">${q.enunciado}</div>
-      ${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}
-      ${isDisc
-        ? `<textarea class="disc-resp" id="disc-${qi}" placeholder="Digite sua resposta aqui..." oninput="respostasAtiv[${qi}]=this.value"></textarea>`
-        : q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')
-      }
-    </div>`;
-  }).join('');
-  G('btn-entregar').disabled=false;
-}
+function rQModal(qs){const L=['A','B','C','D'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
 function selR(qi,oi){ativAtiva.questoes[qi].opcoes.forEach((_,i)=>{const r=G(`ro-${qi}-${i}`),c=G(`rc-${qi}-${i}`);if(r)r.classList.remove('sel');if(c)c.classList.remove('s')});const r=G(`ro-${qi}-${oi}`),c=G(`rc-${qi}-${oi}`);if(r)r.classList.add('sel');if(c)c.classList.add('s');respostasAtiv[qi]=oi}
 async function entregar(){
-  const total=ativAtiva.questoes.length;
-  const multQs=ativAtiva.questoes.filter(q=>q.tipo!=='disc');
-  const respondidas=Object.keys(respostasAtiv).length;
+  const total=ativAtiva.questoes.length,respondidas=Object.keys(respostasAtiv).length;
   if(respondidas<total&&!confirm(`Respondeu ${respondidas} de ${total}. Entregar assim mesmo?`))return;
-  let acertos=0;
-  multQs.forEach((q,_)=>{
-    const qi=ativAtiva.questoes.indexOf(q);
-    if(respostasAtiv[qi]===q.correta)acertos++;
-  });
+  let acertos=0;ativAtiva.questoes.forEach((q,qi)=>{if(respostasAtiv[qi]===q.correta)acertos++});
   const nota=acertos*ativAtiva.pontosPorQ,u=S.user;
   const btn=G('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';shl('Salvando...');
   try{
@@ -1521,67 +1196,21 @@ async function entregar(){
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
 function mostrarResult(reg,atv){
-  const multQs=atv.questoes.filter(q=>q.tipo!=='disc');
-  const discQs=atv.questoes.filter(q=>q.tipo==='disc');
-  const multTotal=multQs.length;
-  const mx=multTotal*atv.pontosPorQ;
-  const ok=reg.nota>=mx*0.6;
-  const pct=multTotal>0?Math.round((reg.acertos/multTotal)*100):100;
-  const L=['A','B','C','D'];
-  const hasDisc=discQs.length>0;
-  let html=`<div class="res-score">
-    <div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div>
-    <div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pts (múltipla escolha)</div>
-    ${hasDisc?`<div style="margin-top:6px;font-size:12px;color:var(--acc2)">✏️ ${discQs.length} questão(ões) discursiva(s) — aguardam correção manual</div>`:''}
-    <div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div>
-    <div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${multTotal} (${pct}%)</div>
-  </div>
+  const total=atv.questoes.length,mx=total*atv.pontosPorQ,ok=reg.nota>=mx*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
+  let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div></div>
   <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:${pct}%"></div></div>
-  <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-    <button class="btn btn-sec btn-sm" onclick="imprimirProva('${atv.id}')">🖨️ Imprimir / PDF</button>
-  </div>
   <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div>`;
   atv.questoes.forEach((q,qi)=>{
     const raw=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)];
-    if(q.tipo==='disc'){
-      const resp=raw||'';
-      html+=`<div class="pq">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-          <span class="qnum" style="background:rgba(167,139,250,.15);color:var(--acc2)">Q${qi+1}</span>
-          <span class="qtype-tag qtype-disc">✏️ Discursiva</span>
-          <span style="font-size:12px;color:var(--acc2)">Aguarda correção</span>
-        </div>
-        <div class="pqe">${q.enunciado}</div>
-        ${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}
-        <div style="background:var(--surf2);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px;line-height:1.6;border:1px solid var(--bdr)">
-          <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Sua resposta:</div>
-          ${resp?`<div>${resp}</div>`:`<div class="mut" style="font-style:italic">Não respondida</div>`}
-        </div>
-        ${q.gabarito?`<div style="background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px"><div style="font-size:11px;color:var(--grn);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Resposta esperada:</div><div>${q.gabarito}</div></div>`:''}
-      </div>`;
-    }else{
-      const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
-      html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
-    }
+    const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
+    html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
   });
   html+=`</div>`;G('mr-b').innerHTML=html;G('m-result').classList.remove('hidden');
 }
 function fecharResult(){cm('m-result');if(tipoAtiv==='prova')renderAlunoProvas();else{if(triIdAtiv){cm('m-aula');renderAlunoTrilhas()}else renderAlunoAulas()}}
 function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=p;tipoAtiv='prova';mostrarResult({respostas:ent.respostas,nota:ent.nota,acertos:ent.acertos},p)}
-function imprimirProva(pvId){
-  const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;
-  const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;
-  const L=['A','B','C','D'],total=p.questoes.length,mx=total*p.pontosPorQ,ok=ent.nota>=mx*0.6,pct=Math.round((ent.acertos/total)*100);
-  let body=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${p.titulo}</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;padding:32px;max-width:800px;margin:0 auto;color:#111}h1{font-size:22px;font-weight:800;margin-bottom:4px}.sub{color:#555;font-size:13px;margin-bottom:20px}.stats{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;padding:14px;background:#f5f5f5;border-radius:8px}.stat{text-align:center}.stat .v{font-size:24px;font-weight:800;color:${ok?'#16a34a':'#dc2626'}}.stat .l{font-size:11px;text-transform:uppercase;color:#777}.status{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:700;font-size:13px;margin-bottom:20px;background:${ok?'#dcfce7':'#fee2e2'};color:${ok?'#16a34a':'#dc2626'}}.q{border:1px solid #e5e7eb;border-radius:8px;padding:14px;margin-bottom:12px}.qe{font-size:14px;line-height:1.6;margin-bottom:10px}.op{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;margin-bottom:5px;font-size:13px}.op.c{background:#dcfce7;border:1px solid #86efac}.op.e{background:#fee2e2;border:1px solid #fca5a5}.op.n{background:#f9fafb;border:1px solid #e5e7eb}.lt{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}.lt.c{background:#16a34a;color:#fff}.lt.e{background:#dc2626;color:#fff}.lt.n{background:#e5e7eb;color:#555}.lr{margin-left:auto;font-size:11px;font-weight:700}img{max-width:100%;max-height:220px;border-radius:6px;margin:8px 0;display:block}.ft{margin-top:28px;padding-top:14px;border-top:1px solid #e5e7eb;font-size:11px;color:#999;text-align:center}@media print{body{padding:16px}@page{margin:1cm}}</style></head><body>`;
-  body+=`<h1>${p.titulo}</h1><div class="sub">${p.disciplina} · ${u.nome} · Turma: ${u.turma} · Entregue: ${ent.entregueEm||'-'}</div>`;
-  body+=`<div class="stats"><div class="stat"><div class="v">${ent.nota.toFixed(1)}</div><div class="l">Nota</div></div><div class="stat"><div class="v">${mx.toFixed(1)}</div><div class="l">Máximo</div></div><div class="stat"><div class="v">${ent.acertos}/${total}</div><div class="l">Acertos</div></div><div class="stat"><div class="v">${pct}%</div><div class="l">Aproveit.</div></div></div>`;
-  body+=`<div class="status">${ok?'🎉 APROVADO':'😔 REPROVADO'}</div><hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb">`;
-  p.questoes.forEach((q,qi)=>{const raw=ent.respostas[qi]!==undefined?ent.respostas[qi]:ent.respostas[String(qi)];const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;body+=`<div class="q"><div class="qe"><strong>Q${qi+1}.</strong> ${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" alt="img">`:''}`;q.opcoes.forEach((op,oi)=>{let cls='n',ltC='n',lr='';if(oi===cor){cls='c';ltC='c';lr='<span class="lr" style="color:#16a34a">✓ Correta</span>'}else if(oi===esc&&!ac){cls='e';ltC='e';lr='<span class="lr" style="color:#dc2626">✗ Sua resposta</span>'}body+=`<div class="op ${cls}"><div class="lt ${ltC}">${L[oi]}</div><span>${op}</span>${lr}</div>`});body+=`</div>`});
-  body+=`<div class="ft">EduProva — Impresso em ${new Date().toLocaleString('pt-BR')}</div></body></html>`;
-  const w=window.open('','_blank');w.document.write(body);w.document.close();setTimeout(()=>w.print(),600);
-}
 
-/* ══ ALUNO AULAS / PROVAS / NOTAS ══ */
+/* ══ ALUNO AULAS ══ */
 function renderAlunoAulas(){
   const u=S.user;G('a-aulas-lbl').textContent=`Turma ${u.turma}`;
   const aulas=S.aulas.filter(al=>al.turmas.includes(u.turma));
@@ -1589,20 +1218,24 @@ function renderAlunoAulas(){
   if(!aulas.length){el.innerHTML='<div class="es"><div class="ei">📚</div><div class="et">Nenhuma aula disponível</div></div>';return}
   el.innerHTML=aulas.map(al=>{const exs=S.exercicios.filter(e=>e.aulaId===al.id&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<div class="ac" style="cursor:pointer" onclick="verAula('${al.id}',false)"><div class="at">${al.titulo}</div><div class="am"><span class="badge bt">${al.disciplina}</span>${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${exs.length?`<span class="badge ${exF===exs.length?'bg':'by'}">🏋️ ${exF}/${exs.length}</span>`:''}</div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula('${al.id}',false)" style="margin-top:8px">📖 Ver Aula →</button></div>`}).join('');
 }
+
+/* ══ ALUNO PROVAS ══ */
 function renderAlunoProvas(){
   const u=S.user;G('a-pv-lbl').textContent=`Turma ${u.turma} — ${u.nome}`;
   const provas=S.provas.filter(p=>p.turmas.includes(u.turma));
   const el=G('a-provas');
   if(!provas.length){el.innerHTML='<div class="es"><div class="ei">📭</div><div class="et">Nenhuma prova disponível</div></div>';return}
-  el.innerHTML=provas.map(p=>{const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);const mx=p.questoes.length*p.pontosPorQ;return`<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge bp">${p.disciplina}</span><span class="badge by">${p.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span></div></div><div style="text-align:right;flex-shrink:0">${ent?`<div><span class="badge bg" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--fd);font-weight:800;color:${ent.nota>=mx*0.6?'var(--grn)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)"> / ${mx.toFixed(1)}</span></div><div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')">📋 Revisar</button><button class="btn btn-sec btn-sm" onclick="imprimirProva('${p.id}')">🖨️ Imprimir</button></div></div>`:`<button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`}</div></div></div>`}).join('');
+  el.innerHTML=provas.map(p=>{const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);const mx=p.questoes.length*p.pontosPorQ;return`<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge bp">${p.disciplina}</span><span class="badge by">${p.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span></div></div><div style="text-align:right;flex-shrink:0">${ent?`<div><span class="badge bg" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--fd);font-weight:800;color:${ent.nota>=mx*0.6?'var(--grn)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)"> / ${mx.toFixed(1)}</span></div><div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')">📋 Revisar</button></div></div>`:`<button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`}</div></div></div>`}).join('');
 }
+
+/* ══ ALUNO NOTAS ══ */
 function renderAlunoNotas(){
   const u=S.user,rs=S.respostas.filter(r=>r.alunoRA===u.ra),rsEx=S.respostasEx.filter(r=>r.alunoRA===u.ra);
   const aprov=rs.filter(r=>{const p=S.provas.find(x=>x.id===r.provaId);return p&&r.nota>=p.questoes.length*p.pontosPorQ*0.6}).length;
   const totalXP=S.progresso.filter(p=>p.alunoRA===u.ra).reduce((s,p)=>s+p.xp,0);
   G('a-stats').innerHTML=`<div class="sc"><div class="slbl">Provas</div><div class="sv">${rs.length}</div></div><div class="sc"><div class="slbl">Exercícios</div><div class="sv">${rsEx.length}</div></div><div class="sc"><div class="slbl">Aprovações</div><div class="sv">${aprov}</div></div><div class="sc"><div class="slbl">XP Total</div><div class="sv">${totalXP}</div></div>`;
   const tbP=G('a-notas-tb');
-  tbP.innerHTML=rs.length?rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge bp">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')" title="Revisar">📋</button><button class="btn btn-sec btn-sm" onclick="imprimirProva('${p.id}')" title="Imprimir">🖨️</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr>';
+  tbP.innerHTML=rs.length?rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge bp">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')" title="Revisar">📋</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr>';
   const tbE=G('a-ex-tb');
   tbE.innerHTML=rsEx.length?rsEx.map(r=>{const ex=S.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=S.aulas.find(al=>al.id===ex.aulaId);const mx=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td></tr>`}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--mut)">Nenhum exercício.</td></tr>';
 }
@@ -1612,22 +1245,13 @@ let dInstall=null;
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
-      reg.addEventListener('updatefound',()=>{
-        const w=reg.installing;
-        w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){const b=document.createElement('div');b.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1e2230;border:1px solid var(--acc);border-radius:10px;padding:12px 20px;z-index:10000;display:flex;align-items:center;gap:12px;white-space:nowrap';b.innerHTML='<span style="font-size:14px;color:var(--txt)">🔄 Nova versão!</span><button onclick="window.location.reload()" style="background:var(--acc);color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">Atualizar</button><button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:var(--mut);font-size:18px;cursor:pointer">×</button>';document.body.appendChild(b)}});
-      });
+      reg.addEventListener('updatefound',()=>{const w=reg.installing;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller){const b=document.createElement('div');b.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1e2230;border:1px solid #4f7cff;border-radius:10px;padding:12px 20px;z-index:10000;display:flex;align-items:center;gap:12px;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)';b.innerHTML='<span style="font-size:14px;color:#e8eaf2">🔄 Nova versão disponível!</span><button onclick="window.location.reload()" style="background:#4f7cff;color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">Atualizar</button><button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:#6b7280;font-size:18px;cursor:pointer">×</button>';document.body.appendChild(b)}})});
     }).catch(e=>console.warn(e));
   });
 }
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dInstall=e;if(!window.matchMedia('(display-mode: standalone)').matches)setTimeout(showInstallBanner,3000)});
-function showInstallBanner(){
-  if(!dInstall)return;
-  const b=document.createElement('div');b.id='ibanner';b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e2230,#161920);border-top:1px solid #2a2f42;padding:14px 16px;z-index:10000;display:flex;align-items:center;gap:12px;box-shadow:0 -8px 32px rgba(0,0,0,.5)';
-  b.innerHTML='<div style="width:44px;height:44px;background:linear-gradient(135deg,#4f7cff,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📚</div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;color:#e8eaf2">Instalar EduProva</div><div style="font-size:12px;color:#6b7280;margin-top:1px">Adicione à tela inicial</div></div><button onclick="instalarApp()" style="background:#4f7cff;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0">Instalar</button><button onclick="G(\'ibanner\').remove()" style="background:transparent;border:none;color:#6b7280;font-size:22px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">×</button>';
-  document.body.appendChild(b);
-}
-async function instalarApp(){if(!dInstall)return;dInstall.prompt();const{outcome}=await dInstall.userChoice;if(outcome==='accepted'){toast('✅ EduProva instalado!','green');const b=G('ibanner');if(b)b.remove()}dInstall=null}
-window.addEventListener('appinstalled',()=>{const b=G('ibanner');if(b)b.remove();dInstall=null;toast('📱 App instalado!','green')});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dInstall=e;if(!window.matchMedia('(display-mode: standalone)').matches)setTimeout(()=>{if(!dInstall)return;const b=document.createElement('div');b.id='ibanner';b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e2230,#161920);border-top:1px solid #2a2f42;padding:14px 16px;z-index:10000;display:flex;align-items:center;gap:12px;box-shadow:0 -8px 32px rgba(0,0,0,.5)';b.innerHTML='<div style="width:44px;height:44px;background:linear-gradient(135deg,#4f7cff,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📚</div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px;color:#e8eaf2">Instalar EduProva</div><div style="font-size:12px;color:#6b7280;margin-top:1px">Adicione à tela inicial</div></div><button onclick="instalarApp()" style="background:#4f7cff;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0">Instalar</button><button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:#6b7280;font-size:22px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">×</button>';document.body.appendChild(b)},3000)});
+async function instalarApp(){if(!dInstall)return;dInstall.prompt();const{outcome}=await dInstall.userChoice;if(outcome==='accepted'){toast('✅ EduProva instalado!','green');const b=document.getElementById('ibanner');if(b)b.remove()}dInstall=null}
+window.addEventListener('appinstalled',()=>{const b=document.getElementById('ibanner');if(b)b.remove();dInstall=null;toast('📱 App instalado!','green')});
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1638,6 +1262,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   G('fp-ini').value=today();G('fp-fim').value=today();G('ca-dt').value=today();
 });
 </script>
-
-
-</body></html>
+</body>
+</html>
