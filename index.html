@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)file:///C:/Users/Diego%20Lima/Downloads/index_8.html -->
-<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>EduProva — Sistema Educacional</title>
-<link rel="manifest" href="file:///C:/Users/Diego%20Lima/Downloads/manifest.json">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4f7cff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EduProva">
-<link rel="apple-touch-icon" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="file:///C:/Users/Diego%20Lima/Downloads/icons/icon-192.png">
-<link href="./index_files/css2" rel="stylesheet">
-<script src="./index_files/supabase-js@2"></script>
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0d0f14;--surf:#161920;--surf2:#1e2230;--bdr:#2a2f42;
@@ -296,6 +296,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .yt-add{background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;overflow:hidden}
 .yt-add-row{display:flex;gap:8px;padding:10px}
 .yt-preview-list{padding:0 10px 10px}
+.yt-card{border:2px solid var(--bdr);transition:border-color .2s}
+.yt-card:hover{border-color:var(--acc)}
+.yt-card:hover .yt-play-btn{transform:scale(1.1)}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -318,7 +321,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <body>
 <div id="lov" class="hidden"><div class="spin"></div><p class="mut" id="ltxt" style="font-size:14px">Carregando...</p></div>
 <div id="toast" class="hidden"></div>
-<div id="imgfs" class="hidden" onclick="this.classList.add(&#39;hidden&#39;)"><img id="imgfs-src" src="file:///C:/Users/Diego%20Lima/Downloads/index_8.html" alt=""></div>
+<div id="imgfs" class="hidden" onclick="this.classList.add('hidden')"><img id="imgfs-src" src="" alt=""></div>
 
 <!-- LOGIN -->
 <div id="scr-login">
@@ -327,13 +330,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="ltit">Bem-vindo!</div>
     <div class="ldsc">Acesse com seu perfil.</div>
     <div class="tabs">
-      <button class="tbtn on" onclick="setTab(&#39;prof&#39;)">👨‍🏫 Professor</button>
-      <button class="tbtn" onclick="setTab(&#39;aluno&#39;)">🎓 Aluno</button>
+      <button class="tbtn on" onclick="setTab('prof')">👨‍🏫 Professor</button>
+      <button class="tbtn" onclick="setTab('aluno')">🎓 Aluno</button>
     </div>
     <div id="lf-prof">
       <div class="fg"><label class="fl">Usuário</label><input class="fi" id="lp-u" placeholder="professor" autocomplete="username"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="lp-p" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;lp-p&#39;,this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="lp-p" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('lp-p',this)">👁</button></div>
       </div>
     </div>
     <div id="lf-aluno" class="hidden">
@@ -342,7 +345,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="la-nm" placeholder="Seu nome completo" autocomplete="name"></div>
       <div class="fg"><label class="fl">Senha</label>
-        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw(&#39;la-pw&#39;,this)">👁</button></div>
+        <div class="pw-w"><input class="fi" id="la-pw" type="password" placeholder="••••••" autocomplete="current-password"><button class="pw-eye" onclick="togglePw('la-pw',this)">👁</button></div>
       </div>
     </div>
     <button class="btn btn-p" id="btn-login" onclick="doLogin()">Entrar →</button>
@@ -362,14 +365,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <label class="fl">Nova senha</label>
           <div class="pw-w">
             <input class="fi" id="rec-nova" type="password" placeholder="Mínimo 4 caracteres">
-            <button class="pw-eye" onclick="togglePw(&#39;rec-nova&#39;,this)">👁</button>
+            <button class="pw-eye" onclick="togglePw('rec-nova',this)">👁</button>
           </div>
         </div>
         <div class="fg" style="margin-bottom:12px">
           <label class="fl">Confirmar nova senha</label>
           <div class="pw-w">
             <input class="fi" id="rec-conf" type="password" placeholder="Repita a senha">
-            <button class="pw-eye" onclick="togglePw(&#39;rec-conf&#39;,this)">👁</button>
+            <button class="pw-eye" onclick="togglePw('rec-conf',this)">👁</button>
           </div>
         </div>
         <div style="display:flex;gap:8px">
@@ -433,10 +436,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <select class="fsel" id="freq-tu" onchange="renderFreq()"><option value="">Selecione</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="fpb on" id="fpb-dia" onclick="setFP(&#39;dia&#39;)">Dia</button>
-              <button class="fpb" id="fpb-semana" onclick="setFP(&#39;semana&#39;)">Semana</button>
-              <button class="fpb" id="fpb-mes" onclick="setFP(&#39;mes&#39;)">Mês</button>
-              <button class="fpb" id="fpb-periodo" onclick="setFP(&#39;periodo&#39;)">Período</button>
+              <button class="fpb on" id="fpb-dia" onclick="setFP('dia')">Dia</button>
+              <button class="fpb" id="fpb-semana" onclick="setFP('semana')">Semana</button>
+              <button class="fpb" id="fpb-mes" onclick="setFP('mes')">Mês</button>
+              <button class="fpb" id="fpb-periodo" onclick="setFP('periodo')">Período</button>
             </div>
           </div>
           <div id="freq-per-inp" style="display:none;gap:10px;flex-wrap:wrap;margin-top:12px">
@@ -462,32 +465,32 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Título</label><input class="fi" id="aula-t" placeholder="Ex: Introdução às Frações"></div>
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="aula-d" placeholder="Ex: Matemática"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"><div class="tci" id="tcg-aula1M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-aula1M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-aula1M3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-aula1M4" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-aula1M5" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-aula2T1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-aula2T2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-aula2T3" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-aula3M1" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-aula3M2" onclick="togTC(&#39;tcg-aula&#39;,&#39;th-aula&#39;,&#39;aula&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-aula" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"></div><div id="th-aula" class="mut sm mt2">Nenhuma turma selecionada</div></div>
           <div class="fg">
             <label class="fl">Conteúdo</label>
             <div class="rew">
               <div class="rtb">
-                <select class="rsel" onchange="rte(&#39;formatBlock&#39;,this.value);this.value=&#39;p&#39;"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
-                <select class="rsel" onchange="rte(&#39;fontSize&#39;,this.value);this.value=&#39;3&#39;"><option value="2">Pequeno</option><option value="3" selected="">Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
+                <select class="rsel" onchange="rte('formatBlock',this.value);this.value='p'"><option value="p">Parágrafo</option><option value="h1">Título 1</option><option value="h2">Título 2</option><option value="h3">Título 3</option></select>
+                <select class="rsel" onchange="rte('fontSize',this.value);this.value='3'"><option value="2">Pequeno</option><option value="3" selected>Normal</option><option value="4">Grande</option><option value="5">Maior</option></select>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;bold&#39;)"><b>B</b></button>
-                <button class="rb" onclick="rte(&#39;italic&#39;)"><i>I</i></button>
-                <button class="rb" onclick="rte(&#39;underline&#39;)"><u>U</u></button>
-                <button class="rb" onclick="rte(&#39;strikeThrough&#39;)"><s>S</s></button>
+                <button class="rb" onclick="rte('bold')"><b>B</b></button>
+                <button class="rb" onclick="rte('italic')"><i>I</i></button>
+                <button class="rb" onclick="rte('underline')"><u>U</u></button>
+                <button class="rb" onclick="rte('strikeThrough')"><s>S</s></button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;justifyLeft&#39;)">⬅</button>
-                <button class="rb" onclick="rte(&#39;justifyCenter&#39;)">☰</button>
-                <button class="rb" onclick="rte(&#39;justifyRight&#39;)">➡</button>
+                <button class="rb" onclick="rte('justifyLeft')">⬅</button>
+                <button class="rb" onclick="rte('justifyCenter')">☰</button>
+                <button class="rb" onclick="rte('justifyRight')">➡</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;insertUnorderedList&#39;)">•</button>
-                <button class="rb" onclick="rte(&#39;insertOrderedList&#39;)">1.</button>
-                <button class="rb" onclick="rte(&#39;formatBlock&#39;,&#39;blockquote&#39;)">❝</button>
+                <button class="rb" onclick="rte('insertUnorderedList')">•</button>
+                <button class="rb" onclick="rte('insertOrderedList')">1.</button>
+                <button class="rb" onclick="rte('formatBlock','blockquote')">❝</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="G(&#39;clrp&#39;).click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte(&#39;foreColor&#39;,this.value)"></button>
-                <button class="rb" onclick="rte(&#39;removeFormat&#39;)">✕</button>
+                <button class="rb" onclick="G('clrp').click()">🎨<input id="clrp" type="color" style="display:none;width:0;height:0" onchange="rte('foreColor',this.value)"></button>
+                <button class="rb" onclick="rte('removeFormat')">✕</button>
                 <div class="rs"></div>
-                <button class="rb" onclick="rte(&#39;undo&#39;)">↩</button>
-                <button class="rb" onclick="rte(&#39;redo&#39;)">↪</button>
+                <button class="rb" onclick="rte('undo')">↩</button>
+                <button class="rb" onclick="rte('redo')">↪</button>
               </div>
               <div class="re" id="aula-cont" contenteditable="true"></div>
             </div>
@@ -495,7 +498,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="fg">
             <label class="fl">Imagens</label>
             <div id="aula-imgs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:8px"></div>
-            <div class="iua"><input type="file" accept="image/*" multiple="" onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
+            <div class="iua"><input type="file" accept="image/*" multiple onchange="handleAulaImg(event)"><div class="iul">🖼 <strong>Clique ou arraste</strong> — máx 5 MB</div></div>
           </div>
 
           <div class="fg">
@@ -539,7 +542,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Ícone (emoji)</label><input class="fi" id="tri-ic" placeholder="🚀" maxlength="4" style="font-size:20px;text-align:center"></div>
             <div class="fg" style="margin:0"><label class="fl">Cor</label><input type="color" id="tri-cor" value="#4f7cff" style="width:100%;height:44px;border-radius:9px;border:1px solid var(--bdr);background:var(--surf2);cursor:pointer;padding:4px"></div>
           </div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"><div class="tci" id="tcg-trilha1M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-trilha1M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-trilha1M3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-trilha1M4" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-trilha1M5" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-trilha2T1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-trilha2T2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-trilha2T3" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-trilha3M1" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-trilha3M2" onclick="togTC(&#39;tcg-trilha&#39;,&#39;th-trilha&#39;,&#39;trilha&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-trilha" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-trilha"></div><div id="th-trilha" class="mut sm mt2">Nenhuma turma selecionada</div></div>
           <hr class="dv">
           <div class="ctit">📚 Aulas da Trilha <span class="mut sm" style="font-weight:400">(arraste para reordenar)</span></div>
           <div class="fg"><select class="fsel" id="tri-add-sel"><option value="">Selecione uma aula...</option></select><button class="btn btn-sec btn-sm" style="margin-top:8px" onclick="addAulaTr()">+ Adicionar</button></div>
@@ -561,16 +564,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="pv-d" placeholder="Ex: Matemática"></div>
           </div>
           <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
-          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"><div class="tci" id="tcg-prova1M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M1&#39;)"><span>1M1</span></div><div class="tci" id="tcg-prova1M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M2&#39;)"><span>1M2</span></div><div class="tci" id="tcg-prova1M3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M3&#39;)"><span>1M3</span></div><div class="tci" id="tcg-prova1M4" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M4&#39;)"><span>1M4</span></div><div class="tci" id="tcg-prova1M5" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;1M5&#39;)"><span>1M5</span></div><div class="tci" id="tcg-prova2T1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T1&#39;)"><span>2T1</span></div><div class="tci" id="tcg-prova2T2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T2&#39;)"><span>2T2</span></div><div class="tci" id="tcg-prova2T3" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;2T3&#39;)"><span>2T3</span></div><div class="tci" id="tcg-prova3M1" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M1&#39;)"><span>3M1</span></div><div class="tci" id="tcg-prova3M2" onclick="togTC(&#39;tcg-prova&#39;,&#39;th-prova&#39;,&#39;prova&#39;,&#39;3M2&#39;)"><span>3M2</span></div></div><div id="th-prova" class="mut sm mt2" style="color: var(--mut);">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
           <hr class="dv">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ(&#39;qP&#39;,&#39;qcP&#39;)">+ Questão</button></div>
-          <div id="qcP"><div class="qi" id="qi-qP-0"><div class="qh"><span class="qnum">Q1</span><button class="btn btn-dan btn-sm" onclick="rmQ(&#39;qP&#39;,&#39;qcP&#39;,0)">🗑</button></div>
-    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD[&#39;qP&#39;][0].enunciado=this.value" value=""></div>
-    <label class="fl">Imagem (opcional)</label>
-    <div id="imgw-qP-0"><div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,&#39;qP&#39;,0)"><div class="iul">🖼 <strong>Clique</strong></div></div></div>
-    <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
-    <ul class="ol-l"><li class="oi"><div class="oltr" id="ol-qP-0-0" onclick="setC(&#39;qP&#39;,0,0)">A</div><input class="fi" style="flex:1" placeholder="Alt. A..." oninput="QD[&#39;qP&#39;][0].opcoes[0]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-1" onclick="setC(&#39;qP&#39;,0,1)">B</div><input class="fi" style="flex:1" placeholder="Alt. B..." oninput="QD[&#39;qP&#39;][0].opcoes[1]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-2" onclick="setC(&#39;qP&#39;,0,2)">C</div><input class="fi" style="flex:1" placeholder="Alt. C..." oninput="QD[&#39;qP&#39;][0].opcoes[2]=this.value" value=""></li><li class="oi"><div class="oltr" id="ol-qP-0-3" onclick="setC(&#39;qP&#39;,0,3)">D</div><input class="fi" style="flex:1" placeholder="Alt. D..." oninput="QD[&#39;qP&#39;][0].opcoes[3]=this.value" value=""></li></ul>
-    <div class="sm mt2" id="qh-qP-0" style="color:var(--mut)">⬆ Clique na letra para marcar a correta</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button></div>
+          <div id="qcP"></div>
           <div id="pv-err" class="hidden"></div>
           <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-sec" style="min-width:110px" onclick="cancelarProva()">Cancelar</button>
@@ -614,13 +611,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <!-- MODALS -->
-<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm(&#39;m-vp&#39;)">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
+<div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm('m-vp')">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
 
 <div class="mov hidden" id="m-fazer">
   <div class="modal modal-lg">
-    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm(&#39;m-fazer&#39;)">×</button></div>
+    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
     <div class="mb" id="mf-b"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-fazer&#39;)">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-fazer')">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
   </div>
 </div>
 
@@ -628,23 +625,23 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
-    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm(&#39;m-ex&#39;)">×</button></div>
+    <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm('m-ex')">×</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Título</label><input class="fi" id="ex-t" placeholder="Ex: Exercícios de Fixação"></div>
       <div class="fg"><label class="fl">Descrição (opcional)</label><input class="fi" id="ex-d" placeholder="Instruções..."></div>
       <div class="fg" style="max-width:200px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="ex-p" value="1" min="0.1" step="0.1"></div>
       <hr class="dv">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ(&#39;exQ&#39;,&#39;qcE&#39;)">+ Questão</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('exQ','qcE')">+ Questão</button></div>
       <div id="qcE"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-ex&#39;)">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-ex')">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
   </div>
 </div>
 
-<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm(&#39;m-aula&#39;)">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
+<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
 
 <div class="mov hidden" id="m-conf-aulas">
-  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm(&#39;m-conf-aulas&#39;)">×</button></div>
+  <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm('m-conf-aulas')">×</button></div>
     <div class="mb">
       <div class="g2" style="margin-bottom:16px">
         <div class="fg" style="margin:0"><label class="fl">Turma</label><select class="fsel" id="ca-tu"><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
@@ -652,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="fg"><label class="fl">Qtd. de Aulas</label><input type="number" class="fi" id="ca-q" value="1" min="1" max="12"></div>
     </div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm(&#39;m-conf-aulas&#39;)">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-conf-aulas')">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
   </div>
 </div>
 
@@ -1017,7 +1014,7 @@ function ytId(url){
   return m?m[1]:null;
 }
 function ytThumb(id){return`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
-function ytEmbed(id){return`https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`}
+function ytEmbed(id){return`https://www.youtube.com/embed/${id}?rel=0&autoplay=1&playsinline=1`}
 
 function addYT(){
   const inp=G('yt-inp'),url=inp.value.trim();
@@ -1048,25 +1045,51 @@ function rYT(){
 
 /* Abre vídeo em modal fullscreen dentro do app */
 function abrirYT(id){
-  let m=G('yt-modal');
-  if(!m){
-    m=document.createElement('div');m.id='yt-modal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px';
-    m.innerHTML=`<div style="width:100%;max-width:860px">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-        <button onclick="fecharYT()" style="background:rgba(255,255,255,.1);border:none;color:#fff;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer">✕ Fechar</button>
+  // Remove modal anterior se existir
+  const old=G('yt-modal');if(old)old.remove();
+
+  const m=document.createElement('div');
+  m.id='yt-modal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px';
+
+  m.innerHTML=`
+    <div style="width:100%;max-width:860px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="color:rgba(255,255,255,.5);font-size:12px">▶ YouTube</div>
+        <button id="yt-close-btn" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer">✕ Fechar</button>
       </div>
-      <div class="yt-ratio" id="yt-frame-wrap"></div>
+      <div style="position:relative;padding-bottom:56.25%;height:0;background:#000;border-radius:10px;overflow:hidden">
+        <iframe
+          id="yt-iframe"
+          src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&fs=1&origin=${encodeURIComponent(location.origin)}"
+          style="position:absolute;inset:0;width:100%;height:100%;border:none"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+      <div style="margin-top:10px;text-align:center">
+        <a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener"
+           style="color:rgba(255,255,255,.4);font-size:12px;text-decoration:none">
+          Abrir no YouTube ↗
+        </a>
+      </div>
     </div>`;
-    m.addEventListener('click',e=>{if(e.target===m)fecharYT()});
-    document.body.appendChild(m);
-  }
-  G('yt-frame-wrap').innerHTML=`<iframe src="${ytEmbed(id)}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"></iframe>`;
-  m.style.display='flex';
+
+  document.body.appendChild(m);
+  G('yt-close-btn').onclick=fecharYT;
+  m.addEventListener('click',e=>{if(e.target===m)fecharYT()});
+  // Impede scroll do body enquanto modal aberto
+  document.body.style.overflow='hidden';
 }
 function fecharYT(){
   const m=G('yt-modal');
-  if(m){G('yt-frame-wrap').innerHTML='';m.style.display='none'}
+  if(m){
+    // Para o vídeo removendo o src antes de remover o modal
+    const fr=G('yt-iframe');if(fr)fr.src='';
+    m.remove();
+  }
+  document.body.style.overflow='';
 }
 
 function irNovaAula(){
@@ -1246,18 +1269,18 @@ function verAula(aulaId,isProfessor,triId=null){
     html+=`<div class="ctit">🎥 Vídeos</div>`;
     html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px">`;
     al.videos.forEach((id,i)=>{
-      html+=`<div>
-        <div class="yt-wrap" style="cursor:pointer;border:2px solid var(--bdr);transition:border-color .2s" onmouseenter="this.style.borderColor='var(--acc)'" onmouseleave="this.style.borderColor='var(--bdr)'" onclick="abrirYT('${id}')">
+      html+=`<div onclick="abrirYT('${id}')" style="cursor:pointer">
+        <div class="yt-wrap yt-card">
           <div class="yt-ratio">
-            <img src="${ytThumb(id)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt="Vídeo ${i+1}">
+            <img src="${ytThumb(id)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt="Video ${i+1}">
             <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-              <div style="width:54px;height:54px;background:rgba(255,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.5)">
-                <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 20px;border-color:transparent transparent transparent #fff;margin-left:4px"></div>
+              <div style="width:54px;height:54px;background:rgba(255,0,0,.88);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 16px rgba(0,0,0,.6);transition:transform .15s" class="yt-play-btn">
+                <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 20px;border-color:transparent transparent transparent #fff;margin-left:5px"></div>
               </div>
             </div>
           </div>
         </div>
-        <div style="padding:6px 2px;font-size:12px;color:var(--mut)">Vídeo ${i+1} — <span style="color:var(--acc);cursor:pointer" onclick="abrirYT('${id}')">▶ Assistir</span></div>
+        <div style="padding:6px 2px;font-size:12px;color:var(--mut)">Vídeo ${i+1} &mdash; <span style="color:var(--acc)">&#9654; Assistir</span></div>
       </div>`;
     });
     html+=`</div>`;
@@ -1416,6 +1439,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   G('fp-ini').value=today();G('fp-fim').value=today();G('ca-dt').value=today();
 });
 </script>
-
-
-</body></html>
+</body>
+</html>
