@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EduProva">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -612,17 +612,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <!-- MODALS -->
 <div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm('m-vp')">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
-
-<div class="mov hidden" id="m-fazer">
-  <div class="modal modal-lg">
-    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
-    <div class="mb" id="mf-b"></div>
-    <div class="mf"><button class="btn btn-sec" onclick="cm('m-fazer')">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
-  </div>
-</div>
-
-<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
-
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
     <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm('m-ex')">×</button></div>
@@ -637,9 +626,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="mf"><button class="btn btn-sec" onclick="cm('m-ex')">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
   </div>
 </div>
-
-<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
-
 <div class="mov hidden" id="m-conf-aulas">
   <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm('m-conf-aulas')">×</button></div>
     <div class="mb">
@@ -652,6 +638,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="mf"><button class="btn btn-sec" onclick="cm('m-conf-aulas')">Cancelar</button><button class="btn btn-grn" style="width:auto;min-width:140px" onclick="salvarConfAulas()">💾 Salvar</button></div>
   </div>
 </div>
+<div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
+<div class="mov hidden" id="m-fazer">
+  <div class="modal modal-lg">
+    <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
+    <div class="mb" id="mf-b"></div>
+    <div class="mf"><button class="btn btn-sec" onclick="cm('m-fazer')">Cancelar</button><button class="btn btn-p" onclick="entregar()" id="btn-entregar">📨 Entregar</button></div>
+  </div>
+</div>
+<div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
 
 <script>
 /* ══ CONFIG ══ */
@@ -910,7 +905,7 @@ function verTurma(t){
 }
 async function delAluno(ra,nome){
   if(!confirm(`Excluir "${nome}"?`))return;shl('Excluindo...');
-  try{await Promise.all([sb.from('respostas').delete().eq('aluno_ra',ra),sb.from('respostas_exercicios').delete().eq('aluno_ra',ra),sb.from('progresso_trilha').delete().eq('aluno_ra',ra),sb.from('frequencia').delete().eq('aluno_ra',ra),sb.from('alunos').delete().eq('aluno_id',ra)]);await loadAllData();verTurma(turmaAtual);renderTurmas();toast('🗑 Aluno removido','red')}
+  try{await Promise.all([sb.from('respostas').delete().eq('aluno_ra',ra),sb.from('respostas_exercicios').delete().eq('aluno_ra',ra),sb.from('progresso_trilha').delete().eq('aluno_ra',ra),sb.from('frequencia').delete().eq('aluno_ra',ra),sb.from('alunos').delete().eq('aluno_id',ra)]);const _t=turmaAtual;await loadAllData();renderTurmas();if(_t)verTurma(_t);toast('🗑 Aluno removido','red')}
   catch(e){toast('❌ Erro.','red')}finally{hhl()}
 }
 function expTurma(){
@@ -1123,7 +1118,7 @@ async function salvarAula(){
   if(!SS['aula']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
   const btn=G('btn-sv-aula');btn.disabled=true;shl('Salvando aula...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toLocaleDateString('pt-BR')};
+    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toISOString()};
     let sid=editAulaId;
     if(editAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editAulaId);if(error)throw error}
     else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;sid=id}
@@ -1165,7 +1160,7 @@ async function salvarEx(){
   if(!QD['exQ']?.length)return toast('⚠️ Adicione ao menos uma questão!','yellow');
   if(QD['exQ'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões e marque as corretas!','yellow');
   const btn=G('btn-sv-ex');btn.disabled=true;shl('Salvando...');
-  try{const aula=S.aulas.find(x=>x.id===editAulaId);const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes:QD['exQ'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pts,criada_em:new Date().toLocaleDateString('pt-BR')};const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null}catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
+  try{const aula=S.aulas.find(x=>x.id===editAulaId);const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes:QD['exQ'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pts,criada_em:new Date().toISOString()};const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null}catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 async function delEx(id){if(!confirm('Excluir exercício?'))return;shl('Excluindo...');try{const ex=S.exercicios.find(x=>x.id===id);if(ex)for(const q of ex.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas_exercicios').delete().eq('exercicio_id',id);await sb.from('exercicios').delete().eq('id',id);await loadAllData();rExAula(editAulaId);toast('🗑 Removido','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
 
@@ -1195,7 +1190,7 @@ async function salvarTrilha(){
   if(!SS['trilha']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
   if(!triAulas.length)return toast('⚠️ Adicione ao menos uma aula!','yellow');
   const btn=G('btn-sv-tri');btn.disabled=true;shl('Salvando trilha...');
-  try{const payload={titulo,descricao:desc,disciplina:disc,turmas:[...SS['trilha']],ordem_aulas:triAulas,cor,icone,criada_em:new Date().toLocaleDateString('pt-BR')};const{error}=editTriId?await sb.from('trilhas').update(payload).eq('id',editTriId):await sb.from('trilhas').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();if(editTriId)rTriDash(editTriId);else{editTriId=null;showSec('sec-trilhas');setNav('ni-trilhas');renderTrilhasProfessor()}toast('✅ Trilha salva!','green')}
+  try{const payload={titulo,descricao:desc,disciplina:disc,turmas:[...SS['trilha']],ordem_aulas:triAulas,cor,icone,criada_em:new Date().toISOString()};const{error}=editTriId?await sb.from('trilhas').update(payload).eq('id',editTriId):await sb.from('trilhas').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();if(editTriId)rTriDash(editTriId);else{editTriId=null;showSec('sec-trilhas');setNav('ni-trilhas');renderTrilhasProfessor()}toast('✅ Trilha salva!','green')}
   catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
 function renderTrilhasProfessor(){
@@ -1219,7 +1214,7 @@ async function salvarProva(){
   if(QD['qP'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões!','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toLocaleDateString('pt-BR')};
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toISOString()};
     const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
     if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
