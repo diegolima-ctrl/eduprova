@@ -1174,11 +1174,19 @@ function addAulaTr(){const sel=G('tri-add-sel'),id=sel.value;if(!id)return;if(tr
 function rmAT(idx){triAulas.splice(idx,1);rTAS()}
 function rTAS(){const el=G('tri-aulas-list');if(!triAulas.length){el.innerHTML='<div class="mut sm" style="padding:10px 0">Nenhuma aula adicionada.</div>';return}el.innerHTML=triAulas.map((aid,i)=>{const al=S.aulas.find(x=>x.id===aid);if(!al)return'';return`<div class="di" draggable="true" data-idx="${i}" ondragstart="ds(event)" ondragover="dov(event)" ondrop="ddp(event)"><span class="dh">⠿</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${i+1}. ${al.titulo}</div><div class="mut xs">${al.disciplina}</div></div><button class="btn btn-dan btn-sm btn-ic" onclick="rmAT(${i})">×</button></div>`}).join('')}
 let dsi=null;function ds(e){dsi=parseInt(e.currentTarget.dataset.idx);e.currentTarget.classList.add('dg')}function dov(e){e.preventDefault()}function ddp(e){e.preventDefault();const t=parseInt(e.currentTarget.dataset.idx);if(dsi===null||dsi===t)return;const tmp=triAulas[dsi];triAulas[dsi]=triAulas[t];triAulas[t]=tmp;dsi=null;rTAS()}
-function rTriDash(triId){
+function rTriDash(triId,filtroTurma=''){
   const t=S.trilhas.find(x=>x.id===triId);if(!t)return;
   const el=G('tri-dash-body');
-  const als=S.alunos.filter(x=>t.turmas.includes(x.turma)).sort((a,b)=>a.turma.localeCompare(b.turma,'pt-BR')||a.nome.localeCompare(b.nome,'pt-BR'));
-  if(!als.length){el.innerHTML='<div class="mut sm">Nenhum aluno nas turmas desta trilha ainda.</div>';return}
+  const turmasDaTrilha=[...t.turmas].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const filtros=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+    <span class="mut sm" style="font-weight:600;letter-spacing:.5px">TURMA:</span>
+    <button class="btn btn-sm ${!filtroTurma?'btn-org':'btn-sec'}" onclick="rTriDash('${triId}','')">Todas</button>
+    ${turmasDaTrilha.map(tm=>`<button class="btn btn-sm ${filtroTurma===tm?'btn-org':'btn-sec'}" onclick="rTriDash('${triId}','${tm}')">${tm}</button>`).join('')}
+  </div>`;
+  let als=S.alunos.filter(x=>t.turmas.includes(x.turma));
+  if(filtroTurma)als=als.filter(x=>x.turma===filtroTurma);
+  als=als.sort((a,b)=>a.turma.localeCompare(b.turma,'pt-BR')||a.nome.localeCompare(b.nome,'pt-BR'));
+  if(!als.length){el.innerHTML=filtros+'<div class="mut sm">Nenhum aluno nesta turma ainda.</div>';return}
   const total=t.ordemAulas.length;
   let html=`<div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Nível</th><th>XP</th><th>Progresso</th><th>Concluídas</th></tr></thead><tbody>`;
   let turmaAtual='';
@@ -1186,10 +1194,10 @@ function rTriDash(triId){
     const pg=S.progresso.find(p=>p.trilhaId===triId&&p.alunoRA===al.ra)||{concluidas:[],xp:0};
     const concl=pg.concluidas.length;const pct=total>0?Math.round((concl/total)*100):0;const nv=getNv(pg.xp);
     let sep='';
-    if(al.turma!==turmaAtual){turmaAtual=al.turma;sep=`<tr><td colspan="6" style="padding:10px 8px 4px;font-weight:700;font-size:12px;color:var(--acc);border-bottom:1px solid var(--brd);background:rgba(255,255,255,0.03);letter-spacing:0.5px">TURMA ${al.turma}</td></tr>`;}
+    if(!filtroTurma&&al.turma!==turmaAtual){turmaAtual=al.turma;sep=`<tr><td colspan="6" style="padding:10px 8px 4px;font-weight:700;font-size:12px;color:var(--acc);border-bottom:1px solid var(--brd);background:rgba(255,255,255,0.03);letter-spacing:0.5px">TURMA ${al.turma}</td></tr>`;}
     return sep+`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff">${al.nome[0].toUpperCase()}</div><strong>${al.nome}</strong></div></td><td><span class="badge bb">${al.turma}</span></td><td><span class="nlvl" style="font-size:10px">${nv.e} N${nv.n}</span></td><td><strong style="color:var(--yel)">⚡ ${pg.xp}</strong></td><td style="min-width:100px"><div class="pb" style="margin-bottom:2px"><div class="pf" style="width:${pct}%;background:${t.cor}"></div></div><span class="xs mut">${pct}%</span></td><td>${concl}/${total}</td></tr>`;
   }).join('');
-  html+=`</tbody></table></div>`;el.innerHTML=html;
+  html+=`</tbody></table></div>`;el.innerHTML=filtros+html;
 }
 async function salvarTrilha(){
   const titulo=G('tri-t').value.trim(),disc=G('tri-d').value.trim(),desc=G('tri-ds').value.trim(),icone=G('tri-ic').value.trim()||'🚀',cor=G('tri-cor').value||'#4f7cff';
