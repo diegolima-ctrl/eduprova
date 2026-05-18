@@ -1177,11 +1177,18 @@ let dsi=null;function ds(e){dsi=parseInt(e.currentTarget.dataset.idx);e.currentT
 function rTriDash(triId){
   const t=S.trilhas.find(x=>x.id===triId);if(!t)return;
   const el=G('tri-dash-body');
-  const als=S.alunos.filter(x=>t.turmas.includes(x.turma)).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  const als=S.alunos.filter(x=>t.turmas.includes(x.turma)).sort((a,b)=>a.turma.localeCompare(b.turma,'pt-BR')||a.nome.localeCompare(b.nome,'pt-BR'));
   if(!als.length){el.innerHTML='<div class="mut sm">Nenhum aluno nas turmas desta trilha ainda.</div>';return}
   const total=t.ordemAulas.length;
   let html=`<div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Nível</th><th>XP</th><th>Progresso</th><th>Concluídas</th></tr></thead><tbody>`;
-  html+=als.map(al=>{const pg=S.progresso.find(p=>p.trilhaId===triId&&p.alunoRA===al.ra)||{concluidas:[],xp:0};const concl=pg.concluidas.length;const pct=total>0?Math.round((concl/total)*100):0;const nv=getNv(pg.xp);return`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff">${al.nome[0].toUpperCase()}</div><strong>${al.nome}</strong></div></td><td><span class="badge bb">${al.turma}</span></td><td><span class="nlvl" style="font-size:10px">${nv.e} N${nv.n}</span></td><td><strong style="color:var(--yel)">⚡ ${pg.xp}</strong></td><td style="min-width:100px"><div class="pb" style="margin-bottom:2px"><div class="pf" style="width:${pct}%;background:${t.cor}"></div></div><span class="xs mut">${pct}%</span></td><td>${concl}/${total}</td></tr>`}).join('');
+  let turmaAtual='';
+  html+=als.map(al=>{
+    const pg=S.progresso.find(p=>p.trilhaId===triId&&p.alunoRA===al.ra)||{concluidas:[],xp:0};
+    const concl=pg.concluidas.length;const pct=total>0?Math.round((concl/total)*100):0;const nv=getNv(pg.xp);
+    let sep='';
+    if(al.turma!==turmaAtual){turmaAtual=al.turma;sep=`<tr><td colspan="6" style="padding:10px 8px 4px;font-weight:700;font-size:12px;color:var(--acc);border-bottom:1px solid var(--brd);background:rgba(255,255,255,0.03);letter-spacing:0.5px">TURMA ${al.turma}</td></tr>`;}
+    return sep+`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff">${al.nome[0].toUpperCase()}</div><strong>${al.nome}</strong></div></td><td><span class="badge bb">${al.turma}</span></td><td><span class="nlvl" style="font-size:10px">${nv.e} N${nv.n}</span></td><td><strong style="color:var(--yel)">⚡ ${pg.xp}</strong></td><td style="min-width:100px"><div class="pb" style="margin-bottom:2px"><div class="pf" style="width:${pct}%;background:${t.cor}"></div></div><span class="xs mut">${pct}%</span></td><td>${concl}/${total}</td></tr>`;
+  }).join('');
   html+=`</tbody></table></div>`;el.innerHTML=html;
 }
 async function salvarTrilha(){
