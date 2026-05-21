@@ -566,7 +566,38 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
           <hr class="dv">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+            <div class="ctit" style="margin:0">📝 Questões</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-sec btn-sm" onclick="toggleTutorialImport()">📋 Como importar?</button>
+              <button class="btn btn-tel btn-sm" onclick="importarTxt()">📂 Importar .txt</button>
+              <button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button>
+            </div>
+          </div>
+          <!-- Tutorial importação -->
+          <div id="tutorial-import" style="display:none;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;line-height:1.75">
+            <div style="font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:12px;color:var(--acc)">📋 Como importar questões via arquivo .txt</div>
+            <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">① Abra o Bloco de Notas</span><br>Pressione <strong>Windows + R</strong>, digite <strong>notepad</strong> e tecle <strong>Enter</strong>. Ou pesquise <em>"Bloco de Notas"</em> no menu Iniciar.</div>
+            <div style="margin-bottom:10px"><span style="color:var(--grn);font-weight:700">② Escreva as questões seguindo exatamente este modelo:</span></div>
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:12px;font-family:monospace;font-size:12px;white-space:pre;color:var(--txt);overflow-x:auto">1. Qual é a capital do Brasil?
+A) São Paulo
+B) Rio de Janeiro
+C) Brasília
+D) Salvador
+E) Belo Horizonte
+Correta: C
+
+2. Quanto é 2 + 2?
+A) 3
+B) 4
+C) 5
+D) 6
+E) 7
+Correta: B</div>
+            <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">③ Salve o arquivo como .txt</span><br>Clique em <strong>Arquivo → Salvar como</strong>. Escolha um local fácil (ex: <strong>Área de Trabalho</strong>). No campo <strong>"Tipo"</strong>, selecione <strong>"Todos os Arquivos (*.*)"</strong>. Nomeie com <strong>.txt</strong> no final — ex: <code style="background:var(--bg);padding:1px 5px;border-radius:4px">prova-matematica.txt</code> — e clique em <strong>Salvar</strong>.</div>
+            <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">④ Importe aqui</span><br>Clique no botão <strong>📂 Importar .txt</strong> acima, selecione o arquivo e as questões serão carregadas automaticamente.</div>
+            <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">⚠️ <strong>Atenção:</strong> A importação <strong>substitui</strong> todas as questões já adicionadas no formulário. Cada questão deve ter as <strong>5 alternativas (A a E)</strong> e a linha <strong>Correta:</strong> com a letra da resposta.</div>
+          </div>
           <div id="qcP"></div>
           <div id="pv-err" class="hidden"></div>
           <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
@@ -1228,6 +1259,40 @@ function renderTrilhasProfessor(){
   el.innerHTML=S.trilhas.map(t=>{const ts=t.turmas.map(x=>`<span class="badge bb" style="margin:1px">${x}</span>`).join('');const pg=S.progresso.filter(p=>p.trilhaId===t.id).length;return`<div class="trc" style="--tc:${t.cor}"><div class="tr-h"><div class="tr-ic" style="background:${t.cor}22;border:2px solid ${t.cor}44">${t.icone}</div><div style="flex:1;min-width:0"><div class="tr-ti">${t.titulo}</div><div class="tr-ds">${t.descricao||''} · ${t.disciplina}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${ts}<span class="badge bo">${t.ordemAulas.length} aulas</span><span class="badge bg">${pg} aluno${pg!==1?'s':''}</span></div></div></div><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-org btn-sm" onclick="editarTrilha('${t.id}')">✏️ Editar</button><button class="btn btn-dan btn-sm" onclick="delTrilha('${t.id}')">🗑</button></div></div>`}).join('');
 }
 async function delTrilha(id){if(!confirm('Excluir trilha?'))return;shl('Excluindo...');try{await sb.from('progresso_trilha').delete().eq('trilha_id',id);await sb.from('trilhas').delete().eq('id',id);await loadAllData();renderTrilhasProfessor();toast('🗑 Trilha removida','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
+
+/* ══ IMPORTAR TXT ══ */
+function toggleTutorialImport(){const b=G('tutorial-import');b.style.display=b.style.display==='none'?'block':'none'}
+function importarTxt(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.txt';
+  inp.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const text=await file.text();
+    const questoes=parseTxt(text);
+    if(!questoes.length)return toast('⚠️ Nenhuma questão encontrada. Verifique o formato!','yellow');
+    QD['qP']=[];G('qcP').innerHTML='';
+    questoes.forEach((q,i)=>{QD['qP'].push(q);_rQ('qP','qcP',i,q)});
+    toast(`✅ ${questoes.length} questão(ões) importada(s)!`,'green');
+  };
+  inp.click();
+}
+function parseTxt(text){
+  const questoes=[];const letraMap={A:0,B:1,C:2,D:3,E:4};
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+  let cur=null;
+  for(const line of lines){
+    // enunciado: "1. ..." ou "1) ..."
+    const qm=line.match(/^\d+[\.\)]\s+(.+)/);
+    if(qm){if(cur)questoes.push(cur);cur={enunciado:qm[1],opcoes:['','','','',''],correta:null,imagemUrl:null};continue}
+    // alternativa: "A) ..." ou "A. ..." ou "A- ..."
+    const om=line.match(/^([A-Ea-e])[\)\.\-]\s*(.+)/);
+    if(om&&cur){const idx=letraMap[om[1].toUpperCase()];if(idx!==undefined)cur.opcoes[idx]=om[2];continue}
+    // correta: "Correta: C" ou "Resposta: C" ou "Gabarito: C"
+    const cm=line.match(/^(?:correta?|resposta|gabarito)\s*[:\-]\s*([A-Ea-e])/i);
+    if(cm&&cur){cur.correta=letraMap[cm[1].toUpperCase()]??null;continue}
+  }
+  if(cur)questoes.push(cur);
+  return questoes.filter(q=>q.enunciado&&q.opcoes.some(o=>o)&&q.correta!==null);
+}
 
 /* ══ PROVAS ══ */
 let editPvId=null;
