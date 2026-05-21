@@ -577,7 +577,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
 
       <!-- Provas lista -->
-      <div class="sec" id="sec-provas"><div class="ph"><div><div class="ptit">Provas</div></div><button class="btn btn-p btn-sm" onclick="irNovaProva()">+ Nova Prova</button></div><div class="card"><div class="tw"><table><thead><tr><th>Título</th><th>Disciplina</th><th>Turmas</th><th>Q.</th><th>Entregas</th><th></th></tr></thead><tbody id="provas-tb"></tbody></table></div></div></div>
+      <div class="sec" id="sec-provas">
+        <div class="ph"><div><div class="ptit">Provas</div></div><button class="btn btn-p btn-sm" onclick="irNovaProva()">+ Nova Prova</button></div>
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <div class="fg" style="margin:0;flex:1;min-width:160px"><label class="fl">Filtrar por Disciplina</label><select class="fsel" id="pv-fd" onchange="renderProvas()"><option value="">Todas</option></select></div>
+          </div>
+        </div>
+        <div class="card"><div class="tw"><table><thead><tr><th>Título</th><th>Disciplina</th><th>Turmas</th><th>Q.</th><th>Entregas</th><th></th></tr></thead><tbody id="provas-tb"></tbody></table></div></div>
+      </div>
 
       <!-- Resultados -->
       <div class="sec" id="sec-resultados">
@@ -593,7 +601,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl"></div></div></div><div id="a-trilhas"></div></div>
 
       <!-- Aluno: Aulas -->
-      <div class="sec" id="sec-a-aulas"><div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl"></div></div></div><div id="a-aulas"></div></div>
+      <div class="sec" id="sec-a-aulas">
+        <div class="ph"><div><div class="ptit">Aulas</div><div class="psub" id="a-aulas-lbl"></div></div></div>
+        <div class="card" style="margin-bottom:14px">
+          <input class="fi" id="aulas-busca" placeholder="🔍 Buscar por título ou disciplina..." oninput="renderAlunoAulas()" style="width:100%">
+        </div>
+        <div id="a-aulas"></div>
+      </div>
 
       <!-- Aluno: Provas -->
       <div class="sec" id="sec-a-provas"><div class="ph"><div><div class="ptit">Minhas Provas</div><div class="psub" id="a-pv-lbl"></div></div></div><div id="a-provas"></div></div>
@@ -980,19 +994,19 @@ async function salvarConfAulas(){
 
 /* ══ QUESTÕES ══ */
 const QD={};
-function addQ(key,cid){if(!QD[key])QD[key]=[];const idx=QD[key].length;const q={enunciado:'',opcoes:['','','',''],correta:null,imagemUrl:null};QD[key].push(q);_rQ(key,cid,idx,q)}
+function addQ(key,cid){if(!QD[key])QD[key]=[];const idx=QD[key].length;const q={enunciado:'',opcoes:['','','','',''],correta:null,imagemUrl:null};QD[key].push(q);_rQ(key,cid,idx,q)}
 function _rQ(key,cid,idx,q){
-  const L=['A','B','C','D'];const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
+  const L=['A','B','C','D','E'];const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
   div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
     <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
     <label class="fl">Imagem (opcional)</label>
     <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`}</div>
     <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
     <ul class="ol-l">${L.map((l,oi)=>`<li class="oi"><div class="oltr${q.correta===oi?' ok':''}" id="ol-${key}-${idx}-${oi}" onclick="setC('${key}',${idx},${oi})">${l}</div><input class="fi" style="flex:1" placeholder="Alt. ${l}..." oninput="QD['${key}'][${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}"></li>`).join('')}</ul>
-    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCD'[q.correta]}`:'⬆ Clique na letra para marcar a correta'}</div>`;
+    <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCDE'[q.correta]}`:'⬆ Clique na letra para marcar a correta'}</div>`;
   G(cid).appendChild(div);
 }
-function setC(key,qi,oi){QD[key][qi].correta=oi;['A','B','C','D'].forEach((_,i)=>G(`ol-${key}-${qi}-${i}`).classList.toggle('ok',i===oi));const h=G(`qh-${key}-${qi}`);h.textContent=`✅ Correta: ${'ABCD'[oi]}`;h.style.color='var(--grn)'}
+function setC(key,qi,oi){QD[key][qi].correta=oi;['A','B','C','D','E'].forEach((_,i)=>G(`ol-${key}-${qi}-${i}`).classList.toggle('ok',i===oi));const h=G(`qh-${key}-${qi}`);h.textContent=`✅ Correta: ${'ABCDE'[oi]}`;h.style.color='var(--grn)'}
 function rmQ(key,cid,idx){QD[key].splice(idx,1);rebQ(key,cid)}
 function rebQ(key,cid){G(cid).innerHTML='';const c=[...QD[key]];QD[key]=[];c.forEach((q,i)=>{QD[key].push({...q,opcoes:[...q.opcoes]});_rQ(key,cid,i,q)})}
 async function hIQ(event,key,idx){const file=event.target.files[0];if(!file)return;if(file.size>5*1024*1024){toast('⚠️ > 5MB!','yellow');return}const wrap=G(`imgw-${key}-${idx}`);wrap.innerHTML=`<div class="upl-spin"><div class="usp"></div>Enviando...</div>`;try{const url=await uploadImg(file,'q');QD[key][idx].imagemUrl=url;wrap.innerHTML=`<div class="ipw"><img class="ipv" src="${url}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`;toast('🖼 Enviada!','green')}catch(e){wrap.innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`;toast('❌ Erro.','red')}}
@@ -1238,13 +1252,20 @@ async function salvarProva(){
 }
 function renderProvas(){
   const tb=G('provas-tb');
-  if(!S.provas.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhuma prova</td></tr>';return}
-  tb.innerHTML=S.provas.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id).length;const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<tr><td><strong>${p.titulo}</strong><div class="mut xs mt1">${p.criadaEm}</div></td><td><span class="badge bp">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'bg':'by'}">${n}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warn btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delProva('${p.id}')">🗑</button></div></td></tr>`}).join('');
+  const fd=G('pv-fd');
+  // popula o filtro de disciplinas dinamicamente
+  const discs=[...new Set(S.provas.map(p=>p.disciplina).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const cur=fd.value;
+  fd.innerHTML='<option value="">Todas</option>'+discs.map(d=>`<option value="${d}"${d===cur?' selected':''}>${d}</option>`).join('');
+  let provas=S.provas;
+  if(fd.value)provas=provas.filter(p=>p.disciplina===fd.value);
+  if(!provas.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhuma prova</td></tr>';return}
+  tb.innerHTML=provas.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id).length;const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<tr><td><strong>${p.titulo}</strong><div class="mut xs mt1">${p.criadaEm}</div></td><td><span class="badge bp">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'bg':'by'}">${n}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warn btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delProva('${p.id}')">🗑</button></div></td></tr>`}).join('');
 }
 async function delProva(id){if(!confirm('Deletar prova e resultados?'))return;shl('Excluindo...');try{const p=S.provas.find(x=>x.id===id);if(p)for(const q of p.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas').delete().eq('prova_id',id);await sb.from('provas').delete().eq('id',id);await loadAllData();renderProvas();toast('🗑 Prova removida','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
 function verProvaProfessor(id){
   const p=S.provas.find(x=>x.id===id);if(!p)return;G('m-vp-t').textContent=p.titulo;
-  const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');const L=['A','B','C','D'];
+  const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');const L=['A','B','C','D','E'];
   const ents=S.respostas.filter(r=>r.provaId===id);
   let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${ts}<span class="badge bp">${p.disciplina}</span><span class="badge by">${p.pontosPorQ} pts/q</span></div><div class="ctit">📝 Questões</div>`;
   p.questoes.forEach((q,i)=>{html+=`<div class="qi"><div class="qh"><span class="qnum">Q${i+1}</span></div><p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p>${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--bdr);display:block;margin-bottom:8px" alt="img">`:''}<ul class="ol-l">${q.opcoes.map((op,oi)=>`<li class="oi"><div class="oltr ${oi===q.correta?'ok':''}">${L[oi]}</div><span style="font-size:13px">${op}</span></li>`).join('')}</ul></div>`});
@@ -1362,7 +1383,7 @@ function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x
 let ativAtiva=null,tipoAtiv=null,triIdAtiv=null,respostasAtiv={};
 function abrirProvaAluno(id){const p=S.provas.find(x=>x.id===id);if(!p)return;ativAtiva=p;tipoAtiv='prova';triIdAtiv=null;respostasAtiv={};G('mf-t').textContent=p.titulo;G('mf-i').textContent=`${p.disciplina} · ${p.questoes.length} q. · ${(p.questoes.length*p.pontosPorQ).toFixed(1)} pts`;rQModal(p.questoes);G('btn-entregar').textContent='📨 Entregar Prova';G('m-fazer').classList.remove('hidden')}
 function abrirEx(exId,aulaId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;respostasAtiv={};G('mf-t').textContent=ex.titulo;G('mf-i').textContent=`${ex.questoes.length} q. · ${(ex.questoes.length*ex.pontosPorQ).toFixed(1)} pts`;rQModal(ex.questoes);G('btn-entregar').textContent='📨 Entregar';G('m-fazer').classList.remove('hidden')}
-function rQModal(qs){const L=['A','B','C','D'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
+function rQModal(qs){const L=['A','B','C','D','E'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
 function selR(qi,oi){ativAtiva.questoes[qi].opcoes.forEach((_,i)=>{const r=G(`ro-${qi}-${i}`),c=G(`rc-${qi}-${i}`);if(r)r.classList.remove('sel');if(c)c.classList.remove('s')});const r=G(`ro-${qi}-${oi}`),c=G(`rc-${qi}-${oi}`);if(r)r.classList.add('sel');if(c)c.classList.add('s');respostasAtiv[qi]=oi}
 async function entregar(){
   const total=ativAtiva.questoes.length,respondidas=Object.keys(respostasAtiv).length;
@@ -1383,7 +1404,7 @@ async function entregar(){
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
 function mostrarResult(reg,atv){
-  const total=atv.questoes.length,mx=total*atv.pontosPorQ,ok=reg.nota>=mx*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D'];
+  const total=atv.questoes.length,mx=total*atv.pontosPorQ,ok=reg.nota>=mx*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D','E'];
   let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div></div>
   <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:${pct}%"></div></div>
   <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div>`;
@@ -1400,9 +1421,11 @@ function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;c
 /* ══ ALUNO AULAS ══ */
 function renderAlunoAulas(){
   const u=S.user;G('a-aulas-lbl').textContent=`Turma ${u.turma}`;
-  const aulas=S.aulas.filter(al=>al.turmas.includes(u.turma));
+  let aulas=S.aulas.filter(al=>al.turmas.includes(u.turma));
+  const busca=(G('aulas-busca')?.value||'').toLowerCase().trim();
+  if(busca)aulas=aulas.filter(al=>al.titulo.toLowerCase().includes(busca)||al.disciplina.toLowerCase().includes(busca));
   const el=G('a-aulas');
-  if(!aulas.length){el.innerHTML='<div class="es"><div class="ei">📚</div><div class="et">Nenhuma aula disponível</div></div>';return}
+  if(!aulas.length){el.innerHTML=`<div class="es"><div class="ei">📚</div><div class="et">${busca?'Nenhuma aula encontrada':'Nenhuma aula disponível'}</div></div>`;return}
   el.innerHTML=aulas.map(al=>{const exs=S.exercicios.filter(e=>e.aulaId===al.id&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<div class="ac" style="cursor:pointer" onclick="verAula('${al.id}',false)"><div class="at">${al.titulo}</div><div class="am"><span class="badge bt">${al.disciplina}</span>${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${exs.length?`<span class="badge ${exF===exs.length?'bg':'by'}">🏋️ ${exF}/${exs.length}</span>`:''}</div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula('${al.id}',false)" style="margin-top:8px">📖 Ver Aula →</button></div>`}).join('');
 }
 
