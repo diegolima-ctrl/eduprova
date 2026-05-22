@@ -621,11 +621,17 @@ Correta: B</div>
       <!-- Resultados -->
       <div class="sec" id="sec-resultados">
         <div class="ph"><div><div class="ptit">Resultados</div></div><button class="btn btn-warn btn-sm" onclick="expResultados()">📥 CSV</button></div>
-        <div class="card" style="margin-bottom:18px"><div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div class="card" style="margin-bottom:14px"><div style="display:flex;gap:12px;flex-wrap:wrap">
           <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Turma</label><select class="fsel" id="res-ft" onchange="renderResultados()"><option value="">Todas</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
-          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Prova</label><select class="fsel" id="res-fp" onchange="renderResultados()"><option value="">Todas</option></select></div>
+          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Disciplina</label><select class="fsel" id="res-fd" onchange="renderResultados()"><option value="">Todas</option></select></div>
+          <div class="fg" style="margin:0;flex:1;min-width:120px" id="res-fp-wrap"><label class="fl">Prova</label><select class="fsel" id="res-fp" onchange="renderResultados()"><option value="">Todas</option></select></div>
         </div></div>
-        <div class="card"><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Prova</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="res-tb"></tbody></table></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="btn btn-org btn-sm" id="res-tab-provas" onclick="resTab('provas')">📋 Provas</button>
+          <button class="btn btn-sec btn-sm" id="res-tab-trilhas" onclick="resTab('trilhas')">🚀 Trilhas</button>
+        </div>
+        <div class="card" id="res-sec-provas"><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Prova</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="res-tb"></tbody></table></div></div>
+        <div id="res-sec-trilhas" style="display:none"><div id="res-trilhas-body"></div></div>
       </div>
 
       <!-- Aluno: Trilhas -->
@@ -1337,13 +1343,60 @@ function verProvaProfessor(id){
   if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody>${ents.map(r=>{const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`}).join('')}</tbody></table></div>`}
   G('m-vp-b').innerHTML=html;G('m-vp').classList.remove('hidden');
 }
+let resTabAtivo='provas';
+function resTab(t){
+  resTabAtivo=t;const isP=t==='provas';
+  G('res-sec-provas').style.display=isP?'':'none';
+  G('res-sec-trilhas').style.display=isP?'none':'';
+  G('res-fp-wrap').style.display=isP?'':'none';
+  G('res-tab-provas').className='btn btn-sm '+(isP?'btn-org':'btn-sec');
+  G('res-tab-trilhas').className='btn btn-sm '+(!isP?'btn-org':'btn-sec');
+  renderResultados();
+}
 function renderResultados(){
-  const ps=G('res-fp'),cp=ps.value;ps.innerHTML='<option value="">Todas</option>'+S.provas.map(p=>`<option value="${p.id}"${cp===p.id?' selected':''}>${p.titulo}</option>`).join('');
-  const ft=G('res-ft').value,fp=G('res-fp').value;
-  let res=[...S.respostas];if(ft)res=res.filter(r=>r.alunoTurma===ft);if(fp)res=res.filter(r=>r.provaId===fp);
-  const tb=G('res-tb');
-  if(!res.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado</td></tr>';return}
-  tb.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td></tr>`}).join('');
+  // Popula disciplinas (provas + trilhas combinadas)
+  const fd=G('res-fd'),cdv=fd.value;
+  const discs=[...new Set([...S.provas.map(p=>p.disciplina),...S.trilhas.map(t=>t.disciplina)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  fd.innerHTML='<option value="">Todas</option>'+discs.map(d=>`<option value="${d}"${cdv===d?' selected':''}>${d}</option>`).join('');
+  const fdisc=fd.value,ft=G('res-ft').value;
+  // Popula select de provas filtrado pela disciplina
+  const ps=G('res-fp'),cp=ps.value;
+  let provasDisp=S.provas;if(fdisc)provasDisp=provasDisp.filter(p=>p.disciplina===fdisc);
+  ps.innerHTML='<option value="">Todas</option>'+provasDisp.map(p=>`<option value="${p.id}"${cp===p.id?' selected':''}>${p.titulo}</option>`).join('');
+  if(resTabAtivo==='provas'){
+    const fp=G('res-fp').value;
+    let res=[...S.respostas];
+    if(ft)res=res.filter(r=>r.alunoTurma===ft);
+    if(fp)res=res.filter(r=>r.provaId===fp);
+    if(fdisc)res=res.filter(r=>{const p=S.provas.find(x=>x.id===r.provaId);return p&&p.disciplina===fdisc;});
+    res.sort((a,b)=>a.alunoNome.localeCompare(b.alunoNome,'pt-BR',{sensitivity:'base'}));
+    const tb=G('res-tb');
+    if(!res.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado</td></tr>';return;}
+    tb.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+  } else {
+    // Aba Trilhas — progresso individual por aluno
+    const el=G('res-trilhas-body');
+    let trilhas=[...S.trilhas];
+    if(ft)trilhas=trilhas.filter(t=>t.turmas.includes(ft));
+    if(fdisc)trilhas=trilhas.filter(t=>t.disciplina===fdisc);
+    trilhas.sort((a,b)=>a.titulo.localeCompare(b.titulo,'pt-BR'));
+    if(!trilhas.length){el.innerHTML='<div class="card"><div style="text-align:center;padding:22px;color:var(--mut)">Nenhuma trilha encontrada para estes filtros</div></div>';return;}
+    el.innerHTML=trilhas.map(t=>{
+      let als=S.alunos.filter(a=>t.turmas.includes(a.turma));
+      if(ft)als=als.filter(a=>a.turma===ft);
+      als=als.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+      if(!als.length)return'';
+      const total=t.ordemAulas.length;
+      const concluidos=als.filter(al=>{const pg=S.progresso.find(p=>p.trilhaId===t.id&&p.alunoRA===al.ra)||{concluidas:[]};return pg.concluidas.length===total&&total>0;}).length;
+      const rows=als.map(al=>{
+        const pg=S.progresso.find(p=>p.trilhaId===t.id&&p.alunoRA===al.ra)||{concluidas:[],xp:0};
+        const concl=pg.concluidas.length,pct=total>0?Math.round((concl/total)*100):0,nv=getNv(pg.xp);
+        const concluido=concl===total&&total>0;
+        return`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff">${al.nome[0].toUpperCase()}</div><strong>${al.nome}</strong></div></td><td><span class="badge bb">${al.turma}</span></td><td><span class="nlvl" style="font-size:10px">${nv.e} N${nv.n}</span></td><td><strong style="color:var(--yel)">⚡ ${pg.xp}</strong></td><td style="min-width:110px"><div class="pb" style="margin-bottom:2px"><div class="pf" style="width:${pct}%;background:${t.cor}"></div></div><span class="xs mut">${pct}%</span></td><td>${concl}/${total}</td><td><span class="badge ${concluido?'bg':'br'}">${concluido?'✅':'⏳'}</span></td></tr>`;
+      }).join('');
+      return`<div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--brd)"><div style="width:38px;height:38px;border-radius:10px;background:${t.cor}22;border:2px solid ${t.cor}44;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${t.icone}</div><div style="flex:1"><div style="font-weight:700;font-size:15px">${t.titulo}</div><div class="mut sm">${t.disciplina} · ${total} aulas · ${als.length} aluno${als.length!==1?'s':''}</div></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;color:${t.cor}">${concluidos}</div><div class="mut xs">concluíram</div></div></div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Nível</th><th>XP</th><th>Progresso</th><th>Aulas</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    }).join('');
+  }
 }
 
 /* ══ VER AULA ══ */
