@@ -316,6 +316,69 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .tdot{width:44px;height:44px;font-size:16px}
 }
 @media(max-width:400px){.sg{grid-template-columns:1fr}.lcard{padding:28px 20px}.tcg{grid-template-columns:repeat(4,1fr)}}
+
+/* ══ EXAM RUNNER ══ */
+#exam-runner{position:fixed;inset:0;background:var(--bg);z-index:5000;display:flex;flex-direction:column;overflow:hidden}
+#exam-runner.hidden{display:none}
+.er-bar{position:sticky;top:0;height:56px;background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:14px;padding:0 20px;flex-shrink:0;z-index:10}
+.er-bar-title{font-family:var(--fd);font-weight:700;font-size:14px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-bar-sub{font-size:11px;color:var(--mut);margin-top:1px}
+.er-bar-div{width:1px;height:28px;background:var(--bdr);flex-shrink:0}
+.er-grow{flex:1}
+.er-timer{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--txt);background:var(--surf2);border-radius:8px;padding:6px 11px;flex-shrink:0}
+.er-timer.warn{color:var(--yel);background:rgba(251,191,36,.1)}
+.er-prog{height:3px;background:var(--surf2);flex-shrink:0}
+.er-prog-fill{height:100%;background:var(--acc);transition:width .4s ease}
+.er-body{flex:1;overflow-y:auto;padding:28px 20px 100px;max-width:720px;margin:0 auto;width:100%}
+.er-dots{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:24px}
+.er-dot{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--bdr);background:var(--surf);font-size:11px;font-weight:700;color:var(--mut);display:grid;place-items:center;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
+.er-dot:hover{border-color:var(--acc)}
+.er-dot.done{background:var(--acc);border-color:var(--acc);color:#fff}
+.er-dot.cur{border-color:var(--acc);color:var(--acc);box-shadow:0 0 0 3px rgba(79,124,255,.25)}
+.er-dot.flag{border-color:var(--yel);color:var(--yel)}
+.er-qhead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.er-qnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--acc);background:rgba(79,124,255,.12);border-radius:6px;padding:3px 9px}
+.er-qpts{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut)}
+.er-flagbtn{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--mut);background:none;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:var(--fb)}
+.er-flagbtn:hover{background:var(--surf2)}
+.er-flagbtn.on{color:var(--yel);background:rgba(251,191,36,.1)}
+.er-qtext{font-size:18px;font-weight:600;line-height:1.5;margin:0 0 20px;color:var(--txt)}
+.er-choices{display:flex;flex-direction:column;gap:9px}
+.er-choice{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:11px;font-size:14.5px;text-align:left;color:var(--txt);cursor:pointer;transition:all .15s;width:100%}
+.er-choice:hover{border-color:var(--acc);background:rgba(79,124,255,.06)}
+.er-choice.sel{border-color:var(--acc);background:rgba(79,124,255,.1);box-shadow:0 0 0 3px rgba(79,124,255,.2)}
+.er-key{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--bdr);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--mut);flex-shrink:0;transition:all .15s}
+.er-choice.sel .er-key{background:var(--acc);border-color:var(--acc);color:#fff}
+.er-foot{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);padding:10px 20px;z-index:10}
+.er-foot-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.er-overlay{position:absolute;inset:0;background:rgba(13,15,20,.8);z-index:20;display:flex;align-items:center;justify-content:center;padding:20px}
+.er-overlay.hidden{display:none}
+.er-card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.5);padding:32px;max-width:380px;width:100%;text-align:center}
+.er-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13.5px;font-weight:700;border-radius:9px;padding:10px 18px;border:none;cursor:pointer;transition:all .15s;font-family:var(--fb)}
+.er-btn:disabled{opacity:.45;cursor:not-allowed}
+.er-btn-p{background:var(--acc);color:#fff}
+.er-btn-p:hover:not(:disabled){background:#3d6ef0}
+.er-btn-sec{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr)}
+.er-btn-sec:hover:not(:disabled){border-color:var(--acc)}
+.er-btn-ghost{background:transparent;color:var(--mut)}
+.er-btn-ghost:hover:not(:disabled){background:var(--surf2)}
+.er-btn-danger{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.er-btn-danger:hover:not(:disabled){background:rgba(248,113,113,.25)}
+/* start screen */
+#er-start{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+.er-start-card{background:var(--surf);border:1px solid var(--bdr);border-radius:18px;padding:36px 28px;max-width:460px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.er-stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:20px 0}
+.er-stat{background:var(--surf2);border-radius:10px;padding:12px 6px;text-align:center}
+.er-stat-v{font-family:var(--fd);font-weight:800;font-size:19px;color:var(--txt)}
+.er-stat-l{font-size:10px;color:var(--mut);margin-top:2px}
+.er-info-box{background:rgba(79,124,255,.08);border:1px solid rgba(79,124,255,.2);border-radius:10px;padding:11px 13px;margin-bottom:20px;display:flex;gap:9px;align-items:flex-start;text-align:left;font-size:12.5px;line-height:1.55;color:var(--mut)}
+/* finish screen */
+#er-finish{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+@keyframes er-pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.er-pop{animation:er-pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes er-fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.er-q-anim{animation:er-fadein .2s ease}
+@media(max-width:480px){.er-start-card,.er-card{padding:24px 16px}.er-qtext{font-size:16px}.er-choice{font-size:13px}}
 </style>
 </head>
 <body>
@@ -690,6 +753,80 @@ Correta: B</div>
   </div>
 </div>
 <div class="mov hidden" id="m-aula"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-aula-t"></div><button class="mx" onclick="cm('m-aula')">×</button></div><div class="mb" id="m-aula-b"></div></div></div>
+<!-- ══ EXAM RUNNER ══ -->
+<div id="exam-runner" class="hidden">
+  <!-- Start screen -->
+  <div id="er-start">
+    <div class="er-start-card">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc2);margin-bottom:12px" id="er-s-sub"></div>
+      <h2 style="font-family:var(--fd);font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em;line-height:1.2" id="er-s-title"></h2>
+      <p style="color:var(--mut);font-size:13px;margin:0 0 20px" id="er-s-turma"></p>
+      <div class="er-stat-grid">
+        <div class="er-stat"><div class="er-stat-v" id="er-s-nq">—</div><div class="er-stat-l">questões</div></div>
+        <div class="er-stat"><div class="er-stat-v" id="er-s-dur">50 min</div><div class="er-stat-l">duração</div></div>
+        <div class="er-stat"><div class="er-stat-v" id="er-s-pts">—</div><div class="er-stat-l">pontos</div></div>
+      </div>
+      <div class="er-info-box">
+        <span style="color:var(--acc);flex-shrink:0">ℹ</span>
+        <span>O tempo começa quando você iniciar. Suas respostas são salvas. Você pode revisar antes de entregar.</span>
+      </div>
+      <button class="er-btn er-btn-p" style="width:100%;padding:13px;font-size:15px;border-radius:11px" onclick="erIniciar()">▶ Iniciar prova</button>
+    </div>
+  </div>
+  <!-- Runner -->
+  <div id="er-running" class="hidden" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div class="er-bar">
+      <div style="min-width:0;flex:1">
+        <div class="er-bar-title" id="er-r-title"></div>
+        <div class="er-bar-sub" id="er-r-sub"></div>
+      </div>
+      <div class="er-bar-div"></div>
+      <div class="er-timer" id="er-timer">⏱ 50:00</div>
+    </div>
+    <div class="er-prog"><div class="er-prog-fill" id="er-prog-fill" style="width:0%"></div></div>
+    <div class="er-body" id="er-body">
+      <div class="er-dots" id="er-dots"></div>
+      <div id="er-q"></div>
+    </div>
+    <div class="er-foot">
+      <div class="er-foot-inner">
+        <button class="er-btn er-btn-ghost" id="er-btn-prev" onclick="erNavQ(erQAtual-1)">‹ Anterior</button>
+        <span style="font-size:11px;color:var(--mut);font-family:'JetBrains Mono',monospace" id="er-count"></span>
+        <button class="er-btn er-btn-p" id="er-btn-next" onclick="erNavQ(erQAtual+1)">Próxima ›</button>
+        <button class="er-btn er-btn-danger hidden" id="er-btn-entregar" onclick="erConfirmar()">📨 Entregar</button>
+      </div>
+    </div>
+    <!-- Confirm overlay -->
+    <div class="er-overlay hidden" id="er-confirm-ov" onclick="this.classList.add('hidden')">
+      <div class="er-card" onclick="event.stopPropagation()">
+        <div style="font-size:28px;margin-bottom:12px">📨</div>
+        <h3 style="font-family:var(--fd);font-size:18px;font-weight:800;margin:0 0 8px">Entregar a prova?</h3>
+        <p style="color:var(--mut);font-size:13px;margin:0 0 6px;line-height:1.55" id="er-confirm-msg"></p>
+        <p style="color:var(--mut);font-size:12px;margin:0 0 20px">Depois de entregar não será possível alterar as respostas.</p>
+        <div style="display:flex;gap:8px">
+          <button class="er-btn er-btn-sec" style="flex:1" onclick="G('er-confirm-ov').classList.add('hidden')">Revisar</button>
+          <button class="er-btn er-btn-p" style="flex:1" id="er-btn-confirmar" onclick="erEntregar()">✓ Entregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Finish screen -->
+  <div id="er-finish" style="display:none">
+    <div class="er-start-card">
+      <div class="er-pop" id="er-fin-icon" style="width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;font-size:30px"></div>
+      <h2 style="font-family:var(--fd);font-size:22px;font-weight:800;margin:0 0 8px">Prova entregue!</h2>
+      <p style="color:var(--mut);font-size:13.5px;margin:0 0 20px;line-height:1.5" id="er-fin-msg"></p>
+      <div style="background:var(--surf2);border-radius:12px;padding:18px;margin-bottom:20px">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:6px">Sua nota</div>
+        <div style="font-family:var(--fd);font-weight:800;font-size:44px;letter-spacing:-.02em;line-height:1" id="er-fin-nota"></div>
+        <div style="margin-top:14px;background:var(--bdr);border-radius:3px;height:5px;overflow:hidden"><div id="er-fin-bar" style="height:100%;transition:width .8s ease"></div></div>
+        <div style="margin-top:5px;font-size:11px;color:var(--mut)" id="er-fin-pct"></div>
+      </div>
+      <button class="er-btn er-btn-sec" style="width:100%" onclick="erFechar()">← Voltar às provas</button>
+    </div>
+  </div>
+</div>
+
 <div class="mov hidden" id="m-fazer">
   <div class="modal modal-lg">
     <div class="mh"><div><div class="mt" id="mf-t"></div><div class="mut sm mt1" id="mf-i"></div></div><button class="mx" onclick="cm('m-fazer')">×</button></div>
@@ -1499,7 +1636,144 @@ function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x
 
 /* ══ PROVA/EXERCÍCIO ALUNO ══ */
 let ativAtiva=null,tipoAtiv=null,triIdAtiv=null,respostasAtiv={};
-function abrirProvaAluno(id){const p=S.provas.find(x=>x.id===id);if(!p)return;ativAtiva=p;tipoAtiv='prova';triIdAtiv=null;respostasAtiv={};G('mf-t').textContent=p.titulo;G('mf-i').textContent=`${p.disciplina} · ${p.questoes.length} q. · ${(p.questoes.length*p.pontosPorQ).toFixed(1)} pts`;rQModal(p.questoes);G('btn-entregar').textContent='📨 Entregar Prova';G('m-fazer').classList.remove('hidden')}
+
+/* ── ExamRunner state ── */
+let erProva=null,erQAtual=0,erRespostas={},erFlags={},erTimerInt=null,erSec=0;
+const ER_L=['A','B','C','D','E'];
+
+function abrirProvaAluno(id){
+  const p=S.provas.find(x=>x.id===id);if(!p)return;
+  erProva=p;erQAtual=0;erRespostas={};erFlags={};
+  const dur=p.duracao||50;
+  G('er-s-sub').textContent=p.disciplina;
+  G('er-s-title').textContent=p.titulo;
+  G('er-s-turma').textContent=p.turmas?.join(', ')||'';
+  G('er-s-nq').textContent=p.questoes.length;
+  G('er-s-dur').textContent=dur+' min';
+  G('er-s-pts').textContent=(p.questoes.length*p.pontosPorQ).toFixed(0);
+  G('er-r-title').textContent=p.titulo;
+  G('er-r-sub').textContent=p.disciplina;
+  G('er-start').style.display='flex';
+  G('er-running').style.display='none';
+  G('er-finish').style.display='none';
+  G('exam-runner').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+
+function erIniciar(){
+  const dur=(erProva.duracao||50)*60;
+  erSec=dur;
+  G('er-start').style.display='none';
+  G('er-running').style.display='flex';
+  erTimerInt&&clearInterval(erTimerInt);
+  erTimerInt=setInterval(()=>{
+    erSec=Math.max(0,erSec-1);
+    const mm=String(Math.floor(erSec/60)).padStart(2,'0'),ss=String(erSec%60).padStart(2,'0');
+    const tel=G('er-timer');tel.textContent=`⏱ ${mm}:${ss}`;
+    tel.classList.toggle('warn',erSec<300);
+    if(erSec<=0){clearInterval(erTimerInt);erConfirmar()}
+  },1000);
+  erRenderQ();erRenderDots();erUpdateProg();erUpdateFoot();
+}
+
+function erNavQ(n){
+  const total=erProva.questoes.length;
+  if(n<0||n>=total)return;
+  erQAtual=n;erRenderQ();erRenderDots();erUpdateProg();erUpdateFoot();
+  G('er-body').scrollTo(0,0);
+}
+
+function erRenderQ(){
+  const q=erProva.questoes[erQAtual],qi=erQAtual;
+  const ans=erRespostas[qi],flagged=erFlags[qi];
+  G('er-q').innerHTML=`<div class="er-q-anim">
+    <div class="er-qhead">
+      <span class="er-qnum">Questão ${qi+1}</span>
+      <span class="er-qpts">${erProva.pontosPorQ} ${erProva.pontosPorQ===1?'ponto':'pontos'}</span>
+      <span class="er-grow"></span>
+      <button class="er-flagbtn${flagged?' on':''}" onclick="erToggleFlag(${qi})">🚩 ${flagged?'Marcada':'Marcar'}</button>
+    </div>
+    <p class="er-qtext">${q.enunciado}</p>
+    ${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:260px;border-radius:9px;margin-bottom:16px;display:block" alt="Q${qi+1}">` :''}
+    <div class="er-choices">
+      ${q.opcoes.map((op,oi)=>`<button class="er-choice${ans===oi?' sel':''}" onclick="erSelR(${qi},${oi})">
+        <span class="er-key">${ER_L[oi]}</span>
+        <span style="flex:1;text-align:left">${op}</span>
+        ${ans===oi?'<span style="color:var(--acc);font-size:16px">✓</span>':''}
+      </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function erSelR(qi,oi){erRespostas[qi]=oi;erRenderQ();erRenderDots();erUpdateFoot()}
+
+function erToggleFlag(qi){erFlags[qi]=!erFlags[qi];erRenderQ();erRenderDots()}
+
+function erRenderDots(){
+  const total=erProva.questoes.length;
+  G('er-dots').innerHTML=Array.from({length:total},(_,i)=>{
+    const done=erRespostas[i]!==undefined,cur=i===erQAtual,flag=erFlags[i]&&!done;
+    return`<button class="er-dot${cur?' cur':''}${done?' done':''}${flag?' flag':''}" onclick="erNavQ(${i})">${i+1}</button>`;
+  }).join('');
+}
+
+function erUpdateProg(){
+  const pct=((erQAtual+1)/erProva.questoes.length)*100;
+  G('er-prog-fill').style.width=pct+'%';
+}
+
+function erUpdateFoot(){
+  const total=erProva.questoes.length,resp=Object.keys(erRespostas).length;
+  G('er-count').textContent=`${resp}/${total} respondidas`;
+  const last=erQAtual===total-1;
+  G('er-btn-prev').disabled=erQAtual===0;
+  G('er-btn-next').classList.toggle('hidden',last);
+  G('er-btn-entregar').classList.toggle('hidden',!last);
+}
+
+function erConfirmar(){
+  const total=erProva.questoes.length,resp=Object.keys(erRespostas).length;
+  G('er-confirm-msg').textContent=`Você respondeu ${resp} de ${total} questões.${resp<total?' Ainda há questões em branco.':''}`;
+  G('er-confirm-ov').classList.remove('hidden');
+}
+
+async function erEntregar(){
+  G('er-confirm-ov').classList.add('hidden');
+  const btn=G('er-btn-confirmar');btn.disabled=true;
+  let acertos=0;erProva.questoes.forEach((q,qi)=>{if(erRespostas[qi]===q.correta)acertos++});
+  const nota=acertos*erProva.pontosPorQ,u=S.user;
+  shl('Salvando...');
+  try{
+    const{error}=await sb.from('respostas').insert({id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:erProva.id,respostas:{...erRespostas},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
+    if(error)throw error;
+    await loadAllData();hhl();
+    erTimerInt&&clearInterval(erTimerInt);
+    erMostrarFim({nota,acertos,total:erProva.questoes.length,max:erProva.questoes.length*erProva.pontosPorQ});
+  }catch(e){hhl();toast('❌ Erro ao entregar.','red');console.error(e)}
+  finally{btn.disabled=false}
+}
+
+function erMostrarFim({nota,acertos,total,max}){
+  const ok=nota>=max*0.6,pct=Math.round((acertos/total)*100);
+  G('er-running').style.display='none';
+  G('er-fin-icon').style.background=ok?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)';
+  G('er-fin-icon').textContent=ok?'✓':'✗';
+  G('er-fin-icon').style.color=ok?'var(--grn)':'var(--red)';
+  G('er-fin-msg').innerHTML=`Você acertou <strong>${acertos} de ${total}</strong> questões.`;
+  G('er-fin-nota').innerHTML=`<span style="color:${ok?'var(--grn)':'var(--red)'}">${nota.toFixed(1)}</span><span style="font-size:18px;color:var(--mut)"> / ${max.toFixed(1)}</span>`;
+  G('er-fin-bar').style.width=pct+'%';
+  G('er-fin-bar').style.background=ok?'var(--grn)':'var(--red)';
+  G('er-fin-pct').textContent=`${pct}% de aproveitamento`;
+  G('er-finish').style.display='flex';
+}
+
+function erFechar(){
+  erTimerInt&&clearInterval(erTimerInt);
+  G('exam-runner').classList.add('hidden');
+  document.body.style.overflow='';
+  renderAlunoProvas();
+}
+
 function abrirEx(exId,aulaId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;respostasAtiv={};G('mf-t').textContent=ex.titulo;G('mf-i').textContent=`${ex.questoes.length} q. · ${(ex.questoes.length*ex.pontosPorQ).toFixed(1)} pts`;rQModal(ex.questoes);G('btn-entregar').textContent='📨 Entregar';G('m-fazer').classList.remove('hidden')}
 function rQModal(qs){const L=['A','B','C','D','E'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
 function selR(qi,oi){ativAtiva.questoes[qi].opcoes.forEach((_,i)=>{const r=G(`ro-${qi}-${i}`),c=G(`rc-${qi}-${i}`);if(r)r.classList.remove('sel');if(c)c.classList.remove('s')});const r=G(`ro-${qi}-${oi}`),c=G(`rc-${qi}-${oi}`);if(r)r.classList.add('sel');if(c)c.classList.add('s');respostasAtiv[qi]=oi}
@@ -1510,14 +1784,9 @@ async function entregar(){
   const nota=acertos*ativAtiva.pontosPorQ,u=S.user;
   const btn=G('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';shl('Salvando...');
   try{
-    if(tipoAtiv==='prova'){
-      const{error}=await sb.from('respostas').insert({id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:ativAtiva.id,respostas:{...respostasAtiv},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
-      if(error)throw error;
-    }else{
-      const{error}=await sb.from('respostas_exercicios').insert({id:Date.now().toString(),exercicio_id:ativAtiva.id,aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,respostas:{...respostasAtiv},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
-      if(error)throw error;
-      if(triIdAtiv){const pg=S.progresso.find(p=>p.trilhaId===triIdAtiv&&p.alunoRA===u.ra);const novoXP=(pg?.xp||0)+XP_EX;const novoNv=getNv(novoXP).n;if(pg)await sb.from('progresso_trilha').update({xp:novoXP,nivel:novoNv}).eq('id',pg.id);else await sb.from('progresso_trilha').insert({id:Date.now().toString()+'x',trilha_id:triIdAtiv,aluno_ra:u.ra,aulas_concluidas:[],xp:novoXP,nivel:novoNv,atualizado_em:new Date().toISOString()});xpPop(`+${XP_EX} XP ⚡`)}
-    }
+    const{error}=await sb.from('respostas_exercicios').insert({id:Date.now().toString(),exercicio_id:ativAtiva.id,aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,respostas:{...respostasAtiv},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
+    if(error)throw error;
+    if(triIdAtiv){const pg=S.progresso.find(p=>p.trilhaId===triIdAtiv&&p.alunoRA===u.ra);const novoXP=(pg?.xp||0)+XP_EX;const novoNv=getNv(novoXP).n;if(pg)await sb.from('progresso_trilha').update({xp:novoXP,nivel:novoNv}).eq('id',pg.id);else await sb.from('progresso_trilha').insert({id:Date.now().toString()+'x',trilha_id:triIdAtiv,aluno_ra:u.ra,aulas_concluidas:[],xp:novoXP,nivel:novoNv,atualizado_em:new Date().toISOString()});xpPop(`+${XP_EX} XP ⚡`)}
     await loadAllData();hhl();cm('m-fazer');mostrarResult({respostas:{...respostasAtiv},nota,acertos},ativAtiva);
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
