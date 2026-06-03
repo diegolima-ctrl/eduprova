@@ -671,6 +671,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
           </div>
           <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
+          <div style="margin-top:4px;padding:14px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px">
+            <div style="font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:12px">🗓 Agendamento <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">— opcional. Sem data, a prova fica disponível imediatamente.</span></div>
+            <div class="g2">
+              <div class="fg" style="margin:0"><label class="fl">Liberar em</label><input class="fi" type="datetime-local" id="pv-ini" oninput="_agInfo()"></div>
+              <div class="fg" style="margin:0"><label class="fl">Encerrar em</label><input class="fi" type="datetime-local" id="pv-fim" oninput="_agInfo()"></div>
+            </div>
+            <div id="pv-ag-info" style="display:none;margin-top:10px;font-size:12px;color:var(--acc)"></div>
+          </div>
           <hr class="dv">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
             <div class="ctit" style="margin:0">📝 Questões</div>
@@ -1521,19 +1529,22 @@ function parseTxt(text){
 
 /* ══ PROVAS ══ */
 let editPvId=null;
-function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d'].forEach(id=>G(id).value='');G('pv-p').value='1';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
-function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{QD['qP'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('qP','qcP',i,q)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function _agInfo(){const ini=G('pv-ini').value,fim=G('pv-fim').value,d=G('pv-ag-info');if(!ini){d.style.display='none';return}const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});let msg=`⏰ Alunos verão a prova bloqueada até <strong>${fmtDt(ini)}</strong>`;if(fim)msg+=` · encerrando em <strong>${fmtDt(fim)}</strong>`;d.innerHTML=msg;d.style.display='block'}
+function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-ini').value=p.data_inicio?p.data_inicio.slice(0,16):'';G('pv-fim').value=p.data_fim?p.data_fim.slice(0,16):'';_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{QD['qP'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('qP','qcP',i,q)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function cancelarProva(){editPvId=null;showSec('sec-provas');setNav('ni-provas');renderProvas()}
 async function salvarProva(){
   const titulo=G('pv-t').value.trim(),disc=G('pv-d').value.trim(),pts=parseFloat(G('pv-p').value)||1;
   const errDiv=G('pv-err');errDiv.classList.add('hidden');
   if(!titulo||!disc)return toast('⚠️ Preencha título e disciplina!','yellow');
   if(!SS['prova']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
+  const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
+  if(pvIni&&pvFim&&new Date(pvFim)<=new Date(pvIni))return toast('⚠️ A data de encerramento deve ser após a data de início!','yellow');
   if(!QD['qP']?.length)return toast('⚠️ Adicione questões!','yellow');
   if(QD['qP'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões!','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toISOString()};
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
     const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
     if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
@@ -1725,6 +1736,9 @@ const ER_L=['A','B','C','D','E'];
 
 function abrirProvaAluno(id){
   const p=S.provas.find(x=>x.id===id);if(!p)return;
+  const agora=new Date();
+  if(p.data_inicio&&agora<new Date(p.data_inicio))return toast('⚠️ Esta prova ainda não está disponível.','yellow');
+  if(p.data_fim&&agora>new Date(p.data_fim))return toast('❌ O prazo desta prova foi encerrado.','red');
   erProva=p;erQAtual=0;erRespostas={};erFlags={};
   const dur=p.duracao||50;
   G('er-s-sub').textContent=p.disciplina;
@@ -1897,13 +1911,33 @@ function renderAlunoAulas(){
   el.innerHTML=aulas.map(al=>{const exs=S.exercicios.filter(e=>e.aulaId===al.id&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<div class="ac" style="cursor:pointer" onclick="verAula('${al.id}',false)"><div class="at">${al.titulo}</div><div class="am"><span class="badge bt">${al.disciplina}</span>${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${exs.length?`<span class="badge ${exF===exs.length?'bg':'by'}">🏋️ ${exF}/${exs.length}</span>`:''}</div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula('${al.id}',false)" style="margin-top:8px">📖 Ver Aula →</button></div>`}).join('');
 }
 
+function _countdown(to,now){const d=to-now;if(d<=0)return'disponível agora';const dy=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000);return dy>0?`${dy}d ${h}h ${m}min`:h>0?`${h}h ${m}min`:`${m}min`}
 /* ══ ALUNO PROVAS ══ */
 function renderAlunoProvas(){
   const u=S.user;G('a-pv-lbl').textContent=`Turma ${u.turma} — ${u.nome}`;
   const provas=S.provas.filter(p=>p.turmas.includes(u.turma));
-  const el=G('a-provas');
+  const el=G('a-provas');const agora=new Date();
   if(!provas.length){el.innerHTML='<div class="es"><div class="ei">📭</div><div class="et">Nenhuma prova disponível</div></div>';return}
-  el.innerHTML=provas.map(p=>{const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);const mx=p.questoes.length*p.pontosPorQ;return`<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap"><span class="badge bp">${p.disciplina}</span><span class="badge by">${p.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span></div></div><div style="text-align:right;flex-shrink:0">${ent?`<div><span class="badge bg" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--fd);font-weight:800;color:${ent.nota>=mx*0.6?'var(--grn)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)"> / ${mx.toFixed(1)}</span></div><div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')">📋 Revisar</button></div></div>`:`<button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`}</div></div></div>`}).join('');
+  const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  el.innerHTML=provas.map(p=>{
+    const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);
+    const mx=p.questoes.length*p.pontosPorQ;
+    const ini=p.data_inicio?new Date(p.data_inicio):null;
+    const fim=p.data_fim?new Date(p.data_fim):null;
+    const pending=ini&&agora<ini;
+    const closed=!ent&&fim&&agora>fim;
+    let badges=`<span class="badge bp">${p.disciplina}</span><span class="badge by">${p.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span>`;
+    if(pending)badges+=`<span class="badge bb">🗓 Agendada</span>`;
+    if(closed)badges+=`<span class="badge br">🔒 Encerrada</span>`;
+    let dataInfo='';
+    if(ini&&!ent){if(pending)dataInfo=`<div style="margin-top:6px;font-size:11px;color:var(--mut)">📅 Libera: <strong style="color:var(--txt)">${fmtDt(p.data_inicio)}</strong></div>`;else if(fim&&!closed)dataInfo=`<div style="margin-top:6px;font-size:11px;color:var(--mut)">⏳ Encerra: <strong style="color:var(--txt)">${fmtDt(p.data_fim)}</strong></div>`;}
+    let acao='';
+    if(ent){const ok=ent.nota>=mx*0.6;acao=`<div><span class="badge bg" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--fd);font-weight:800;color:${ok?'var(--grn)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)"> / ${mx.toFixed(1)}</span></div><div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')">📋 Revisar</button></div></div>`;}
+    else if(pending){const cd=_countdown(ini,agora);acao=`<div style="text-align:center"><div style="font-size:26px;margin-bottom:4px">🔒</div><div style="font-size:12px;color:var(--acc);font-weight:700;font-family:var(--fd)">${cd}</div><div style="font-size:11px;color:var(--mut);margin-top:2px">para liberar</div></div>`;}
+    else if(closed){acao=`<div style="text-align:center"><div style="font-size:22px;margin-bottom:4px">⛔</div><div style="font-size:12px;color:var(--mut)">Prazo encerrado</div></div>`;}
+    else{acao=`<button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`;}
+    return`<div class="card" style="margin-bottom:12px;opacity:${closed?'0.6':'1'};${pending?'border-left:3px solid var(--acc)':''};"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">${badges}</div>${dataInfo}</div><div style="text-align:right;flex-shrink:0">${acao}</div></div></div>`;
+  }).join('');
 }
 
 /* ══ ALUNO NOTAS ══ */
