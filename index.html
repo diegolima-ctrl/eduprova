@@ -959,7 +959,7 @@ async function loadAllData(){
     safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
     safe(sb.from('aulas_configuracao').select('*'))
   ]);
-  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em}));
+  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,data_inicio:p.data_inicio||null,data_fim:p.data_fim||null}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
