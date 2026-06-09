@@ -1521,7 +1521,7 @@ function importarTxt(){
 }
 function parseTxt(text){
   const questoes=[];const letraMap={A:0,B:1,C:2,D:3,E:4};
-  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+  const lines=text.split('\n').map(l=>l.trim().replace(/\*\*/g,'').replace(/^#+\s*/,'')).filter(l=>l&&l!=='---'&&l!=='***'&&l!=='___');
   let cur=null;
   for(const line of lines){
     const qm=line.match(/^\d+[\.\)]\s+(.+)/);
