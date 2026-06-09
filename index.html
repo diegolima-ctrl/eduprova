@@ -685,7 +685,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="btn btn-sec btn-sm" onclick="toggleTutorialImport()">📋 Como importar?</button>
               <button class="btn btn-tel btn-sm" onclick="importarTxt()">📂 Importar .txt</button>
-              <button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP')">+ Questão</button>
+              <button class="btn btn-sec btn-sm" onclick="addQ('qP','qcP','multipla')">+ Múltipla</button>
+              <button class="btn btn-tel btn-sm" onclick="addQ('qP','qcP','subjetiva')">+ Dissertativa</button>
             </div>
           </div>
           <!-- Tutorial importação -->
@@ -961,7 +962,7 @@ async function loadAllData(){
   ]);
   S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,data_inicio:p.data_inicio||null,data_fim:p.data_fim||null}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
-  S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
   S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em}));
   S.respostasEx=r5.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
@@ -1258,16 +1259,26 @@ async function salvarConfAulas(){
 
 /* ══ QUESTÕES ══ */
 const QD={};
-function addQ(key,cid){if(!QD[key])QD[key]=[];const idx=QD[key].length;const q={enunciado:'',opcoes:['','','','',''],correta:null,imagemUrl:null};QD[key].push(q);_rQ(key,cid,idx,q)}
+function addQ(key,cid,tipo='multipla'){if(!QD[key])QD[key]=[];const idx=QD[key].length;const q=tipo==='subjetiva'?{tipo:'subjetiva',enunciado:'',gabarito:'',criterios:'',pontos:5,imagemUrl:null}:{tipo:'multipla',enunciado:'',opcoes:['','','','',''],correta:null,imagemUrl:null};QD[key].push(q);_rQ(key,cid,idx,q)}
 function _rQ(key,cid,idx,q){
-  const L=['A','B','C','D','E'];const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
-  div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
+  const tipo=q.tipo||'multipla';
+  const div=document.createElement('div');div.className='qi';div.id=`qi-${key}-${idx}`;
+  if(tipo==='subjetiva'){
+    div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1} <span style="font-size:10px;background:rgba(45,212,191,.15);color:var(--tel);border-radius:4px;padding:2px 6px;font-weight:600">Dissertativa</span></span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Gabarito / Resposta esperada</label><textarea class="fi" rows="3" placeholder="Descreva a resposta correta esperada..." oninput="QD['${key}'][${idx}].gabarito=this.value" style="resize:vertical">${q.gabarito||''}</textarea></div>
+    <div class="fg" style="margin-bottom:10px"><label class="fl">Critérios de avaliação <span class="mut xs">(opcional — ex: vale 3pts mencionar X...)</span></label><textarea class="fi" rows="2" placeholder="Opcional..." oninput="QD['${key}'][${idx}].criterios=this.value" style="resize:vertical">${q.criterios||''}</textarea></div>
+    <div class="fg" style="margin-bottom:0"><label class="fl">Pontuação máxima desta questão</label><input class="fi" type="number" min="0.5" max="100" step="0.5" style="width:120px" value="${q.pontos||5}" oninput="QD['${key}'][${idx}].pontos=parseFloat(this.value)||5"></div>`;
+  }else{
+    const L=['A','B','C','D','E'];
+    div.innerHTML=`<div class="qh"><span class="qnum">Q${idx+1}</span><button class="btn btn-dan btn-sm" onclick="rmQ('${key}','${cid}',${idx})">🗑</button></div>
     <div class="fg" style="margin-bottom:10px"><label class="fl">Enunciado</label><input class="fi" placeholder="Enunciado..." oninput="QD['${key}'][${idx}].enunciado=this.value" value="${(q.enunciado||'').replace(/"/g,'&quot;')}"></div>
     <label class="fl">Imagem (opcional)</label>
     <div id="imgw-${key}-${idx}">${q.imagemUrl?`<div class="ipw"><img class="ipv" src="${q.imagemUrl}" alt="img"><button class="irm" onclick="rmIQ('${key}',${idx})">×</button></div>`:`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`}</div>
     <label class="fl" style="margin-top:12px">Alternativas <span class="mut xs">(clique na letra para marcar a correta)</span></label>
-    <ul class="ol-l">${L.map((l,oi)=>`<li class="oi"><div class="oltr${q.correta===oi?' ok':''}" id="ol-${key}-${idx}-${oi}" onclick="setC('${key}',${idx},${oi})">${l}</div><input class="fi" style="flex:1" placeholder="Alt. ${l}..." oninput="QD['${key}'][${idx}].opcoes[${oi}]=this.value" value="${(q.opcoes[oi]||'').replace(/"/g,'&quot;')}"></li>`).join('')}</ul>
+    <ul class="ol-l">${L.map((l,oi)=>`<li class="oi"><div class="oltr${q.correta===oi?' ok':''}" id="ol-${key}-${idx}-${oi}" onclick="setC('${key}',${idx},${oi})">${l}</div><input class="fi" style="flex:1" placeholder="Alt. ${l}..." oninput="QD['${key}'][${idx}].opcoes[${oi}]=this.value" value="${((q.opcoes||[])[oi]||'').replace(/"/g,'&quot;')}"></li>`).join('')}</ul>
     <div class="sm mt2" id="qh-${key}-${idx}" style="color:${q.correta!==null?'var(--grn)':'var(--mut)'}">${q.correta!==null?`✅ Correta: ${'ABCDE'[q.correta]}`:'⬆ Clique na letra para marcar a correta'}</div>`;
+  }
   G(cid).appendChild(div);
 }
 function setC(key,qi,oi){QD[key][qi].correta=oi;['A','B','C','D','E'].forEach((_,i)=>G(`ol-${key}-${qi}-${i}`).classList.toggle('ok',i===oi));const h=G(`qh-${key}-${qi}`);h.textContent=`✅ Correta: ${'ABCDE'[oi]}`;h.style.color='var(--grn)'}
@@ -1530,8 +1541,8 @@ function parseTxt(text){
 /* ══ PROVAS ══ */
 let editPvId=null;
 function _agInfo(){const ini=G('pv-ini').value,fim=G('pv-fim').value,d=G('pv-ag-info');if(!ini){d.style.display='none';return}const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});let msg=`⏰ Alunos verão a prova bloqueada até <strong>${fmtDt(ini)}</strong>`;if(fim)msg+=` · encerrando em <strong>${fmtDt(fim)}</strong>`;d.innerHTML=msg;d.style.display='block'}
-function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
-function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-ini').value=p.data_inicio?p.data_inicio.slice(0,16):'';G('pv-fim').value=p.data_fim?p.data_fim.slice(0,16):'';_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{QD['qP'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('qP','qcP',i,q)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-ini').value=p.data_inicio?p.data_inicio.slice(0,16):'';G('pv-fim').value=p.data_fim?p.data_fim.slice(0,16):'';_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function cancelarProva(){editPvId=null;showSec('sec-provas');setNav('ni-provas');renderProvas()}
 async function salvarProva(){
   const titulo=G('pv-t').value.trim(),disc=G('pv-d').value.trim(),pts=parseFloat(G('pv-p').value)||1;
@@ -1541,10 +1552,11 @@ async function salvarProva(){
   const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
   if(pvIni&&pvFim&&new Date(pvFim)<=new Date(pvIni))return toast('⚠️ A data de encerramento deve ser após a data de início!','yellow');
   if(!QD['qP']?.length)return toast('⚠️ Adicione questões!','yellow');
-  if(QD['qP'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões!','yellow');
+  if(QD['qP'].find(q=>{if(!q.enunciado)return true;if(!q.tipo||q.tipo==='multipla')return(q.opcoes||[]).some(o=>!o)||q.correta===null;if(q.tipo==='subjetiva')return!q.gabarito;return false}))return toast('⚠️ Preencha todas as questões! (dissertativas precisam de gabarito)','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
+    const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null}),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
     const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
     if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
@@ -1564,13 +1576,23 @@ function renderProvas(){
   tb.innerHTML=provas.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id).length;const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<tr><td><strong>${p.titulo}</strong><div class="mut xs mt1">${p.criadaEm}</div></td><td><span class="badge bp">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'bg':'by'}">${n}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warn btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delProva('${p.id}')">🗑</button></div></td></tr>`}).join('');
 }
 async function delProva(id){if(!confirm('Deletar prova e resultados?'))return;shl('Excluindo...');try{const p=S.provas.find(x=>x.id===id);if(p)for(const q of p.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas').delete().eq('prova_id',id);await sb.from('provas').delete().eq('id',id);await loadAllData();renderProvas();toast('🗑 Prova removida','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
+function calcMaxNota(questoes,pontosPorQ){return questoes.reduce((s,q)=>s+(q.tipo==='subjetiva'?(q.pontos||5):pontosPorQ),0)}
 function verProvaProfessor(id){
   const p=S.provas.find(x=>x.id===id);if(!p)return;G('m-vp-t').textContent=p.titulo;
   const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');const L=['A','B','C','D','E'];
   const ents=S.respostas.filter(r=>r.provaId===id);
-  let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${ts}<span class="badge bp">${p.disciplina}</span><span class="badge by">${p.pontosPorQ} pts/q</span></div><div class="ctit">📝 Questões</div>`;
-  p.questoes.forEach((q,i)=>{html+=`<div class="qi"><div class="qh"><span class="qnum">Q${i+1}</span></div><p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p>${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--bdr);display:block;margin-bottom:8px" alt="img">`:''}<ul class="ol-l">${q.opcoes.map((op,oi)=>`<li class="oi"><div class="oltr ${oi===q.correta?'ok':''}">${L[oi]}</div><span style="font-size:13px">${op}</span></li>`).join('')}</ul></div>`});
-  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody>${ents.map(r=>{const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`}).join('')}</tbody></table></div>`}
+  const mx=calcMaxNota(p.questoes,p.pontosPorQ);
+  const totalMult=p.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length;
+  let html=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${ts}<span class="badge bp">${p.disciplina}</span><span class="badge by">${mx.toFixed(1)} pts total</span></div><div class="ctit">📝 Questões</div>`;
+  p.questoes.forEach((q,i)=>{
+    const tipo=q.tipo||'multipla';
+    if(tipo==='subjetiva'){
+      html+=`<div class="qi"><div class="qh"><span class="qnum">Q${i+1} <span style="font-size:10px;background:rgba(45,212,191,.15);color:var(--tel);border-radius:4px;padding:2px 6px">Dissertativa · ${q.pontos||5}pts</span></span></div><p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p><div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;font-size:13px"><div class="mut xs" style="font-weight:700;margin-bottom:4px">GABARITO</div>${q.gabarito}</div>${q.criterios?`<div style="margin-top:6px;font-size:12px;color:var(--mut)">Critérios: ${q.criterios}</div>`:''}</div>`;
+    }else{
+      html+=`<div class="qi"><div class="qh"><span class="qnum">Q${i+1}</span></div><p style="margin-bottom:8px;font-size:14px;line-height:1.6">${q.enunciado}</p>${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--bdr);display:block;margin-bottom:8px" alt="img">`:''}<ul class="ol-l">${q.opcoes.map((op,oi)=>`<li class="oi"><div class="oltr ${oi===q.correta?'ok':''}">${L[oi]}</div><span style="font-size:13px">${op}</span></li>`).join('')}</ul></div>`;
+    }
+  });
+  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Obj.</th><th>Nota</th><th>Status</th></tr></thead><tbody>${ents.map(r=>{const ok=r.nota>=mx*0.6;return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${totalMult}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td></tr>`}).join('')}</tbody></table></div>`}
   G('m-vp-b').innerHTML=html;G('m-vp').classList.remove('hidden');
 }
 let resTabAtivo='provas';
@@ -1729,7 +1751,6 @@ function rTMap(t,pg,u){return t.ordemAulas.map((aid,i)=>{const al=S.aulas.find(x
 
 /* ══ PROVA/EXERCÍCIO ALUNO ══ */
 let ativAtiva=null,tipoAtiv=null,triIdAtiv=null,respostasAtiv={};
-
 /* ── ExamRunner state ── */
 let erProva=null,erQAtual=0,erRespostas={},erFlags={},erTimerInt=null,erSec=0;
 const ER_L=['A','B','C','D','E'];
@@ -1746,7 +1767,7 @@ function abrirProvaAluno(id){
   G('er-s-turma').textContent=p.turmas?.join(', ')||'';
   G('er-s-nq').textContent=p.questoes.length;
   G('er-s-dur').textContent=dur+' min';
-  G('er-s-pts').textContent=(p.questoes.length*p.pontosPorQ).toFixed(0);
+  G('er-s-pts').textContent=calcMaxNota(p.questoes,p.pontosPorQ).toFixed(0);
   G('er-r-title').textContent=p.titulo;
   G('er-r-sub').textContent=p.disciplina;
   G('er-start').style.display='flex';
@@ -1781,23 +1802,22 @@ function erNavQ(n){
 
 function erRenderQ(){
   const q=erProva.questoes[erQAtual],qi=erQAtual;
+  const tipo=q.tipo||'multipla';
   const ans=erRespostas[qi],flagged=erFlags[qi];
+  const pts=tipo==='subjetiva'?(q.pontos||5)+' '+(q.pontos===1?'ponto':'pontos'):erProva.pontosPorQ+' '+(erProva.pontosPorQ===1?'ponto':'pontos');
+  const respostaWidget=tipo==='subjetiva'
+    ?`<textarea class="fi" rows="6" style="resize:vertical;margin-top:4px" placeholder="Digite sua resposta aqui..." oninput="erRespostas[${qi}]=this.value">${ans||''}</textarea>`
+    :`<div class="er-choices">${q.opcoes.map((op,oi)=>`<button class="er-choice${ans===oi?' sel':''}" onclick="erSelR(${qi},${oi})"><span class="er-key">${ER_L[oi]}</span><span style="flex:1;text-align:left">${op}</span>${ans===oi?'<span style="color:var(--acc);font-size:16px">✓</span>':''}</button>`).join('')}</div>`;
   G('er-q').innerHTML=`<div class="er-q-anim">
     <div class="er-qhead">
-      <span class="er-qnum">Questão ${qi+1}</span>
-      <span class="er-qpts">${erProva.pontosPorQ} ${erProva.pontosPorQ===1?'ponto':'pontos'}</span>
+      <span class="er-qnum">Questão ${qi+1}${tipo==='subjetiva'?' <span style="font-size:11px;color:var(--tel)">[Dissertativa]</span>':''}</span>
+      <span class="er-qpts">${pts}</span>
       <span class="er-grow"></span>
       <button class="er-flagbtn${flagged?' on':''}" onclick="erToggleFlag(${qi})">🚩 ${flagged?'Marcada':'Marcar'}</button>
     </div>
     <p class="er-qtext">${q.enunciado}</p>
     ${q.imagemUrl?`<img src="${q.imagemUrl}" style="max-width:100%;max-height:260px;border-radius:9px;margin-bottom:16px;display:block" alt="Q${qi+1}">` :''}
-    <div class="er-choices">
-      ${q.opcoes.map((op,oi)=>`<button class="er-choice${ans===oi?' sel':''}" onclick="erSelR(${qi},${oi})">
-        <span class="er-key">${ER_L[oi]}</span>
-        <span style="flex:1;text-align:left">${op}</span>
-        ${ans===oi?'<span style="color:var(--acc);font-size:16px">✓</span>':''}
-      </button>`).join('')}
-    </div>
+    ${respostaWidget}
   </div>`;
 }
 
@@ -1836,25 +1856,38 @@ function erConfirmar(){
 async function erEntregar(){
   G('er-confirm-ov').classList.add('hidden');
   const btn=G('er-btn-confirmar');btn.disabled=true;
-  let acertos=0;erProva.questoes.forEach((q,qi)=>{if(erRespostas[qi]===q.correta)acertos++});
-  const nota=acertos*erProva.pontosPorQ,u=S.user;
+  let acertos=0,notaSubjetiva=0;
+  const textosRespostas={},correcoesIA={};
+  erProva.questoes.forEach((q,qi)=>{if(!q.tipo||q.tipo==='multipla'){if(erRespostas[qi]===q.correta)acertos++}else{textosRespostas[qi]=erRespostas[qi]||''}});
+  const subjetivas=erProva.questoes.map((q,qi)=>({q,qi})).filter(({q})=>q.tipo==='subjetiva');
+  if(subjetivas.length>0){
+    shl('🤖 Corrigindo questões dissertativas...');
+    for(const{q,qi}of subjetivas){
+      try{const{data,error}=await sb.functions.invoke('corrigir-subjetiva',{body:{enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios,pontos:q.pontos||5,resposta_aluno:textosRespostas[qi]}});if(error)throw error;correcoesIA[qi]=data;notaSubjetiva+=data.nota||0}
+      catch(e){correcoesIA[qi]={nota:0,feedback:'Erro na correção automática.'}}
+    }
+  }
+  const nota=+(acertos*erProva.pontosPorQ+notaSubjetiva).toFixed(2);
+  const max=calcMaxNota(erProva.questoes,erProva.pontosPorQ);
+  const u=S.user;
   shl('Salvando...');
   try{
-    const{error}=await sb.from('respostas').insert({id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:erProva.id,respostas:{...erRespostas},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
+    const{error}=await sb.from('respostas').insert({id:Date.now().toString(),aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,prova_id:erProva.id,respostas:{...erRespostas},texto_respostas:textosRespostas,correcoes:correcoesIA,nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
     if(error)throw error;
     await loadAllData();hhl();
     erTimerInt&&clearInterval(erTimerInt);
-    erMostrarFim({nota,acertos,total:erProva.questoes.length,max:erProva.questoes.length*erProva.pontosPorQ});
+    erMostrarFim({nota,acertos,total:erProva.questoes.length,max});
   }catch(e){hhl();toast('❌ Erro ao entregar.','red');console.error(e)}
   finally{btn.disabled=false}
 }
 
 function erMostrarFim({nota,acertos,total,max}){
-  const ok=nota>=max*0.6,pct=Math.round((acertos/total)*100);
+  const ok=nota>=max*0.6,pct=Math.round((nota/max)*100);
+  const totalMult=erProva.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length;
   G('er-running').style.display='none';
   G('er-fin-icon').style.background=ok?'var(--success-50)':'var(--danger-50)';
   G('er-fin-icon').style.color=ok?'var(--grn)':'var(--red)';
-  G('er-fin-msg').innerHTML=`Você acertou <strong>${acertos} de ${total}</strong> questões.`;
+  G('er-fin-msg').innerHTML=`Você acertou <strong>${acertos} de ${totalMult}</strong> questões objetivas.`;
   G('er-fin-nota').innerHTML=`<span style="color:${ok?'var(--grn)':'var(--red)'}">${nota.toFixed(1)}</span><span style="font-size:18px;color:var(--mut)"> / ${max.toFixed(1)}</span>`;
   G('er-fin-bar').style.width=pct+'%';
   G('er-fin-bar').style.background=ok?'var(--grn)':'var(--red)';
@@ -1870,35 +1903,54 @@ function erFechar(){
 }
 
 function abrirEx(exId,aulaId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;respostasAtiv={};G('mf-t').textContent=ex.titulo;G('mf-i').textContent=`${ex.questoes.length} q. · ${(ex.questoes.length*ex.pontosPorQ).toFixed(1)} pts`;rQModal(ex.questoes);G('btn-entregar').textContent='📨 Entregar';G('m-fazer').classList.remove('hidden')}
-function rQModal(qs){const L=['A','B','C','D','E'];G('mf-b').innerHTML=qs.map((q,qi)=>`<div class="pq"><div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}</div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('')}</div>`).join('');G('btn-entregar').disabled=false}
+function rQModal(qs){const L=['A','B','C','D','E'];G('mf-b').innerHTML=qs.map((q,qi)=>{const tipo=q.tipo||'multipla';const label=`<div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;margin-bottom:7px">Questão ${qi+1}${tipo==='subjetiva'?' <span style="color:var(--tel);text-transform:none;font-weight:500">[Dissertativa]</span>':''}</div>`;const widget=tipo==='subjetiva'?`<textarea class="fi" rows="5" style="resize:vertical;margin-top:8px" placeholder="Digite sua resposta aqui..." oninput="respostasAtiv[${qi}]=this.value"></textarea>`:q.opcoes.map((op,oi)=>`<div class="ro" id="ro-${qi}-${oi}" onclick="selR(${qi},${oi})"><div class="rc" id="rc-${qi}-${oi}"></div><span><strong>${L[oi]}.</strong> ${op}</span></div>`).join('');return`<div class="pq">${label}<div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="Q${qi+1}">`:''}${widget}</div>`}).join('');G('btn-entregar').disabled=false}
 function selR(qi,oi){ativAtiva.questoes[qi].opcoes.forEach((_,i)=>{const r=G(`ro-${qi}-${i}`),c=G(`rc-${qi}-${i}`);if(r)r.classList.remove('sel');if(c)c.classList.remove('s')});const r=G(`ro-${qi}-${oi}`),c=G(`rc-${qi}-${oi}`);if(r)r.classList.add('sel');if(c)c.classList.add('s');respostasAtiv[qi]=oi}
 async function entregar(){
   const total=ativAtiva.questoes.length,respondidas=Object.keys(respostasAtiv).length;
   if(respondidas<total&&!confirm(`Respondeu ${respondidas} de ${total}. Entregar assim mesmo?`))return;
-  let acertos=0;ativAtiva.questoes.forEach((q,qi)=>{if(respostasAtiv[qi]===q.correta)acertos++});
-  const nota=acertos*ativAtiva.pontosPorQ,u=S.user;
-  const btn=G('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';shl('Salvando...');
+  let acertos=0,notaSubjetiva=0;
+  const textosRespostas={},correcoesIA={};
+  ativAtiva.questoes.forEach((q,qi)=>{if(!q.tipo||q.tipo==='multipla'){if(respostasAtiv[qi]===q.correta)acertos++}else{textosRespostas[qi]=respostasAtiv[qi]||''}});
+  const subjetivas=ativAtiva.questoes.map((q,qi)=>({q,qi})).filter(({q})=>q.tipo==='subjetiva');
+  const btn=G('btn-entregar');btn.disabled=true;btn.textContent='Enviando...';
+  if(subjetivas.length>0){
+    shl('🤖 Corrigindo questões dissertativas...');
+    for(const{q,qi}of subjetivas){
+      try{const{data,error}=await sb.functions.invoke('corrigir-subjetiva',{body:{enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios,pontos:q.pontos||5,resposta_aluno:textosRespostas[qi]}});if(error)throw error;correcoesIA[qi]=data;notaSubjetiva+=data.nota||0}
+      catch(e){correcoesIA[qi]={nota:0,feedback:'Erro na correção automática.'}}
+    }
+  }
+  const nota=+(acertos*ativAtiva.pontosPorQ+notaSubjetiva).toFixed(2),u=S.user;
+  shl('Salvando...');
   try{
     const{error}=await sb.from('respostas_exercicios').insert({id:Date.now().toString(),exercicio_id:ativAtiva.id,aluno_ra:u.ra,aluno_nome:u.nome,aluno_turma:u.turma,respostas:{...respostasAtiv},nota,acertos,entregue_em:new Date().toLocaleString('pt-BR')});
     if(error)throw error;
     if(triIdAtiv){const pg=S.progresso.find(p=>p.trilhaId===triIdAtiv&&p.alunoRA===u.ra);const novoXP=(pg?.xp||0)+XP_EX;const novoNv=getNv(novoXP).n;if(pg)await sb.from('progresso_trilha').update({xp:novoXP,nivel:novoNv}).eq('id',pg.id);else await sb.from('progresso_trilha').insert({id:Date.now().toString()+'x',trilha_id:triIdAtiv,aluno_ra:u.ra,aulas_concluidas:[],xp:novoXP,nivel:novoNv,atualizado_em:new Date().toISOString()});xpPop(`+${XP_EX} XP ⚡`)}
-    await loadAllData();hhl();cm('m-fazer');mostrarResult({respostas:{...respostasAtiv},nota,acertos},ativAtiva);
+    await loadAllData();hhl();cm('m-fazer');mostrarResult({respostas:{...respostasAtiv},textoRespostas:textosRespostas,correcoes:correcoesIA,nota,acertos},ativAtiva);
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
 function mostrarResult(reg,atv){
-  const total=atv.questoes.length,mx=total*atv.pontosPorQ,ok=reg.nota>=mx*0.6,pct=Math.round((reg.acertos/total)*100),L=['A','B','C','D','E'];
-  let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${total} (${pct}%)</div></div>
+  const mx=calcMaxNota(atv.questoes,atv.pontosPorQ),ok=reg.nota>=mx*0.6,pct=Math.round((reg.nota/mx)*100),L=['A','B','C','D','E'];
+  const totalMult=atv.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length;
+  let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${totalMult} objetivas · ${pct}% do total</div></div>
   <div class="pb" style="margin:0 20px 20px;height:10px"><div class="pf" style="width:${pct}%"></div></div>
   <hr class="dv" style="margin:0 0 16px"><div style="padding:0 2px"><div class="ctit">📋 Gabarito</div>`;
   atv.questoes.forEach((q,qi)=>{
-    const raw=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)];
-    const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
-    html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
+    const tipo=q.tipo||'multipla';
+    if(tipo==='subjetiva'){
+      const txt=(reg.textoRespostas||{})[qi]||(reg.textoRespostas||{})[String(qi)]||'(em branco)';
+      const corr=(reg.correcoes||{})[qi]||(reg.correcoes||{})[String(qi)]||{};
+      html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:rgba(45,212,191,.15);color:var(--tel)">Q${qi+1}</span><span style="font-size:11px;color:var(--tel);font-weight:600">Dissertativa</span></div><div class="pqe">${q.enunciado}</div><div style="margin-top:10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:12px"><div class="mut xs" style="font-weight:700;text-transform:uppercase;margin-bottom:6px">Sua resposta</div><div style="font-size:13px;line-height:1.7;white-space:pre-wrap">${txt}</div></div><div style="margin-top:8px;background:rgba(79,124,255,.06);border:1px solid rgba(79,124,255,.2);border-radius:10px;padding:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:12px;font-weight:700;color:var(--acc)">🤖 Correção da IA</span><span class="badge bg" style="font-size:11px">${(corr.nota||0).toFixed(1)} / ${q.pontos||5} pts</span></div><div style="font-size:13px;color:var(--mut);line-height:1.6">${corr.feedback||'—'}</div></div></div>`;
+    }else{
+      const raw=reg.respostas[qi]!==undefined?reg.respostas[qi]:reg.respostas[String(qi)];
+      const esc=raw!==undefined?parseInt(raw):undefined,cor=q.correta,ac=esc===cor;
+      html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
+    }
   });
   html+=`</div>`;G('mr-b').innerHTML=html;G('m-result').classList.remove('hidden');
 }
 function fecharResult(){cm('m-result');if(tipoAtiv==='prova')renderAlunoProvas();else{if(triIdAtiv){cm('m-aula');renderAlunoTrilhas()}else renderAlunoAulas()}}
-function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=p;tipoAtiv='prova';mostrarResult({respostas:ent.respostas,nota:ent.nota,acertos:ent.acertos},p)}
+function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=p;tipoAtiv='prova';mostrarResult({respostas:ent.respostas,textoRespostas:ent.textoRespostas||{},correcoes:ent.correcoes||{},nota:ent.nota,acertos:ent.acertos},p)}
 
 /* ══ ALUNO AULAS ══ */
 function renderAlunoAulas(){
