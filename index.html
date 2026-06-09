@@ -693,25 +693,25 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div id="tutorial-import" style="display:none;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:16px;font-size:13px;line-height:1.75">
             <div style="font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:12px;color:var(--acc)">📋 Como importar questões via arquivo .txt</div>
             <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">① Abra o Bloco de Notas</span><br>Pressione <strong>Windows + R</strong>, digite <strong>notepad</strong> e tecle <strong>Enter</strong>. Ou pesquise <em>"Bloco de Notas"</em> no menu Iniciar.</div>
-            <div style="margin-bottom:10px"><span style="color:var(--grn);font-weight:700">② Escreva as questões seguindo exatamente este modelo:</span></div>
+            <div style="margin-bottom:8px"><span style="color:var(--grn);font-weight:700">② Escreva as questões seguindo o modelo:</span></div>
+            <div style="margin-bottom:6px;font-size:12px;font-weight:700;color:var(--acc)">Múltipla escolha:</div>
             <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:12px;font-family:monospace;font-size:12px;white-space:pre;color:var(--txt);overflow-x:auto">1. Qual é a capital do Brasil?
 A) São Paulo
 B) Rio de Janeiro
 C) Brasília
 D) Salvador
 E) Belo Horizonte
-Correta: C
-
-2. Quanto é 2 + 2?
-A) 3
-B) 4
-C) 5
-D) 6
-E) 7
-Correta: B</div>
-            <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">③ Salve o arquivo como .txt</span><br>Clique em <strong>Arquivo → Salvar como</strong>. Escolha um local fácil (ex: <strong>Área de Trabalho</strong>). No campo <strong>"Tipo"</strong>, selecione <strong>"Todos os Arquivos (*.*)"</strong>. Nomeie com <strong>.txt</strong> no final — ex: <code style="background:var(--bg);padding:1px 5px;border-radius:4px">prova-matematica.txt</code> — e clique em <strong>Salvar</strong>.</div>
+Correta: C</div>
+            <div style="margin-bottom:6px;font-size:12px;font-weight:700;color:var(--tel)">Dissertativa (correção automática por IA):</div>
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:12px;font-family:monospace;font-size:12px;white-space:pre;color:var(--txt);overflow-x:auto">2. Explique o processo de fotossíntese.
+Tipo: Dissertativa
+Gabarito: A fotossíntese converte luz solar em energia química usando CO2 e água para produzir glicose e liberar O2.
+Critérios: Mencionar cloroplastos e a troca de gases (opcional)
+Pontos: 5</div>
+            <div style="margin-bottom:4px;font-size:12px;color:var(--mut)">Regras para dissertativas: <strong>Tipo: Dissertativa</strong> e <strong>Gabarito:</strong> são obrigatórios · <strong>Critérios:</strong> é opcional · <strong>Pontos:</strong> padrão 5 se omitido · você pode misturar os dois tipos no mesmo arquivo</div>
+            <div style="margin-bottom:12px;margin-top:12px"><span style="color:var(--grn);font-weight:700">③ Salve o arquivo como .txt</span><br>Clique em <strong>Arquivo → Salvar como</strong>. No campo <strong>"Tipo"</strong>, selecione <strong>"Todos os Arquivos (*.*)"</strong>. Nomeie com <strong>.txt</strong> no final — ex: <code style="background:var(--bg);padding:1px 5px;border-radius:4px">prova-bio.txt</code> — e clique em <strong>Salvar</strong>.</div>
             <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">④ Importe aqui</span><br>Clique no botão <strong>📂 Importar .txt</strong> acima, selecione o arquivo e as questões serão carregadas automaticamente.</div>
-            <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">⚠️ <strong>Atenção:</strong> A importação <strong>substitui</strong> todas as questões já adicionadas no formulário. Cada questão deve ter as <strong>5 alternativas (A a E)</strong> e a linha <strong>Correta:</strong> com a letra da resposta.</div>
+            <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">⚠️ <strong>Atenção:</strong> A importação <strong>substitui</strong> todas as questões já adicionadas no formulário.</div>
           </div>
           <div id="qcP"></div>
           <div id="pv-err" class="hidden"></div>
@@ -1524,18 +1524,24 @@ function parseTxt(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
   let cur=null;
   for(const line of lines){
-    // enunciado: "1. ..." ou "1) ..."
     const qm=line.match(/^\d+[\.\)]\s+(.+)/);
-    if(qm){if(cur)questoes.push(cur);cur={enunciado:qm[1],opcoes:['','','','',''],correta:null,imagemUrl:null};continue}
-    // alternativa: "A) ..." ou "A. ..." ou "A- ..."
-    const om=line.match(/^([A-Ea-e])[\)\.\-]\s*(.+)/);
-    if(om&&cur){const idx=letraMap[om[1].toUpperCase()];if(idx!==undefined)cur.opcoes[idx]=om[2];continue}
-    // correta: "Correta: C" ou "Resposta: C" ou "Gabarito: C"
-    const cm=line.match(/^(?:correta?|resposta|gabarito)\s*[:\-]\s*([A-Ea-e])/i);
-    if(cm&&cur){cur.correta=letraMap[cm[1].toUpperCase()]??null;continue}
+    if(qm){if(cur)questoes.push(cur);cur={tipo:'multipla',enunciado:qm[1],opcoes:['','','','',''],correta:null,imagemUrl:null};continue}
+    if(!cur)continue;
+    // tipo dissertativa: "Tipo: Dissertativa" ou simplesmente "Dissertativa"
+    if(/^tipo\s*[:\-]\s*dissertativa/i.test(line)||/^dissertativa$/i.test(line)){cur.tipo='subjetiva';cur.gabarito='';cur.criterios='';cur.pontos=5;continue}
+    if(cur.tipo==='subjetiva'){
+      const gm=line.match(/^gabarito\s*[:\-]\s*(.+)/i);if(gm){cur.gabarito=gm[1];continue}
+      const crm=line.match(/^crit[eé]rios?\s*[:\-]\s*(.+)/i);if(crm){cur.criterios=crm[1];continue}
+      const pm=line.match(/^pontos?\s*[:\-]\s*(\d+(?:[.,]\d+)?)/i);if(pm){cur.pontos=parseFloat(pm[1].replace(',','.'))||5;continue}
+    }else{
+      const om=line.match(/^([A-Ea-e])[\)\.\-]\s*(.+)/);
+      if(om){const idx=letraMap[om[1].toUpperCase()];if(idx!==undefined)cur.opcoes[idx]=om[2];continue}
+      const cm=line.match(/^(?:correta?|resposta|gabarito)\s*[:\-]\s*([A-Ea-e])\b/i);
+      if(cm){cur.correta=letraMap[cm[1].toUpperCase()]??null;continue}
+    }
   }
   if(cur)questoes.push(cur);
-  return questoes.filter(q=>q.enunciado&&q.opcoes.some(o=>o)&&q.correta!==null);
+  return questoes.filter(q=>q.enunciado&&(q.tipo==='subjetiva'?q.gabarito:(q.opcoes.some(o=>o)&&q.correta!==null)));
 }
 
 /* ══ PROVAS ══ */
