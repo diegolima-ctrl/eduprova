@@ -560,6 +560,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <!-- Aulas -->
       <div class="sec" id="sec-aulas">
         <div class="ph"><div><div class="ptit">Aulas</div><div class="psub">Conteúdo e exercícios</div></div><button class="btn btn-tel btn-sm" onclick="irNovaAula()">+ Nova Aula</button></div>
+        <div class="card" style="margin-bottom:14px"><div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Disciplina</label><select class="fsel" id="aula-fd" onchange="renderAulasProfessor()"><option value="">Todas</option></select></div>
+          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Turma</label><select class="fsel" id="aula-ft" onchange="renderAulasProfessor()"><option value="">Todas</option></select></div>
+          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Período</label><select class="fsel" id="aula-fp" onchange="renderAulasProfessor()"><option value="">Todos</option><option>1º Bimestre</option><option>2º Bimestre</option><option>3º Bimestre</option><option>4º Bimestre</option></select></div>
+        </div></div>
         <div id="aulas-lista"></div>
       </div>
 
@@ -571,6 +576,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Título</label><input class="fi" id="aula-t" placeholder="Ex: Introdução às Frações"></div>
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="aula-d" placeholder="Ex: Matemática"></div>
           </div>
+          <div class="fg" style="margin-bottom:16px"><label class="fl">Período</label><select class="fi" id="aula-periodo"><option value="">-- Selecione o bimestre --</option><option>1º Bimestre</option><option>2º Bimestre</option><option>3º Bimestre</option><option>4º Bimestre</option></select></div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"></div><div id="th-aula" class="mut sm mt2">Nenhuma turma selecionada</div></div>
           <div class="fg">
             <label class="fl">Conteúdo</label>
@@ -1395,6 +1401,7 @@ function irNovaAula(){
   editAulaId=null;aulaImgs=[];aulaVideos=[];
   G('form-aula-tit').textContent='Nova Aula';G('btn-sv-aula').textContent='💾 Salvar Aula';
   ['aula-t','aula-d'].forEach(id=>G(id).value='');
+  G('aula-periodo').value='';
   G('aula-cont').innerHTML='';G('yt-inp').value='';
   buildTC('tcg-aula','th-aula','aula');rAI();rYT();
   G('aula-ex-card').style.display='none';
@@ -1405,6 +1412,7 @@ function editarAula(id){
   editAulaId=id;aulaImgs=[...al.imagens];aulaVideos=[...(al.videos||[])];
   G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
   G('aula-t').value=al.titulo;G('aula-d').value=al.disciplina;
+  G('aula-periodo').value=al.periodo||'';
   G('aula-cont').innerHTML=al.conteudo||'';G('yt-inp').value='';
   buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));
   rAI();rYT();
@@ -1422,7 +1430,8 @@ async function salvarAula(){
   if(!SS['aula']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
   const btn=G('btn-sv-aula');btn.disabled=true;shl('Salvando aula...');
   try{
-    const payload={titulo,disciplina:disc,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toISOString()};
+    const periodo=G('aula-periodo').value;
+    const payload={titulo,disciplina:disc,periodo:periodo||null,turmas:[...SS['aula']],conteudo:cont,imagens:aulaImgs,videos:aulaVideos,criada_em:new Date().toISOString()};
     let sid=editAulaId;
     if(editAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editAulaId);if(error)throw error}
     else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;sid=id}
@@ -1433,15 +1442,32 @@ async function salvarAula(){
 }
 
 function renderAulasProfessor(){
+  // Popula filtros com valores únicos das aulas
+  const fdEl=G('aula-fd'),ftEl=G('aula-ft');
+  const fdv=fdEl.value,ftv=ftEl.value;
+  const discs=[...new Set(S.aulas.map(a=>a.disciplina).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const turms=[...new Set(S.aulas.flatMap(a=>a.turmas||[]).filter(Boolean))].sort();
+  fdEl.innerHTML='<option value="">Todas</option>'+discs.map(d=>`<option value="${d}"${fdv===d?' selected':''}>${d}</option>`).join('');
+  ftEl.innerHTML='<option value="">Todas</option>'+turms.map(t=>`<option value="${t}"${ftv===t?' selected':''}>${t}</option>`).join('');
+  const fd=fdEl.value,ft=ftEl.value,fp=G('aula-fp').value;
+  // Aplica filtros
+  let aulas=[...S.aulas];
+  if(fd)aulas=aulas.filter(a=>a.disciplina===fd);
+  if(ft)aulas=aulas.filter(a=>(a.turmas||[]).includes(ft));
+  if(fp)aulas=aulas.filter(a=>a.periodo===fp);
   const el=G('aulas-lista');
-  if(!S.aulas.length){el.innerHTML='<div class="es"><div class="ei">📚</div><div class="et">Nenhuma aula criada</div></div>';return}
-  el.innerHTML=S.aulas.map(al=>{
+  if(!aulas.length){
+    const vazio=S.aulas.length?'Nenhuma aula encontrada para estes filtros':'Nenhuma aula criada';
+    el.innerHTML=`<div class="es"><div class="ei">📚</div><div class="et">${vazio}</div></div>`;return;
+  }
+  el.innerHTML=aulas.map(al=>{
     const exs=S.exercicios.filter(e=>e.aulaId===al.id);
     const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');
     const vtag=al.videos?.length?`<span class="badge bo" style="cursor:default">🎥 ${al.videos.length}</span>`:'';
+    const ptag=al.periodo?`<span class="badge bg" style="cursor:default">${al.periodo}</span>`:'';
     return`<div class="ac">
       <div class="at">${al.titulo}</div>
-      <div class="am"><span class="badge bt">${al.disciplina}</span>${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${vtag}<span class="badge by">🏋️ ${exs.length} ex.</span></div>
+      <div class="am"><span class="badge bt">${al.disciplina}</span>${ptag}${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${vtag}<span class="badge by">🏋️ ${exs.length} ex.</span></div>
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
         <button class="btn btn-tel btn-sm" onclick="editarAula('${al.id}')">✏️ Editar</button>
         <button class="btn btn-sec btn-sm" onclick="verAula('${al.id}',true)">👁 Ver</button>
