@@ -1701,8 +1701,10 @@ function renderResultados(){
   const fdisc=fd.value,ft=G('res-ft').value;
   // Popula select de provas filtrado pela disciplina
   const ps=G('res-fp'),cp=ps.value;
-  let provasDisp=S.provas;if(fdisc)provasDisp=provasDisp.filter(p=>p.disciplina===fdisc);
-  ps.innerHTML='<option value="">Todas</option>'+provasDisp.map(p=>`<option value="${p.id}"${cp===p.id?' selected':''}>${p.titulo}</option>`).join('');
+  // Só mostra provas que têm pelo menos uma resposta (realizadas), respeitando filtros ativos
+  const idsComResp=new Set(S.respostas.filter(r=>(!ft||r.alunoTurma===ft)&&(!fdisc||(S.provas.find(x=>x.id===r.provaId)?.disciplina===fdisc))).map(r=>r.provaId));
+  const provasDisp=S.provas.filter(p=>idsComResp.has(p.id));
+  ps.innerHTML='<option value="">Todas ('+provasDisp.length+')</option>'+provasDisp.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id&&(!ft||r.alunoTurma===ft)).length;return`<option value="${p.id}"${cp===p.id?' selected':''}>${p.titulo} (${n})</option>`}).join('');
   if(resTabAtivo==='provas'){
     const fp=G('res-fp').value;
     let res=[...S.respostas];
@@ -1711,8 +1713,24 @@ function renderResultados(){
     if(fdisc)res=res.filter(r=>{const p=S.provas.find(x=>x.id===r.provaId);return p&&p.disciplina===fdisc;});
     res.sort((a,b)=>a.alunoNome.localeCompare(b.alunoNome,'pt-BR',{sensitivity:'base'}));
     const tb=G('res-tb');
-    if(!res.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado</td></tr>';return;}
-    tb.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=calcMaxNota(p.questoes,p.pontosPorQ),ok=r.nota>=mx*0.6,totalMult=p.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length,pct=totalMult>0?Math.round((r.acertos/totalMult)*100):0;const temSubj=p.questoes.some(q=>q.tipo==='subjetiva'||q.tipo==='redacao');const temManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);return`<tr><td><strong>${r.alunoNome}</strong>${temManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${totalMult}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${p.id}','${r.id}')">✏️ Corrigir</button>`:''}</td></tr>`;}).join('');
+    if(!res.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado encontrado</td></tr>';return;}
+    function _rowRes(r){const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=calcMaxNota(p.questoes,p.pontosPorQ),ok=r.nota>=mx*0.6,totalMult=p.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length,pct=totalMult>0?Math.round((r.acertos/totalMult)*100):0;const temSubj=p.questoes.some(q=>q.tipo==='subjetiva'||q.tipo==='redacao');const temManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);return`<tr><td><strong>${r.alunoNome}</strong>${temManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${totalMult}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${p.id}','${r.id}')">✏️ Corrigir</button>`:''}</td></tr>`;}
+    if(fp){
+      // Prova específica selecionada — tabela simples sem cabeçalho separador
+      tb.innerHTML=res.map(r=>_rowRes(r)).join('');
+    } else {
+      // Todas as provas — agrupa por prova com cabeçalho separador
+      const grupos=[];const seen={};
+      res.forEach(r=>{if(!seen[r.provaId]){seen[r.provaId]=true;grupos.push(r.provaId);}});
+      tb.innerHTML=grupos.map(pid=>{
+        const p=S.provas.find(x=>x.id===pid);if(!p)return'';
+        const rows=res.filter(r=>r.provaId===pid);
+        const mx=calcMaxNota(p.questoes,p.pontosPorQ);
+        const apr=rows.filter(r=>r.nota>=mx*0.6).length;
+        const med=rows.length?rows.reduce((s,r)=>s+r.nota,0)/rows.length:0;
+        return`<tr><td colspan="7" style="background:var(--surf2);padding:8px 12px;border-top:2px solid var(--acc)"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px"><strong style="font-size:14px">📋 ${p.titulo}</strong><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge bt" style="font-size:11px">${p.disciplina||''}</span><span class="mut" style="font-size:12px">${rows.length} resposta${rows.length!==1?'s':''}</span><span class="mut" style="font-size:12px">Média: <strong>${med.toFixed(1)}</strong>/${mx.toFixed(1)}</span><span class="mut" style="font-size:12px">✅ ${apr}/${rows.length}</span><button class="btn btn-acc btn-sm" style="font-size:11px;padding:2px 8px" onclick="G('res-fp').value='${pid}';renderResultados()">Ver só esta</button></div></div></td></tr>`+rows.map(r=>_rowRes(r)).join('');
+      }).join('');
+    }
   } else {
     // Aba Trilhas — progresso individual por aluno
     const el=G('res-trilhas-body');
