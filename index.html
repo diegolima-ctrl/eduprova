@@ -1603,7 +1603,7 @@ async function salvarProva(){
   const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
   if(pvIni&&pvFim&&new Date(pvFim)<=new Date(pvIni))return toast('⚠️ A data de encerramento deve ser após a data de início!','yellow');
   if(!QD['qP']?.length)return toast('⚠️ Adicione questões!','yellow');
-  if(QD['qP'].find(q=>{if(!q.enunciado)return true;if(!q.tipo||q.tipo==='multipla')return(q.opcoes||[]).some(o=>!o)||q.correta===null;if(q.tipo==='subjetiva')return!q.gabarito;if(q.tipo==='redacao')return!q.proposta;return false}))return toast('⚠️ Preencha todas as questões! (dissertativas precisam de gabarito; redações precisam de proposta)','yellow');
+  if(QD['qP'].find(q=>{if(!q.enunciado)return true;if(!q.tipo||q.tipo==='multipla'){const ops=q.opcoes||[];return ops.filter(o=>o).length<2||q.correta===null||!ops[q.correta];}if(q.tipo==='subjetiva')return!q.gabarito;if(q.tipo==='redacao')return!q.proposta;return false}))return toast('⚠️ Preencha todas as questões! (dissertativas precisam de gabarito; redações precisam de proposta)','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
     const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
