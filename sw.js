@@ -1,4 +1,4 @@
-const CACHE = 'eduprova-v3';
+const CACHE = 'eduprova-v2';
 const STATIC = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
@@ -7,12 +7,7 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
-      .then(() => self.clients.matchAll({type:'window', includeUncontrolled:true}))
-      .then(clients => clients.forEach(c => c.navigate(c.url)))
-  );
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
   self.clients.claim();
 });
 
