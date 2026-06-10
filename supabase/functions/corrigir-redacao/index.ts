@@ -18,14 +18,17 @@ Proposta/Tema: ${proposta}
 ${criterios ? `Critérios adicionais: ${criterios}` : ''}
 Pontuação máxima configurada: ${pontos} pontos
 
-Leia a redação na imagem e avalie seguindo o modelo ENEM. Retorne APENAS um JSON com estes campos:
-- "c1": Competência 1 - Domínio da norma culta da língua escrita (0, 40, 80, 120, 160 ou 200)
-- "c2": Competência 2 - Compreensão da proposta e desenvolvimento do tema (0, 40, 80, 120, 160 ou 200)
-- "c3": Competência 3 - Seleção e organização dos argumentos (0, 40, 80, 120, 160 ou 200)
-- "c4": Competência 4 - Conhecimento dos mecanismos linguísticos de coesão (0, 40, 80, 120, 160 ou 200)
-- "c5": Competência 5 - Elaboração de proposta de intervenção social (0, 40, 80, 120, 160 ou 200)
-- "total": soma de c1+c2+c3+c4+c5 (número entre 0 e 1000)
-- "feedback": comentário em português de até 4 linhas destacando pontos fortes e o que precisa melhorar`
+Leia a redação na imagem e avalie seguindo o modelo ENEM. Retorne APENAS um objeto JSON (sem markdown, sem blocos de código) com exatamente estes campos:
+{"c1": <0-200>, "c2": <0-200>, "c3": <0-200>, "c4": <0-200>, "c5": <0-200>, "total": <0-1000>, "feedback": "<comentário>"}
+
+Onde:
+- c1: Competência 1 - Domínio da norma culta da língua escrita (0, 40, 80, 120, 160 ou 200)
+- c2: Competência 2 - Compreensão da proposta e desenvolvimento do tema (0, 40, 80, 120, 160 ou 200)
+- c3: Competência 3 - Seleção e organização dos argumentos (0, 40, 80, 120, 160 ou 200)
+- c4: Competência 4 - Conhecimento dos mecanismos linguísticos de coesão (0, 40, 80, 120, 160 ou 200)
+- c5: Competência 5 - Elaboração de proposta de intervenção social (0, 40, 80, 120, 160 ou 200)
+- total: soma de c1+c2+c3+c4+c5
+- feedback: comentário em português de até 4 linhas com pontos fortes e o que precisa melhorar`
 
     const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -42,23 +45,34 @@ Leia a redação na imagem e avalie seguindo o modelo ENEM. Retorne APENAS um JS
             { type: 'image_url', image_url: { url: foto_url } },
           ],
         }],
-        response_format: { type: 'json_object' },
+        // Sem response_format para compatibilidade com modelos de visão
         temperature: 0.1,
-        max_tokens: 400,
+        max_tokens: 500,
       }),
     })
 
-    if (!r.ok) throw new Error(`Groq error ${r.status}: ${await r.text()}`)
+    if (!r.ok) {
+      const errText = await r.text()
+      throw new Error(`Groq error ${r.status}: ${errText}`)
+    }
 
     const data = await r.json()
+    const raw = data.choices?.[0]?.message?.content ?? ''
+
     let result: { c1:number; c2:number; c3:number; c4:number; c5:number; total:number; feedback:string } = {
-      c1:0,c2:0,c3:0,c4:0,c5:0,total:0,feedback:'Erro ao processar resposta da IA.'
+      c1:0,c2:0,c3:0,c4:0,c5:0,total:0,feedback:'Não foi possível interpretar a resposta da IA.'
     }
 
     try {
-      result = JSON.parse(data.choices[0].message.content)
+      // Extrai JSON mesmo se vier com ```json ... ``` ou texto ao redor
+      const match = raw.match(/\{[\s\S]*\}/)
+      if (match) {
+        result = JSON.parse(match[0])
+      } else {
+        throw new Error('JSON não encontrado na resposta')
+      }
     } catch {
-      result = { c1:0,c2:0,c3:0,c4:0,c5:0,total:0,feedback:'Não foi possível interpretar a resposta da IA.' }
+      result = { c1:0,c2:0,c3:0,c4:0,c5:0,total:0,feedback:'Resposta da IA em formato inesperado.' }
     }
 
     // Clamp cada competência a múltiplos de 40 entre 0–200
@@ -72,6 +86,7 @@ Leia a redação na imagem e avalie seguindo o modelo ENEM. Retorne APENAS um JS
 
     return new Response(JSON.stringify(result), { headers: CORS })
   } catch (e) {
+    console.error('corrigir-redacao error:', e)
     return new Response(
       JSON.stringify({ c1:0,c2:0,c3:0,c4:0,c5:0,total:0,feedback:'Erro interno na correção.',error:String(e) }),
       { status: 500, headers: CORS }
