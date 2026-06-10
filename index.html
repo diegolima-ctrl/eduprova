@@ -786,6 +786,7 @@ Pontos: 1000</div>
 
 <!-- MODALS -->
 <div class="mov hidden" id="m-vp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-vp-t"></div><button class="mx" onclick="cm('m-vp')">×</button></div><div class="mb" id="m-vp-b"></div></div></div>
+<div class="mov hidden" id="m-corr-manual"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-cm-t">Correção Manual</div><button class="mx" onclick="cm('m-corr-manual')">×</button></div><div class="mb" id="m-cm-b"></div><div style="display:flex;gap:10px;justify-content:flex-end;padding:16px;border-top:1px solid var(--bdr);flex-shrink:0"><button class="btn btn-sec" onclick="cm('m-corr-manual')">Cancelar</button><button class="btn btn-grn" id="btn-sv-corr" onclick="salvarCorrecaoManual()">💾 Salvar Correção</button></div></div></div>
 <div class="mov hidden" id="m-ex">
   <div class="modal modal-lg">
     <div class="mh"><div class="mt" id="m-ex-t">Novo Exercício</div><button class="mx" onclick="cm('m-ex')">×</button></div>
@@ -1619,9 +1620,69 @@ function verProvaProfessor(id){
     }
   });
   const temRedacao=p.questoes.some(q=>q.tipo==='redacao');
-  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Obj.</th>${temRedacao?'<th>ENEM</th>':''}<th>Nota</th><th>Status</th><th></th></tr></thead><tbody>${ents.map(r=>{const ok=r.nota>=mx*0.6;const enemsHtml=temRedacao?`<td>${p.questoes.map((q,qi)=>{if(q.tipo!=='redacao')return'';const corr=(r.correcoes||{})[qi]||(r.correcoes||{})[String(qi)]||{};const fotoUrl=(r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||'';return`<div style="font-size:11px">${fotoUrl?`<a href="${fotoUrl}" target="_blank" style="color:var(--acc)">📷 Ver foto</a> · `:''}<span style="font-weight:600">${corr.total||0}/1000</span></div>`;}).join('')}</td>`:'';return`<tr><td><strong>${r.alunoNome}</strong></td><td>${r.alunoTurma}</td><td>${r.acertos}/${totalMult}</td>${enemsHtml}<td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td><td style="font-size:11px;white-space:nowrap">${r.entregueEm||''}</td></tr>`}).join('')}</tbody></table></div>`}
+  const temSubj=p.questoes.some(q=>q.tipo==='subjetiva'||q.tipo==='redacao');
+  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Obj.</th>${temRedacao?'<th>ENEM</th>':''}<th>Nota</th><th>Status</th><th></th></tr></thead><tbody>${ents.map(r=>{const ok=r.nota>=mx*0.6;const temCorrecaoManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);const enemsHtml=temRedacao?`<td>${p.questoes.map((q,qi)=>{if(q.tipo!=='redacao')return'';const corr=(r.correcoes||{})[qi]||(r.correcoes||{})[String(qi)]||{};const fotoUrl=(r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||'';return`<div style="font-size:11px">${fotoUrl?`<a href="${fotoUrl}" target="_blank" style="color:var(--acc)">📷 Ver foto</a> · `:''}<span style="font-weight:600">${corr.total||0}/1000</span>${corr.manual?'<span style="color:var(--yel);margin-left:4px">✍️</span>':''}</div>`;}).join('')}</td>`:'';return`<tr><td><strong>${r.alunoNome}</strong>${temCorrecaoManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td>${r.alunoTurma}</td><td>${r.acertos}/${totalMult}</td>${enemsHtml}<td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td><td>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${id}','${r.id}')">✏️ Corrigir</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
   G('m-vp-b').innerHTML=html;G('m-vp').classList.remove('hidden');
 }
+let corrManualProvaId=null,corrManualRespostaId=null;
+function abrirCorrecaoManual(provaId,respostaId){
+  const p=S.provas.find(x=>x.id===provaId),r=S.respostas.find(x=>x.id===respostaId);
+  if(!p||!r)return;
+  corrManualProvaId=provaId;corrManualRespostaId=respostaId;
+  G('m-cm-t').textContent=`Correção Manual — ${r.alunoNome}`;
+  const subjs=p.questoes.map((q,qi)=>({q,qi})).filter(({q})=>q.tipo==='subjetiva'||q.tipo==='redacao');
+  if(!subjs.length)return toast('Esta prova não tem questões subjetivas ou redações.','yellow');
+  let html='';
+  for(const{q,qi}of subjs){
+    const corr=(r.correcoes||{})[qi]||(r.correcoes||{})[String(qi)]||{};
+    const tipo=q.tipo;
+    const fotoUrl=tipo==='redacao'?((r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||''):'';
+    const txt=tipo==='subjetiva'?((r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||'(em branco)'):'';
+    html+=`<div class="qi" style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="qnum" style="background:${tipo==='redacao'?'rgba(79,124,255,.15)':'rgba(45,212,191,.15)'};color:${tipo==='redacao'?'var(--acc)':'var(--tel)'}">Q${qi+1}</span><span style="font-size:12px;font-weight:600;color:${tipo==='redacao'?'var(--acc)':'var(--tel)'}">${tipo==='redacao'?'Redação ENEM':'Dissertativa'}</span>${corr.manual?'<span class="badge by" style="font-size:10px">✍️ Já corrigida manualmente</span>':''}</div><div style="font-size:13px;color:var(--mut);margin-bottom:10px;line-height:1.5">${q.enunciado}</div>`;
+    if(tipo==='subjetiva'){
+      html+=`<div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px"><div style="font-weight:700;color:var(--mut);margin-bottom:4px">RESPOSTA DO ALUNO</div><div style="white-space:pre-wrap;line-height:1.6">${txt}</div></div><div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div class="fg" style="width:150px;margin:0"><label class="fl">Nota (0–${q.pontos||5})</label><input class="fi" type="number" id="cm-nota-${qi}" min="0" max="${q.pontos||5}" step="0.5" value="${corr.nota??0}"></div><div class="fg" style="flex:1;min-width:200px;margin:0"><label class="fl">Feedback</label><textarea class="fi" id="cm-fb-${qi}" rows="3" style="resize:vertical">${corr.feedback||''}</textarea></div></div>`;
+    }else{
+      const opts=[0,40,80,120,160,200];
+      const mkSel=(cn,val)=>`<select class="fi" id="cm-${cn}-${qi}" style="padding:6px 8px" onchange="_cmRecalc(${qi})">${opts.map(v=>`<option value="${v}"${v===val?' selected':''}>${v}</option>`).join('')}</select>`;
+      html+=`${fotoUrl?`<a href="${fotoUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--acc);margin-bottom:10px">📷 Ver foto da redação →</a><br>`:''}`;
+      html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><label class="fl">C1 · Norma culta</label>${mkSel('c1',corr.c1??0)}</div><div><label class="fl">C2 · Compreensão do tema</label>${mkSel('c2',corr.c2??0)}</div><div><label class="fl">C3 · Argumentação</label>${mkSel('c3',corr.c3??0)}</div><div><label class="fl">C4 · Coesão textual</label>${mkSel('c4',corr.c4??0)}</div><div><label class="fl">C5 · Proposta de intervenção</label>${mkSel('c5',corr.c5??0)}</div><div><label class="fl">Total ENEM</label><div id="cm-total-${qi}" style="padding:8px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;font-weight:700;font-size:15px">${corr.total||0}/1000</div></div></div><div class="fg" style="margin:0"><label class="fl">Feedback</label><textarea class="fi" id="cm-fb-${qi}" rows="3" style="resize:vertical">${corr.feedback||''}</textarea></div>`;
+    }
+    html+='</div>';
+  }
+  G('m-cm-b').innerHTML=html;G('m-corr-manual').classList.remove('hidden');
+}
+function _cmRecalc(qi){
+  const g=id=>parseInt(G(id)?.value||0)||0;
+  const tot=g(`cm-c1-${qi}`)+g(`cm-c2-${qi}`)+g(`cm-c3-${qi}`)+g(`cm-c4-${qi}`)+g(`cm-c5-${qi}`);
+  const el=G(`cm-total-${qi}`);if(el)el.textContent=`${tot}/1000`;
+}
+async function salvarCorrecaoManual(){
+  const p=S.provas.find(x=>x.id===corrManualProvaId),r=S.respostas.find(x=>x.id===corrManualRespostaId);
+  if(!p||!r)return;
+  const btn=G('btn-sv-corr');btn.disabled=true;shl('Salvando correção...');
+  const novasCorr={...(r.correcoes||{})};
+  p.questoes.forEach((q,qi)=>{
+    if(q.tipo==='subjetiva'){
+      const nota=Math.min(Math.max(parseFloat(G(`cm-nota-${qi}`)?.value)||0,0),q.pontos||5);
+      novasCorr[qi]={...(novasCorr[qi]||{}),nota,feedback:G(`cm-fb-${qi}`)?.value||'',manual:true};
+    }else if(q.tipo==='redacao'){
+      const g=id=>parseInt(G(id)?.value||0)||0;
+      const c1=g(`cm-c1-${qi}`),c2=g(`cm-c2-${qi}`),c3=g(`cm-c3-${qi}`),c4=g(`cm-c4-${qi}`),c5=g(`cm-c5-${qi}`);
+      const total=c1+c2+c3+c4+c5,notaFinal=+((total/1000)*(q.pontos||1000)).toFixed(2);
+      novasCorr[qi]={...(novasCorr[qi]||{}),c1,c2,c3,c4,c5,total,notaFinal,feedback:G(`cm-fb-${qi}`)?.value||'',manual:true};
+    }
+  });
+  let novaNota=r.acertos*p.pontosPorQ;
+  p.questoes.forEach((q,qi)=>{const c=novasCorr[qi]||novasCorr[String(qi)]||{};if(q.tipo==='subjetiva')novaNota+=c.nota||0;else if(q.tipo==='redacao')novaNota+=c.notaFinal||0;});
+  novaNota=+novaNota.toFixed(2);
+  try{
+    const{error}=await sb.from('respostas').update({correcoes:novasCorr,nota:novaNota}).eq('id',r.id);
+    if(error)throw error;
+    await loadAllData();hhl();cm('m-corr-manual');toast('✅ Correção salva!','green');verProvaProfessor(corrManualProvaId);
+  }catch(e){hhl();toast('❌ Erro ao salvar.','red');console.error(e)}
+  finally{btn.disabled=false}
+}
+
 let resTabAtivo='provas';
 function resTab(t){
   resTabAtivo=t;const isP=t==='provas';
