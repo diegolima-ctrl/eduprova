@@ -725,7 +725,7 @@ Pontos: 1000</div>
             <div style="margin-bottom:4px;font-size:12px;color:var(--mut)">Regras: <strong>Tipo: Redação</strong> e <strong>Proposta:</strong> obrigatórios · <strong>Critérios:</strong> opcional · <strong>Pontos:</strong> padrão 1000 · o aluno envia foto da redação manuscrita</div>
             <div style="margin-bottom:12px;margin-top:12px"><span style="color:var(--grn);font-weight:700">③ Salve o arquivo como .txt</span><br>Clique em <strong>Arquivo → Salvar como</strong>. No campo <strong>"Tipo"</strong>, selecione <strong>"Todos os Arquivos (*.*)"</strong>. Nomeie com <strong>.txt</strong> no final — ex: <code style="background:var(--bg);padding:1px 5px;border-radius:4px">prova-bio.txt</code> — e clique em <strong>Salvar</strong>.</div>
             <div style="margin-bottom:12px"><span style="color:var(--grn);font-weight:700">④ Importe aqui</span><br>Clique no botão <strong>📂 Importar .txt</strong> acima, selecione o arquivo e as questões serão carregadas automaticamente.</div>
-            <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">⚠️ <strong>Atenção:</strong> A importação <strong>substitui</strong> todas as questões já adicionadas no formulário.</div>
+            <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">💡 <strong>Dica:</strong> A importação <strong>adiciona</strong> as questões ao final das que já estão no formulário.</div>
           </div>
           <div id="qcP"></div>
           <div id="pv-err" class="hidden"></div>
@@ -1554,9 +1554,9 @@ function importarTxt(){
     const text=await file.text();
     const questoes=parseTxt(text);
     if(!questoes.length)return toast('⚠️ Nenhuma questão encontrada. Verifique o formato!','yellow');
-    QD['qP']=[];G('qcP').innerHTML='';
-    questoes.forEach((q,i)=>{QD['qP'].push(q);_rQ('qP','qcP',i,q)});
-    toast(`✅ ${questoes.length} questão(ões) importada(s)!`,'green');
+    const baseIdx=QD['qP'].length;
+    questoes.forEach((q,i)=>{QD['qP'].push(q);_rQ('qP','qcP',baseIdx+i,q)});
+    toast(`✅ ${questoes.length} questão(ões) adicionada(s)! Total: ${QD['qP'].length}`,'green');
   };
   inp.click();
 }
