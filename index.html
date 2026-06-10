@@ -2019,7 +2019,7 @@ async function erEntregar(){
         const notaFinal=+((data.total/1000)*(q.pontos||1000)).toFixed(2);
         correcoesIA[qi]={...data,notaFinal};
         notaSubjetiva+=notaFinal;
-      }catch(e){console.error('corrigir-redacao:',e);correcoesIA[qi]={c1:0,c2:0,c3:0,c4:0,c5:0,total:0,notaFinal:0,feedback:'Erro na correção da redação: '+String(e)}}}
+      }catch(e){console.error('corrigir-redacao:',e);correcoesIA[qi]={c1:0,c2:0,c3:0,c4:0,c5:0,total:0,notaFinal:0,feedback:'Erro na correção da redação: '+String(e)}}
     }
   }
   const nota=+(acertos*erProva.pontosPorQ+notaSubjetiva).toFixed(2);
@@ -2092,7 +2092,7 @@ async function entregar(){
         const notaFinal=+((data.total/1000)*(q.pontos||1000)).toFixed(2);
         correcoesIA[qi]={...data,notaFinal};
         notaSubjetiva+=notaFinal;
-      }catch(e){console.error('corrigir-redacao:',e);correcoesIA[qi]={c1:0,c2:0,c3:0,c4:0,c5:0,total:0,notaFinal:0,feedback:'Erro na correção da redação: '+String(e)}}}
+      }catch(e){console.error('corrigir-redacao:',e);correcoesIA[qi]={c1:0,c2:0,c3:0,c4:0,c5:0,total:0,notaFinal:0,feedback:'Erro na correção da redação: '+String(e)}}
     }
   }
   const nota=+(acertos*ativAtiva.pontosPorQ+notaSubjetiva).toFixed(2),u=S.user;
