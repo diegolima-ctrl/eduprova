@@ -753,7 +753,7 @@ Pontos: 1000</div>
           <button class="btn btn-org btn-sm" id="res-tab-provas" onclick="resTab('provas')">📋 Provas</button>
           <button class="btn btn-sec btn-sm" id="res-tab-trilhas" onclick="resTab('trilhas')">🚀 Trilhas</button>
         </div>
-        <div class="card" id="res-sec-provas"><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Prova</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="res-tb"></tbody></table></div></div>
+        <div class="card" id="res-sec-provas"><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Prova</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="res-tb"></tbody></table></div></div>
         <div id="res-sec-trilhas" style="display:none"><div id="res-trilhas-body"></div></div>
       </div>
 
@@ -1711,8 +1711,8 @@ function renderResultados(){
     if(fdisc)res=res.filter(r=>{const p=S.provas.find(x=>x.id===r.provaId);return p&&p.disciplina===fdisc;});
     res.sort((a,b)=>a.alunoNome.localeCompare(b.alunoNome,'pt-BR',{sensitivity:'base'}));
     const tb=G('res-tb');
-    if(!res.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado</td></tr>';return;}
-    tb.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6,pct=Math.round((r.acertos/p.questoes.length)*100);return`<tr><td><strong>${r.alunoNome}</strong></td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${p.questoes.length}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td></tr>`;}).join('');
+    if(!res.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:22px;color:var(--mut)">Nenhum resultado</td></tr>';return;}
+    tb.innerHTML=res.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=calcMaxNota(p.questoes,p.pontosPorQ),ok=r.nota>=mx*0.6,totalMult=p.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length,pct=totalMult>0?Math.round((r.acertos/totalMult)*100):0;const temSubj=p.questoes.some(q=>q.tipo==='subjetiva'||q.tipo==='redacao');const temManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);return`<tr><td><strong>${r.alunoNome}</strong>${temManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td><span class="badge bb">${r.alunoTurma}</span></td><td style="font-size:12px">${p.titulo}</td><td>${r.acertos}/${totalMult}<div class="pb mt1" style="width:60px"><div class="pf" style="width:${pct}%"></div></div></td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${p.id}','${r.id}')">✏️ Corrigir</button>`:''}</td></tr>`;}).join('');
   } else {
     // Aba Trilhas — progresso individual por aluno
     const el=G('res-trilhas-body');
