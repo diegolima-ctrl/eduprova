@@ -924,6 +924,7 @@ Pontos: 1000</div>
   </div>
 </div>
 <div class="mov hidden" id="m-result"><div class="modal"><div class="mh"><div class="mt">🏆 Resultado</div><button class="mx" onclick="fecharResult()">×</button></div><div class="mb" id="mr-b"></div><div class="mf"><button class="btn btn-p" onclick="fecharResult()">Fechar</button></div></div></div>
+<div class="mov hidden" id="m-esp"><div class="modal modal-lg"><div class="mh"><div class="mt" id="m-esp-t"></div><button class="mx" onclick="cm('m-esp')">×</button></div><div class="mb" id="m-esp-b"></div></div></div>
 
 <script>
 /* ══ CONFIG ══ */
@@ -1647,7 +1648,7 @@ function verProvaProfessor(id){
   });
   const temRedacao=p.questoes.some(q=>q.tipo==='redacao');
   const temSubj=p.questoes.some(q=>q.tipo==='subjetiva'||q.tipo==='redacao');
-  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Obj.</th>${temRedacao?'<th>ENEM</th>':''}<th>Nota</th><th>Status</th><th></th></tr></thead><tbody>${ents.map(r=>{const ok=r.nota>=mx*0.6;const temCorrecaoManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);const enemsHtml=temRedacao?`<td>${p.questoes.map((q,qi)=>{if(q.tipo!=='redacao')return'';const corr=(r.correcoes||{})[qi]||(r.correcoes||{})[String(qi)]||{};const fotoUrl=(r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||'';return`<div style="font-size:11px">${fotoUrl?`<a href="${fotoUrl}" target="_blank" style="color:var(--acc)">📷 Ver foto</a> · `:''}<span style="font-weight:600">${corr.total||0}/1000</span>${corr.manual?'<span style="color:var(--yel);margin-left:4px">✍️</span>':''}</div>`;}).join('')}</td>`:'';return`<tr><td><strong>${r.alunoNome}</strong>${temCorrecaoManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td>${r.alunoTurma}</td><td>${r.acertos}/${totalMult}</td>${enemsHtml}<td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td><td>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${id}','${r.id}')">✏️ Corrigir</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
+  if(ents.length){html+=`<div class="ctit" style="margin-top:14px">📊 Resultados</div><div class="tw"><table><thead><tr><th>Aluno</th><th>Turma</th><th>Obj.</th>${temRedacao?'<th>ENEM</th>':''}<th>Nota</th><th>Status</th><th></th></tr></thead><tbody>${ents.map(r=>{const ok=r.nota>=mx*0.6;const temCorrecaoManual=temSubj&&Object.values(r.correcoes||{}).some(c=>c.manual);const enemsHtml=temRedacao?`<td>${p.questoes.map((q,qi)=>{if(q.tipo!=='redacao')return'';const corr=(r.correcoes||{})[qi]||(r.correcoes||{})[String(qi)]||{};const fotoUrl=(r.textoRespostas||{})[qi]||(r.textoRespostas||{})[String(qi)]||'';return`<div style="font-size:11px">${fotoUrl?`<a href="${fotoUrl}" target="_blank" style="color:var(--acc)">📷 Ver foto</a> · `:''}<span style="font-weight:600">${corr.total||0}/1000</span>${corr.manual?'<span style="color:var(--yel);margin-left:4px">✍️</span>':''}</div>`;}).join('')}</td>`:'';return`<tr><td><strong>${r.alunoNome}</strong>${temCorrecaoManual?'<span class="badge by" style="font-size:10px;margin-left:4px">✍️</span>':''}</td><td>${r.alunoTurma}</td><td>${r.acertos}/${totalMult}</td>${enemsHtml}<td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'Aprovado':'Reprovado'}</span></td><td><div style="display:flex;gap:4px;justify-content:flex-end"><button class="btn btn-sec btn-sm" onclick="verEspelhoAluno('${id}','${r.id}')" title="Ver prova respondida">👁 Espelho</button>${temSubj?`<button class="btn btn-sec btn-sm" onclick="abrirCorrecaoManual('${id}','${r.id}')">✏️ Corrigir</button>`:''}</div></td></tr>`}).join('')}</tbody></table></div>`}
   G('m-vp-b').innerHTML=html;G('m-vp').classList.remove('hidden');
 }
 let corrManualProvaId=null,corrManualRespostaId=null;
@@ -2104,7 +2105,7 @@ async function entregar(){
     await loadAllData();hhl();cm('m-fazer');mostrarResult({respostas:{...respostasAtiv},textoRespostas:textosRespostas,correcoes:correcoesIA,nota,acertos},ativAtiva);
   }catch(e){hhl();toast('❌ Erro ao enviar.','red');console.error(e)}finally{btn.disabled=false;btn.textContent='📨 Entregar'}
 }
-function mostrarResult(reg,atv){
+function buildEspelhoHTML(reg,atv){
   const mx=calcMaxNota(atv.questoes,atv.pontosPorQ),ok=reg.nota>=mx*0.6,pct=Math.round((reg.nota/mx)*100),L=['A','B','C','D','E'];
   const totalMult=atv.questoes.filter(q=>!q.tipo||q.tipo==='multipla').length;
   let html=`<div class="res-score"><div class="res-num" style="color:${ok?'var(--grn)':'var(--red)'}">${reg.nota.toFixed(1)}</div><div class="mut sm" style="margin-top:5px">de ${mx.toFixed(1)} pontos</div><div class="badge ${ok?'bg':'br'}" style="font-size:14px;padding:7px 20px;margin-top:10px;display:inline-block">${ok?'🎉 APROVADO!':'😔 REPROVADO'}</div><div class="mut mt3 sm">${reg.acertos} acerto${reg.acertos!==1?'s':''} de ${totalMult} objetivas · ${pct}% do total</div></div>
@@ -2127,7 +2128,15 @@ function mostrarResult(reg,atv){
       html+=`<div class="pq"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><span class="qnum" style="background:${ac?'rgba(52,211,153,.15)':'rgba(248,113,113,.15)'};color:${ac?'var(--grn)':'var(--red)'}">Q${qi+1}</span><span>${ac?'✅':'❌'}</span></div><div class="pqe">${q.enunciado}</div>${q.imagemUrl?`<img src="${q.imagemUrl}" class="pqi" alt="img">`:''}${q.opcoes.map((op,oi)=>`<div class="ro ${oi===cor?'ca':oi===esc&&!ac?'wa':''}"><div style="width:16px;height:16px;border-radius:50%;background:${oi===cor?'var(--grn)':oi===esc&&!ac?'var(--red)':'var(--bdr)'};flex-shrink:0"></div><span style="font-size:13px"><strong>${L[oi]}.</strong> ${op}</span>${oi===cor?'<span style="margin-left:auto;font-size:11px;color:var(--grn);white-space:nowrap">✓ Correta</span>':''}${oi===esc&&oi!==cor?'<span style="margin-left:auto;font-size:11px;color:var(--red);white-space:nowrap">✗ Sua</span>':''}</div>`).join('')}</div>`;
     }
   });
-  html+=`</div>`;G('mr-b').innerHTML=html;G('m-result').classList.remove('hidden');
+  html+=`</div>`;return html;
+}
+function mostrarResult(reg,atv){G('mr-b').innerHTML=buildEspelhoHTML(reg,atv);G('m-result').classList.remove('hidden');}
+function verEspelhoAluno(provaId,respostaId){
+  const p=S.provas.find(x=>x.id===provaId),r=S.respostas.find(x=>x.id===respostaId);
+  if(!p||!r)return;
+  G('m-esp-t').innerHTML=`📄 ${r.alunoNome} <span class="mut" style="font-weight:400;font-size:13px">· ${r.alunoTurma} · ${r.entregueEm||''}</span>`;
+  G('m-esp-b').innerHTML=buildEspelhoHTML({respostas:r.respostas||{},textoRespostas:r.textoRespostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos},p);
+  G('m-esp').classList.remove('hidden');
 }
 function fecharResult(){cm('m-result');if(tipoAtiv==='prova')renderAlunoProvas();else{if(triIdAtiv){cm('m-aula');renderAlunoTrilhas()}else renderAlunoAulas()}}
 function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=p;tipoAtiv='prova';mostrarResult({respostas:ent.respostas,textoRespostas:ent.textoRespostas||{},correcoes:ent.correcoes||{},nota:ent.nota,acertos:ent.acertos},p)}
