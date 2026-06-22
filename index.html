@@ -680,14 +680,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Duração (minutos)</label><input class="fi" type="number" id="pv-dur" value="50" min="1" step="1"></div>
           </div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
-          <div style="margin-top:4px;padding:14px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px">
-            <div style="font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:12px">🗓 Agendamento <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">— opcional. Sem data, a prova fica disponível imediatamente.</span></div>
-            <div class="g2">
-              <div class="fg" style="margin:0"><label class="fl">Liberar em</label><input class="fi" type="datetime-local" id="pv-ini" oninput="_agInfo()"></div>
-              <div class="fg" style="margin:0"><label class="fl">Encerrar em</label><input class="fi" type="datetime-local" id="pv-fim" oninput="_agInfo()"></div>
-            </div>
-            <div id="pv-ag-info" style="display:none;margin-top:10px;font-size:12px;color:var(--acc)"></div>
-          </div>
+          <div style="margin-top:4px;padding:12px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px;font-size:12px;color:var(--mut)">🔒 A prova é criada <strong style="color:var(--txt)">bloqueada</strong>. Use o botão <strong style="color:var(--txt)">Liberar</strong> na lista de provas quando quiser que os alunos comecem.</div>
           <hr class="dv">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
             <div class="ctit" style="margin:0">📝 Questões</div>
@@ -979,7 +972,7 @@ async function loadAllData(){
     safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
     safe(sb.from('aulas_configuracao').select('*'))
   ]);
-  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,data_inicio:p.data_inicio||null,data_fim:p.data_fim||null}));
+  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,liberada:!!p.liberada}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
@@ -1595,26 +1588,21 @@ function parseTxt(text){
 
 /* ══ PROVAS ══ */
 let editPvId=null;
-function isoToLocalInput(iso){if(!iso)return'';const d=new Date(iso);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
-function _agInfo(){const ini=G('pv-ini').value,fim=G('pv-fim').value,d=G('pv-ag-info');if(!ini){d.style.display='none';return}const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});let msg=`⏰ Alunos verão a prova bloqueada até <strong>${fmtDt(ini)}</strong>`;if(fim)msg+=` · encerrando em <strong>${fmtDt(fim)}</strong>`;d.innerHTML=msg;d.style.display='block'}
-function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('pv-dur').value='50';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
-function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-dur').value=p.duracao||50;G('pv-ini').value=isoToLocalInput(p.data_inicio);G('pv-fim').value=isoToLocalInput(p.data_fim);_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta||'',criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d'].forEach(id=>G(id).value='');G('pv-p').value='1';G('pv-dur').value='50';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-dur').value=p.duracao||50;G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta||'',criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function cancelarProva(){editPvId=null;showSec('sec-provas');setNav('ni-provas');renderProvas()}
 async function salvarProva(){
   const titulo=G('pv-t').value.trim(),disc=G('pv-d').value.trim(),pts=parseFloat(G('pv-p').value)||1;
   const errDiv=G('pv-err');errDiv.classList.add('hidden');
   if(!titulo||!disc)return toast('⚠️ Preencha título e disciplina!','yellow');
   if(!SS['prova']?.size)return toast('⚠️ Selecione ao menos uma turma!','yellow');
-  const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
-  if(pvIni&&pvFim&&new Date(pvFim)<=new Date(pvIni))return toast('⚠️ A data de encerramento deve ser após a data de início!','yellow');
   if(!QD['qP']?.length)return toast('⚠️ Adicione questões!','yellow');
   if(QD['qP'].find(q=>{if(!q.enunciado)return true;if(!q.tipo||q.tipo==='multipla'){const ops=q.opcoes||[];return ops.filter(o=>o).length<2||q.correta===null||!ops[q.correta];}if(q.tipo==='subjetiva')return!q.gabarito;if(q.tipo==='redacao')return!q.proposta;return false}))return toast('⚠️ Preencha todas as questões! (dissertativas precisam de gabarito; redações precisam de proposta)','yellow');
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
-    const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
     const dur=Math.max(1,parseInt(G('pv-dur').value)||50);
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,duracao:dur,questoes:QD['qP'].map(q=>q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta,criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null}),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
-    const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,duracao:dur,questoes:QD['qP'].map(q=>q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta,criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null}),criada_em:new Date().toISOString()};
+    const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload,liberada:false});
     if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
   }catch(e){hhl();errDiv.className='err-box';errDiv.textContent=`JS: ${e.message}`;errDiv.classList.remove('hidden');toast('❌ Erro.','red')}
@@ -1630,8 +1618,9 @@ function renderProvas(){
   let provas=S.provas;
   if(fd.value)provas=provas.filter(p=>p.disciplina===fd.value);
   if(!provas.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mut)">Nenhuma prova</td></tr>';return}
-  tb.innerHTML=provas.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id).length;const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<tr><td><strong>${p.titulo}</strong><div class="mut xs mt1">${p.criadaEm}</div></td><td><span class="badge bp">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'bg':'by'}">${n}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warn btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delProva('${p.id}')">🗑</button></div></td></tr>`}).join('');
+  tb.innerHTML=provas.map(p=>{const n=S.respostas.filter(r=>r.provaId===p.id).length;const ts=p.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');const libBtn=p.liberada?`<button class="btn btn-warn btn-sm" onclick="toggleLiberada('${p.id}',false)" title="Bloquear acesso dos alunos">🔒 Bloquear</button>`:`<button class="btn btn-p btn-sm" onclick="toggleLiberada('${p.id}',true)" title="Liberar para os alunos">🔓 Liberar</button>`;const stat=p.liberada?'<span class="badge bg" style="margin-top:4px">🔓 Liberada</span>':'<span class="badge by" style="margin-top:4px">🔒 Bloqueada</span>';return`<tr><td><strong>${p.titulo}</strong><div class="mut xs mt1">${p.criadaEm}</div><div>${stat}</div></td><td><span class="badge bp">${p.disciplina}</span></td><td>${ts}</td><td>${p.questoes.length}</td><td><span class="badge ${n>0?'bg':'by'}">${n}</span></td><td><div style="display:flex;gap:4px;flex-wrap:wrap">${libBtn}<button class="btn btn-sec btn-sm" onclick="verProvaProfessor('${p.id}')">👁</button><button class="btn btn-warn btn-sm" onclick="editarProva('${p.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delProva('${p.id}')">🗑</button></div></td></tr>`}).join('');
 }
+async function toggleLiberada(id,val){const{error}=await sb.from('provas').update({liberada:val}).eq('id',id);if(error){toast('❌ Erro ao atualizar.','red');return}const p=S.provas.find(x=>x.id===id);if(p)p.liberada=val;renderProvas();toast(val?'🔓 Prova liberada para os alunos!':'🔒 Prova bloqueada.',val?'green':'yellow')}
 async function delProva(id){if(!confirm('Deletar prova e resultados?'))return;shl('Excluindo...');try{const p=S.provas.find(x=>x.id===id);if(p)for(const q of p.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas').delete().eq('prova_id',id);await sb.from('provas').delete().eq('id',id);await loadAllData();renderProvas();toast('🗑 Prova removida','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
 function calcMaxNota(questoes,pontosPorQ){return questoes.reduce((s,q)=>s+(q.tipo==='subjetiva'?(q.pontos||5):q.tipo==='redacao'?(q.pontos||1000):pontosPorQ),0)}
 function verProvaProfessor(id){
@@ -1895,9 +1884,7 @@ const ER_L=['A','B','C','D','E'];
 
 function abrirProvaAluno(id){
   const p=S.provas.find(x=>x.id===id);if(!p)return;
-  const agora=new Date();
-  if(p.data_inicio&&agora<new Date(p.data_inicio))return toast('⚠️ Esta prova ainda não está disponível.','yellow');
-  if(p.data_fim&&agora>new Date(p.data_fim))return toast('❌ O prazo desta prova foi encerrado.','red');
+  if(!p.liberada)return toast('🔒 Esta prova ainda não foi liberada pelo professor.','yellow');
   erProva=p;erQAtual=0;erRespostas={};erFlags={};erFotosRedacao={};
   const dur=p.duracao||50;
   G('er-s-sub').textContent=p.disciplina;
@@ -2157,32 +2144,23 @@ function renderAlunoAulas(){
   el.innerHTML=aulas.map(al=>{const exs=S.exercicios.filter(e=>e.aulaId===al.id&&e.turmas.includes(u.turma));const exF=exs.filter(e=>S.respostasEx.find(r=>r.exercicioId===e.id&&r.alunoRA===u.ra)).length;const ts=al.turmas.map(t=>`<span class="badge bb" style="margin:1px">${t}</span>`).join('');return`<div class="ac" style="cursor:pointer" onclick="verAula('${al.id}',false)"><div class="at">${al.titulo}</div><div class="am"><span class="badge bt">${al.disciplina}</span>${ts}${al.imagens?.length?`<span class="badge bp">🖼 ${al.imagens.length}</span>`:''}${exs.length?`<span class="badge ${exF===exs.length?'bg':'by'}">🏋️ ${exF}/${exs.length}</span>`:''}</div><button class="btn btn-tel btn-sm" onclick="event.stopPropagation();verAula('${al.id}',false)" style="margin-top:8px">📖 Ver Aula →</button></div>`}).join('');
 }
 
-function _countdown(to,now){const d=to-now;if(d<=0)return'disponível agora';const dy=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000);return dy>0?`${dy}d ${h}h ${m}min`:h>0?`${h}h ${m}min`:`${m}min`}
 /* ══ ALUNO PROVAS ══ */
 function renderAlunoProvas(){
   const u=S.user;G('a-pv-lbl').textContent=`Turma ${u.turma} — ${u.nome}`;
   const provas=S.provas.filter(p=>p.turmas.includes(u.turma));
-  const el=G('a-provas');const agora=new Date();
+  const el=G('a-provas');
   if(!provas.length){el.innerHTML='<div class="es"><div class="ei">📭</div><div class="et">Nenhuma prova disponível</div></div>';return}
-  const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   el.innerHTML=provas.map(p=>{
     const ent=S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra);
     const mx=p.questoes.length*p.pontosPorQ;
-    const ini=p.data_inicio?new Date(p.data_inicio):null;
-    const fim=p.data_fim?new Date(p.data_fim):null;
-    const pending=ini&&agora<ini;
-    const closed=!ent&&fim&&agora>fim;
+    const locked=!ent&&!p.liberada;
     let badges=`<span class="badge bp">${p.disciplina}</span><span class="badge by">${p.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span>`;
-    if(pending)badges+=`<span class="badge bb">🗓 Agendada</span>`;
-    if(closed)badges+=`<span class="badge br">🔒 Encerrada</span>`;
-    let dataInfo='';
-    if(ini&&!ent){if(pending)dataInfo=`<div style="margin-top:6px;font-size:11px;color:var(--mut)">📅 Libera: <strong style="color:var(--txt)">${fmtDt(p.data_inicio)}</strong></div>`;else if(fim&&!closed)dataInfo=`<div style="margin-top:6px;font-size:11px;color:var(--mut)">⏳ Encerra: <strong style="color:var(--txt)">${fmtDt(p.data_fim)}</strong></div>`;}
+    if(locked)badges+=`<span class="badge bb">🔒 Aguardando liberação</span>`;
     let acao='';
     if(ent){const ok=ent.nota>=mx*0.6;acao=`<div><span class="badge bg" style="font-size:12px;padding:5px 12px">✅ Entregue</span><div style="margin-top:6px;font-size:20px;font-family:var(--fd);font-weight:800;color:${ok?'var(--grn)':'var(--red)'}">${ent.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)"> / ${mx.toFixed(1)}</span></div><div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')">📋 Revisar</button></div></div>`;}
-    else if(pending){const cd=_countdown(ini,agora);acao=`<div style="text-align:center"><div style="font-size:26px;margin-bottom:4px">🔒</div><div style="font-size:12px;color:var(--acc);font-weight:700;font-family:var(--fd)">${cd}</div><div style="font-size:11px;color:var(--mut);margin-top:2px">para liberar</div></div>`;}
-    else if(closed){acao=`<div style="text-align:center"><div style="font-size:22px;margin-bottom:4px">⛔</div><div style="font-size:12px;color:var(--mut)">Prazo encerrado</div></div>`;}
+    else if(locked){acao=`<div style="text-align:center"><div style="font-size:26px;margin-bottom:4px">🔒</div><div style="font-size:11px;color:var(--mut);margin-top:2px">Aguardando<br>liberação do professor</div></div>`;}
     else{acao=`<button class="btn btn-p" style="width:auto;padding:10px 16px" onclick="abrirProvaAluno('${p.id}')">✏️ Fazer</button>`;}
-    return`<div class="card" style="margin-bottom:12px;opacity:${closed?'0.6':'1'};${pending?'border-left:3px solid var(--acc)':''};"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">${badges}</div>${dataInfo}</div><div style="text-align:right;flex-shrink:0">${acao}</div></div></div>`;
+    return`<div class="card" style="margin-bottom:12px;opacity:${locked?'0.7':'1'};${locked?'border-left:3px solid var(--mut)':''};"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px"><div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:16px;font-weight:700">${p.titulo}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">${badges}</div></div><div style="text-align:right;flex-shrink:0">${acao}</div></div></div>`;
   }).join('');
 }
 
