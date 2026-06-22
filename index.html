@@ -675,7 +675,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fg" style="margin:0"><label class="fl">Título</label><input class="fi" id="pv-t" placeholder="Ex: Prova Bimestral"></div>
             <div class="fg" style="margin:0"><label class="fl">Disciplina</label><input class="fi" id="pv-d" placeholder="Ex: Matemática"></div>
           </div>
-          <div class="fg" style="max-width:220px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
+          <div class="g2">
+            <div class="fg" style="margin:0"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="pv-p" value="1" min="0.1" step="0.1"></div>
+            <div class="fg" style="margin:0"><label class="fl">Duração (minutos)</label><input class="fi" type="number" id="pv-dur" value="50" min="1" step="1"></div>
+          </div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-prova"></div><div id="th-prova" class="mut sm mt2">Nenhuma turma</div></div>
           <div style="margin-top:4px;padding:14px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px">
             <div style="font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:12px">🗓 Agendamento <span style="font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">— opcional. Sem data, a prova fica disponível imediatamente.</span></div>
@@ -976,7 +979,7 @@ async function loadAllData(){
     safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
     safe(sb.from('aulas_configuracao').select('*'))
   ]);
-  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,questoes:A(p.questoes),criadaEm:p.criada_em,data_inicio:p.data_inicio||null,data_fim:p.data_fim||null}));
+  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,data_inicio:p.data_inicio||null,data_fim:p.data_fim||null}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
@@ -1592,9 +1595,10 @@ function parseTxt(text){
 
 /* ══ PROVAS ══ */
 let editPvId=null;
+function isoToLocalInput(iso){if(!iso)return'';const d=new Date(iso);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
 function _agInfo(){const ini=G('pv-ini').value,fim=G('pv-fim').value,d=G('pv-ag-info');if(!ini){d.style.display='none';return}const fmtDt=iso=>new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});let msg=`⏰ Alunos verão a prova bloqueada até <strong>${fmtDt(ini)}</strong>`;if(fim)msg+=` · encerrando em <strong>${fmtDt(fim)}</strong>`;d.innerHTML=msg;d.style.display='block'}
-function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
-function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-ini').value=p.data_inicio?p.data_inicio.slice(0,16):'';G('pv-fim').value=p.data_fim?p.data_fim.slice(0,16):'';_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta||'',criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d','pv-ini','pv-fim'].forEach(id=>G(id).value='');G('pv-p').value='1';G('pv-dur').value='50';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');G('pv-ag-info').style.display='none';buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
+function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-dur').value=p.duracao||50;G('pv-ini').value=isoToLocalInput(p.data_inicio);G('pv-fim').value=isoToLocalInput(p.data_fim);_agInfo();G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta||'',criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function cancelarProva(){editPvId=null;showSec('sec-provas');setNav('ni-provas');renderProvas()}
 async function salvarProva(){
   const titulo=G('pv-t').value.trim(),disc=G('pv-d').value.trim(),pts=parseFloat(G('pv-p').value)||1;
@@ -1608,7 +1612,8 @@ async function salvarProva(){
   const btn=G('btn-sv-pv');btn.disabled=true;shl('Salvando prova...');
   try{
     const pvIni=G('pv-ini').value,pvFim=G('pv-fim').value;
-    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,questoes:QD['qP'].map(q=>q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta,criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null}),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
+    const dur=Math.max(1,parseInt(G('pv-dur').value)||50);
+    const payload={titulo,disciplina:disc,turmas:[...SS['prova']],pontos_por_q:pts,duracao:dur,questoes:QD['qP'].map(q=>q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito,criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta,criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null}),criada_em:new Date().toISOString(),data_inicio:pvIni?new Date(pvIni).toISOString():null,data_fim:pvFim?new Date(pvFim).toISOString():null};
     const{error}=editPvId?await sb.from('provas').update(payload).eq('id',editPvId):await sb.from('provas').insert({id:Date.now().toString(),...payload});
     if(error){errDiv.className='err-box';errDiv.textContent=`Erro: ${error.message}`;errDiv.classList.remove('hidden');hhl();toast('❌ Erro ao salvar.','red');return}
     await loadAllData();hhl();editPvId=null;toast('✅ Prova salva!','green');showSec('sec-provas');setNav('ni-provas');renderProvas();
