@@ -447,7 +447,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
     <div id="lf-aluno" class="hidden">
       <div class="fg"><label class="fl">Turma</label>
-        <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select>
+        <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option><option>3T2</option></select>
       </div>
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="la-nm" placeholder="Seu nome completo" autocomplete="name"></div>
       <div class="fg"><label class="fl">Senha</label>
@@ -747,7 +747,7 @@ Pontos: 1000</div>
       <div class="sec" id="sec-resultados">
         <div class="ph"><div><div class="ptit">Resultados</div></div><button class="btn btn-warn btn-sm" onclick="expResultados()">📥 CSV</button></div>
         <div class="card" style="margin-bottom:14px"><div style="display:flex;gap:12px;flex-wrap:wrap">
-          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Turma</label><select class="fsel" id="res-ft" onchange="renderResultados()"><option value="">Todas</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
+          <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Turma</label><select class="fsel" id="res-ft" onchange="renderResultados()"><option value="">Todas</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option><option>3T2</option></select></div>
           <div class="fg" style="margin:0;flex:1;min-width:120px"><label class="fl">Disciplina</label><select class="fsel" id="res-fd" onchange="renderResultados()"><option value="">Todas</option></select></div>
           <div class="fg" style="margin:0;flex:1;min-width:120px" id="res-fp-wrap"><label class="fl">Prova</label><select class="fsel" id="res-fp" onchange="renderResultados()"><option value="">Todas</option></select></div>
         </div></div>
@@ -807,7 +807,7 @@ Pontos: 1000</div>
   <div class="modal"><div class="mh"><div class="mt">⚙️ Config. Aulas por Dia</div><button class="mx" onclick="cm('m-conf-aulas')">×</button></div>
     <div class="mb">
       <div class="g2" style="margin-bottom:16px">
-        <div class="fg" style="margin:0"><label class="fl">Turma</label><select class="fsel" id="ca-tu"><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option></select></div>
+        <div class="fg" style="margin:0"><label class="fl">Turma</label><select class="fsel" id="ca-tu"><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option><option>3T2</option></select></div>
         <div class="fg" style="margin:0"><label class="fl">Data</label><input type="date" class="fi" id="ca-dt"></div>
       </div>
       <div class="fg"><label class="fl">Qtd. de Aulas</label><input type="number" class="fi" id="ca-q" value="1" min="1" max="12"></div>
@@ -928,7 +928,7 @@ const SBU='https://ervdfmkgeihpbblwknog.supabase.co';
 const SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVydmRmbWtnZWlocGJibHdrbm9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzE2NzEsImV4cCI6MjA5MDA0NzY3MX0.0cItNzM-JxM71c-8yjH4RNbxaqPhYIYe0sVDVA7JBN0';
 const sb=supabase.createClient(SBU,SBK);
 const BKT='questoes';
-const TURMAS=['1M1','1M2','1M3','1M4','1M5','2T1','2T2','2T3','3M1','3M2'];
+const TURMAS=['1M1','1M2','1M3','1M4','1M5','2T1','2T2','2T3','3M1','3M2','3T2'];
 const XP_AULA=50,XP_EX=30;
 const NIVEIS=[{n:1,xp:0,l:'Iniciante',e:'🌱'},{n:2,xp:100,l:'Aprendiz',e:'📖'},{n:3,xp:250,l:'Estudante',e:'🎓'},{n:4,xp:500,l:'Especialista',e:'⭐'},{n:5,xp:1000,l:'Mestre',e:'🏆'}];
 
