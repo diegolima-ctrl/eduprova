@@ -446,8 +446,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
     <div id="lf-aluno" class="hidden">
+      <div class="fg"><label class="fl">Turno</label>
+        <select class="fsel" id="la-turno" onchange="filtrarTurmasLogin()"><option value="">Selecione o turno</option><option value="M">☀️ Manhã</option><option value="T">🌆 Tarde</option></select>
+      </div>
       <div class="fg"><label class="fl">Turma</label>
-        <select class="fsel" id="la-tu"><option value="">Selecione sua turma</option><option>1M1</option><option>1M2</option><option>1M3</option><option>1M4</option><option>1M5</option><option>2M1</option><option>2M2</option><option>2M3</option><option>2M4</option><option>2M5</option><option>2M6</option><option>2T1</option><option>2T2</option><option>2T3</option><option>3M1</option><option>3M2</option><option>3M3</option><option>3M4</option><option>3M5</option><option>3T1</option><option>3T2</option><option>3T1-ANTIGO</option><option>3T2-ANTIGO</option></select>
+        <select class="fsel" id="la-tu"><option value="">Selecione o turno primeiro</option></select>
       </div>
       <div class="fg"><label class="fl">Nome completo</label><input class="fi" id="la-nm" placeholder="Seu nome completo" autocomplete="name"></div>
       <div class="fg"><label class="fl">Senha</label>
@@ -1003,6 +1006,13 @@ function setTab(t){
   G('lf-prof').classList.toggle('hidden',t!=='prof');
   G('lf-aluno').classList.toggle('hidden',t!=='aluno');
   G('lerr').classList.add('hidden');
+}
+/* filtra as turmas do login pelo turno escolhido (2ª letra da turma: M=manhã, T=tarde) */
+function filtrarTurmasLogin(){
+  const turno=G('la-turno').value,sel=G('la-tu');
+  if(!turno){sel.innerHTML='<option value="">Selecione o turno primeiro</option>';return}
+  const lista=TURMAS.filter(t=>t[1]===turno);
+  sel.innerHTML='<option value="">Selecione sua turma</option>'+lista.map(t=>`<option>${t}</option>`).join('');
 }
 /* dados do aluno aguardando troca de senha */
 let _recAluno=null;
