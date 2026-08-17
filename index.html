@@ -963,17 +963,33 @@ document.querySelectorAll('.mov').forEach(o=>o.addEventListener('click',e=>{if(e
 /* ══ DADOS ══ */
 async function loadAllData(){
   const safe=async(p)=>{try{const r=await p;return r.error?{data:[]}:r}catch(e){return{data:[]}}};
+  // Busca TODAS as linhas em páginas de 1000 (o Supabase limita cada select a 1000 por padrão).
+  // Sem isso, tabelas grandes (respostas, frequencia...) ficam truncadas e provas entregues
+  // reaparecem como "por fazer" para o aluno.
+  const all=async(table,orderCol,asc)=>{
+    const PAGE=1000;let from=0,acc=[];
+    for(;;){
+      let q=sb.from(table).select('*');
+      if(orderCol)q=q.order(orderCol,{ascending:!!asc});
+      const{data,error}=await q.range(from,from+PAGE-1);
+      if(error||!data||!data.length)break;
+      acc=acc.concat(data);
+      if(data.length<PAGE)break;
+      from+=PAGE;
+    }
+    return{data:acc};
+  };
   const[r0,r1,r2,r3,r4,r5,r6,r7,r8,r9]=await Promise.all([
-    safe(sb.from('provas').select('*').order('criada_em',{ascending:false})),
-    safe(sb.from('alunos').select('*').order('nome',{ascending:true})),
-    safe(sb.from('respostas').select('*')),
-    safe(sb.from('aulas').select('*').order('criada_em',{ascending:false})),
-    safe(sb.from('exercicios').select('*').order('criada_em',{ascending:false})),
-    safe(sb.from('respostas_exercicios').select('*')),
-    safe(sb.from('trilhas').select('*').order('criada_em',{ascending:false})),
-    safe(sb.from('progresso_trilha').select('*')),
-    safe(sb.from('frequencia').select('*').order('data',{ascending:false})),
-    safe(sb.from('aulas_configuracao').select('*'))
+    safe(all('provas','criada_em',false)),
+    safe(all('alunos','nome',true)),
+    safe(all('respostas')),
+    safe(all('aulas','criada_em',false)),
+    safe(all('exercicios','criada_em',false)),
+    safe(all('respostas_exercicios')),
+    safe(all('trilhas','criada_em',false)),
+    safe(all('progresso_trilha')),
+    safe(all('frequencia','data',false)),
+    safe(all('aulas_configuracao'))
   ]);
   S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,liberada:!!p.liberada}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
