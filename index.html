@@ -800,7 +800,26 @@ Pontos: 1000</div>
       <div class="fg"><label class="fl">Descrição (opcional)</label><input class="fi" id="ex-d" placeholder="Instruções..."></div>
       <div class="fg" style="max-width:200px"><label class="fl">Pontos/Questão</label><input class="fi" type="number" id="ex-p" value="1" min="0.1" step="0.1"></div>
       <hr class="dv">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ctit" style="margin:0">📝 Questões</div><button class="btn btn-sec btn-sm" onclick="addQ('exQ','qcE')">+ Questão</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ctit" style="margin:0">📝 Questões</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sec btn-sm" onclick="toggleTutorialImportEx()">📋 Como importar?</button><button class="btn btn-tel btn-sm" onclick="importarTxtEx()">📂 Importar .txt</button><button class="btn btn-sec btn-sm" onclick="addQ('exQ','qcE')">+ Questão</button></div></div>
+      <div id="tutorial-import-ex" style="display:none;margin-bottom:14px;padding:14px 16px;background:var(--surf2);border:1px solid var(--bdr);border-radius:10px">
+        <div style="font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:10px;color:var(--acc)">📋 Como importar questões via arquivo .txt</div>
+        <div style="font-size:13px;color:var(--txt);line-height:1.6">
+          <div style="margin-bottom:8px">Crie um arquivo <strong>.txt</strong> com as questões de <strong>múltipla escolha</strong> neste formato (uma questão após a outra):</div>
+          <pre style="background:var(--bg);padding:10px 12px;border-radius:8px;font-size:12px;overflow-x:auto;margin:0 0 10px;white-space:pre-wrap">1. Qual é a capital do Brasil?
+A) São Paulo
+B) Rio de Janeiro
+C) Brasília
+D) Salvador
+Correta: C
+
+2. Quanto é 2 + 2?
+A) 3
+B) 4
+C) 5
+Correta: B</pre>
+          <div style="padding:9px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;color:var(--yel);font-size:12px">💡 <strong>Dica:</strong> A importação <strong>adiciona</strong> as questões às que já estão no formulário. Exercícios aceitam apenas questões de <strong>múltipla escolha</strong> — questões dissertativas ou de redação no arquivo são ignoradas.</div>
+        </div>
+      </div>
       <div id="qcE"></div>
     </div>
     <div class="mf"><button class="btn btn-sec" onclick="cm('m-ex')">Cancelar</button><button class="btn btn-p" id="btn-sv-ex" onclick="salvarEx()" style="width:auto;min-width:140px">💾 Salvar</button></div>
@@ -1504,14 +1523,14 @@ async function delAula(id){if(!confirm('Excluir aula e exercícios?'))return;shl
 /* ══ EXERCÍCIOS ══ */
 let editExId=null;
 function rExAula(aulaId){const exs=S.exercicios.filter(e=>e.aulaId===aulaId);const el=G('exs-aula');if(!exs.length){el.innerHTML='<div class="mut sm" style="padding:8px 0">Nenhum exercício. Clique em "+ Exercício".</div>';return}el.innerHTML=exs.map(ex=>{const rs=S.respostasEx.filter(r=>r.exercicioId===ex.id).length;return`<div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="mut sm mt1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">${ex.questoes.length} q.</span><span class="badge bg">${rs} entrega${rs!==1?'s':''}</span></div></div><div style="display:flex;gap:5px"><button class="btn btn-warn btn-sm" onclick="editEx('${ex.id}')">✏️</button><button class="btn btn-dan btn-sm" onclick="delEx('${ex.id}')">🗑</button></div></div></div>`}).join('')}
-function abrirModalEx(){editExId=null;QD['exQ']=[];G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';G('qcE').innerHTML='';addQ('exQ','qcE');G('m-ex').classList.remove('hidden')}
-function editEx(id){const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;editExId=id;QD['exQ']=[];G('m-ex-t').textContent='Editar Exercício';G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;G('qcE').innerHTML='';ex.questoes.forEach((q,i)=>{QD['exQ'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('exQ','qcE',i,q)});G('m-ex').classList.remove('hidden')}
+function abrirModalEx(){editExId=null;QD['exQ']=[];G('m-ex-t').textContent='Novo Exercício';G('btn-sv-ex').textContent='💾 Salvar';['ex-t','ex-d'].forEach(id=>G(id).value='');G('ex-p').value='1';G('qcE').innerHTML='';G('tutorial-import-ex').style.display='none';addQ('exQ','qcE');G('m-ex').classList.remove('hidden')}
+function editEx(id){const ex=S.exercicios.find(x=>x.id===id);if(!ex)return;editExId=id;QD['exQ']=[];G('m-ex-t').textContent='Editar Exercício';G('ex-t').value=ex.titulo;G('ex-d').value=ex.descricao||'';G('ex-p').value=ex.pontosPorQ;G('qcE').innerHTML='';G('tutorial-import-ex').style.display='none';ex.questoes.forEach((q,i)=>{QD['exQ'].push({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});_rQ('exQ','qcE',i,q)});G('m-ex').classList.remove('hidden')}
 async function salvarEx(){
   if(!editAulaId)return toast('⚠️ Salve a aula primeiro!','yellow');
   const titulo=G('ex-t').value.trim(),desc=G('ex-d').value.trim(),pts=parseFloat(G('ex-p').value)||1;
   if(!titulo)return toast('⚠️ Preencha o título!','yellow');
   if(!QD['exQ']?.length)return toast('⚠️ Adicione ao menos uma questão!','yellow');
-  if(QD['exQ'].find(q=>!q.enunciado||q.opcoes.some(o=>!o)||q.correta===null))return toast('⚠️ Preencha todas as questões e marque as corretas!','yellow');
+  if(QD['exQ'].find(q=>{const ops=q.opcoes||[];return!q.enunciado||ops.filter(o=>o).length<2||q.correta===null||!ops[q.correta];}))return toast('⚠️ Preencha todas as questões e marque as corretas!','yellow');
   const btn=G('btn-sv-ex');btn.disabled=true;shl('Salvando...');
   try{const aula=S.aulas.find(x=>x.id===editAulaId);const payload={aula_id:editAulaId,titulo,descricao:desc,turmas:aula?aula.turmas:[],questoes:QD['exQ'].map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null})),pontos_por_q:pts,criada_em:new Date().toISOString()};const{error}=editExId?await sb.from('exercicios').update(payload).eq('id',editExId):await sb.from('exercicios').insert({id:Date.now().toString(),...payload});if(error)throw error;await loadAllData();hhl();cm('m-ex');rExAula(editAulaId);toast('✅ Exercício salvo!','green');editExId=null}catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
 }
@@ -1580,6 +1599,24 @@ function importarTxt(){
     const baseIdx=QD['qP'].length;
     questoes.forEach((q,i)=>{QD['qP'].push(q);_rQ('qP','qcP',baseIdx+i,q)});
     toast(`✅ ${questoes.length} questão(ões) adicionada(s)! Total: ${QD['qP'].length}`,'green');
+  };
+  inp.click();
+}
+function toggleTutorialImportEx(){const b=G('tutorial-import-ex');b.style.display=b.style.display==='none'?'block':'none'}
+function importarTxtEx(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.txt';
+  inp.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const text=await file.text();
+    const todas=parseTxt(text);
+    // Exercícios só suportam múltipla escolha — descarta dissertativas/redações.
+    const questoes=todas.filter(q=>(!q.tipo||q.tipo==='multipla')).map(q=>({enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:null}));
+    const ignoradas=todas.length-questoes.length;
+    if(!questoes.length)return toast('⚠️ Nenhuma questão de múltipla escolha encontrada. Verifique o formato!','yellow');
+    if(!QD['exQ'])QD['exQ']=[];
+    const baseIdx=QD['exQ'].length;
+    questoes.forEach((q,i)=>{QD['exQ'].push(q);_rQ('exQ','qcE',baseIdx+i,q)});
+    toast(`✅ ${questoes.length} questão(ões) adicionada(s)! Total: ${QD['exQ'].length}${ignoradas?` (${ignoradas} ignorada(s) por não ser múltipla escolha)`:''}`,'green');
   };
   inp.click();
 }
