@@ -994,7 +994,7 @@ async function loadAllData(){
   S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,liberada:!!p.liberada}));
   S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
   S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
+  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,periodo:x.periodo||'',turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
   S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em}));
   S.respostasEx=r5.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
   S.trilhas=r6.data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em}));
