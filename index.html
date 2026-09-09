@@ -782,7 +782,7 @@ Pontos: 1000</div>
         <div class="ph"><div><div class="ptit">Minhas Notas</div></div></div>
         <div class="sg" id="a-stats"></div>
         <div class="card" style="margin-bottom:16px"><div class="ctit">📋 Provas</div><div class="tw"><table><thead><tr><th>Prova</th><th>Disciplina</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-notas-tb"></tbody></table></div></div>
-        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th></tr></thead><tbody id="a-ex-tb"></tbody></table></div></div>
+        <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-ex-tb"></tbody></table></div></div>
       </div>
 
     </main>
@@ -1883,7 +1883,7 @@ function verAula(aulaId,isProfessor,triId=null){
     exs.forEach(ex=>{
       const feito=!isProfessor?S.respostasEx.find(r=>r.exercicioId===ex.id&&r.alunoRA===u?.ra):null;
       const mx=ex.questoes.length*ex.pontosPorQ;
-      html+=`<div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="mut sm mt1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">${ex.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span></div></div><div>${isProfessor?'':(feito?`<div><span class="badge bg" style="padding:5px 12px">✅ Entregue</span><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:${feito.nota>=mx*0.6?'var(--grn)':'var(--red)'}; margin-top:5px">${feito.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)">/${mx.toFixed(1)}</span></div></div>`:`<button class="btn btn-tel btn-sm" onclick="abrirEx('${ex.id}','${aulaId}','${triId||''}')">✏️ Fazer</button>`)}</div></div></div>`;
+      html+=`<div class="qi" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${ex.titulo}</div>${ex.descricao?`<div class="mut sm mt1">${ex.descricao}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge by">${ex.questoes.length} q.</span><span class="badge bb">Máx: ${mx.toFixed(1)}</span></div></div><div>${isProfessor?'':(feito?`<div style="text-align:right"><span class="badge bg" style="padding:5px 12px">✅ Entregue</span><div style="font-family:var(--fd);font-size:18px;font-weight:800;color:${feito.nota>=mx*0.6?'var(--grn)':'var(--red)'}; margin-top:5px">${feito.nota.toFixed(1)}<span style="font-size:13px;color:var(--mut)">/${mx.toFixed(1)}</span></div><button class="btn btn-sec btn-sm" style="margin-top:6px" onclick="revisarExercicio('${ex.id}','${triId||''}')">📋 Revisar</button></div>`:`<button class="btn btn-tel btn-sm" onclick="abrirEx('${ex.id}','${aulaId}','${triId||''}')">✏️ Fazer</button>`)}</div></div></div>`;
     });
   }
 
@@ -2195,6 +2195,7 @@ function verEspelhoAluno(provaId,respostaId){
 }
 function fecharResult(){cm('m-result');if(tipoAtiv==='prova')renderAlunoProvas();else{if(triIdAtiv){cm('m-aula');renderAlunoTrilhas()}else renderAlunoAulas()}}
 function revisarProva(pvId){const p=S.provas.find(x=>x.id===pvId);if(!p)return;const u=S.user;const ent=S.respostas.find(r=>r.provaId===pvId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=p;tipoAtiv='prova';mostrarResult({respostas:ent.respostas,textoRespostas:ent.textoRespostas||{},correcoes:ent.correcoes||{},nota:ent.nota,acertos:ent.acertos},p)}
+function revisarExercicio(exId,triId){const ex=S.exercicios.find(x=>x.id===exId);if(!ex)return;const u=S.user;const ent=S.respostasEx.find(r=>r.exercicioId===exId&&r.alunoRA===u.ra);if(!ent)return;ativAtiva=ex;tipoAtiv='exercicio';triIdAtiv=triId||null;mostrarResult({respostas:ent.respostas,textoRespostas:ent.textoRespostas||{},correcoes:ent.correcoes||{},nota:ent.nota,acertos:ent.acertos},ex)}
 
 /* ══ ALUNO AULAS ══ */
 function renderAlunoAulas(){
@@ -2236,7 +2237,7 @@ function renderAlunoNotas(){
   const tbP=G('a-notas-tb');
   tbP.innerHTML=rs.length?rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge bp">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')" title="Revisar">📋</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr>';
   const tbE=G('a-ex-tb');
-  tbE.innerHTML=rsEx.length?rsEx.map(r=>{const ex=S.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=S.aulas.find(al=>al.id===ex.aulaId);const mx=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td></tr>`}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--mut)">Nenhum exercício.</td></tr>';
+  tbE.innerHTML=rsEx.length?rsEx.map(r=>{const ex=S.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=S.aulas.find(al=>al.id===ex.aulaId);const mx=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarExercicio('${ex.id}')" title="Revisar">📋</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhum exercício.</td></tr>';
 }
 
 /* ══ PWA ══ */
