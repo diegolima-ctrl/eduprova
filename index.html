@@ -581,6 +581,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           </div>
           <div class="fg" style="margin-bottom:16px"><label class="fl">Período</label><select class="fi" id="aula-periodo"><option value="">-- Selecione o bimestre --</option><option>1º Bimestre</option><option>2º Bimestre</option><option>3º Bimestre</option><option>4º Bimestre</option></select></div>
           <div class="fg"><label class="fl">Turmas</label><div class="tcg" id="tcg-aula"></div><div id="th-aula" class="mut sm mt2">Nenhuma turma selecionada</div></div>
+          <div class="fg"><label class="fl">🚀 Adicionar à Trilha(s) <span class="mut" style="font-weight:400">(opcional)</span></label><div class="tcg" id="tcg-aula-tri"></div><div id="th-aula-tri" class="mut sm mt2">Nenhuma trilha selecionada</div></div>
           <div class="fg">
             <label class="fl">Conteúdo</label>
             <div class="rew">
@@ -1351,7 +1352,16 @@ async function hIQ(event,key,idx){const file=event.target.files[0];if(!file)retu
 async function rmIQ(key,idx){const url=QD[key][idx].imagemUrl;if(url)await removeImg(url);QD[key][idx].imagemUrl=null;G(`imgw-${key}-${idx}`).innerHTML=`<div class="iua"><input type="file" accept="image/*" onchange="hIQ(event,'${key}',${idx})"><div class="iul">🖼 <strong>Clique</strong></div></div>`}
 
 /* ══ AULAS ══ */
-let editAulaId=null,aulaImgs=[],aulaVideos=[];
+let editAulaId=null,aulaImgs=[],aulaVideos=[],aulaTrilhasSel=new Set();
+function buildATC(selected=new Set()){
+  aulaTrilhasSel=new Set(selected);
+  const el=G('tcg-aula-tri');
+  if(!S.trilhas.length){el.innerHTML='<div class="mut sm">Nenhuma trilha criada ainda.</div>';updATH();return}
+  el.innerHTML=S.trilhas.map(t=>`<div class="tci${aulaTrilhasSel.has(t.id)?' on':''}" id="atc-${t.id}" onclick="togATC('${t.id}')"><span>${t.icone||'🚀'} ${t.titulo}</span></div>`).join('');
+  updATH();
+}
+function togATC(id){aulaTrilhasSel.has(id)?aulaTrilhasSel.delete(id):aulaTrilhasSel.add(id);G(`atc-${id}`).classList.toggle('on',aulaTrilhasSel.has(id));updATH()}
+function updATH(){const h=G('th-aula-tri');if(!h)return;if(!aulaTrilhasSel.size){h.textContent='Nenhuma trilha selecionada';h.style.color='var(--mut)'}else{h.textContent=`✅ ${[...aulaTrilhasSel].map(id=>S.trilhas.find(t=>t.id===id)?.titulo||'').join(', ')}`;h.style.color='var(--grn)'}}
 
 /* ── YouTube helpers ── */
 function ytId(url){
@@ -1445,7 +1455,7 @@ function irNovaAula(){
   ['aula-t','aula-d'].forEach(id=>G(id).value='');
   G('aula-periodo').value='';
   G('aula-cont').innerHTML='';G('yt-inp').value='';
-  buildTC('tcg-aula','th-aula','aula');rAI();rYT();
+  buildTC('tcg-aula','th-aula','aula');buildATC();rAI();rYT();
   G('aula-ex-card').style.display='none';
   closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
 }
@@ -1457,6 +1467,7 @@ function editarAula(id){
   G('aula-periodo').value=al.periodo||'';
   G('aula-cont').innerHTML=al.conteudo||'';G('yt-inp').value='';
   buildTC('tcg-aula','th-aula','aula',new Set(al.turmas||[]));
+  buildATC(new Set(S.trilhas.filter(t=>t.ordemAulas.includes(id)).map(t=>t.id)));
   rAI();rYT();
   G('aula-ex-card').style.display='block';rExAula(id);
   closeSB();showSec('sec-nova-aula');setNav('ni-aulas');
@@ -1477,7 +1488,15 @@ async function salvarAula(){
     let sid=editAulaId;
     if(editAulaId){const{error}=await sb.from('aulas').update(payload).eq('id',editAulaId);if(error)throw error}
     else{const id=Date.now().toString();const{error}=await sb.from('aulas').insert({id,...payload});if(error)throw error;sid=id}
+    const trilhaUpdates=S.trilhas.reduce((arr,t)=>{
+      const tem=t.ordemAulas.includes(sid),quer=aulaTrilhasSel.has(t.id);
+      if(tem&&!quer)arr.push(sb.from('trilhas').update({ordem_aulas:t.ordemAulas.filter(x=>x!==sid)}).eq('id',t.id));
+      else if(!tem&&quer)arr.push(sb.from('trilhas').update({ordem_aulas:[...t.ordemAulas,sid]}).eq('id',t.id));
+      return arr;
+    },[]);
+    if(trilhaUpdates.length)await Promise.all(trilhaUpdates);
     await loadAllData();hhl();
+    buildATC(new Set(S.trilhas.filter(t=>t.ordemAulas.includes(sid)).map(t=>t.id)));
     editAulaId=sid;G('form-aula-tit').textContent='Editar Aula';G('btn-sv-aula').textContent='💾 Salvar Alterações';
     G('aula-ex-card').style.display='block';rExAula(sid);toast('✅ Aula salva!','green');
   }catch(e){hhl();toast('❌ Erro: '+e.message,'red')}finally{btn.disabled=false}
