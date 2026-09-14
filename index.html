@@ -146,6 +146,10 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100v
 .ptit{font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:-.02em}
 .psub{color:var(--mut);font-size:14px;margin-top:4px;line-height:1.5}
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:20px;box-shadow:var(--sh)}
+.ia-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.ia-msg-user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.ia-msg-bot{align-self:flex-start;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-bottom-left-radius:4px}
+.ia-msg-bot.ia-msg-load{color:var(--mut);font-style:italic}
 .ctit{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--txt)}
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px}
 .sc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:18px}
@@ -786,6 +790,26 @@ Pontos: 1000</div>
         <div class="card"><div class="ctit">🏋️ Exercícios</div><div class="tw"><table><thead><tr><th>Exercício</th><th>Aula</th><th>Acertos</th><th>Nota</th><th>Status</th><th></th></tr></thead><tbody id="a-ex-tb"></tbody></table></div></div>
       </div>
 
+      <!-- Aluno: Assistente IA -->
+      <div class="sec" id="sec-a-ia">
+        <div class="ph"><div><div class="ptit">Assistente IA</div><div class="psub">Tire dúvidas sobre o conteúdo das suas aulas e provas liberadas</div></div></div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="fg" style="margin:0">
+            <label class="fl">Sobre o que você quer conversar?</label>
+            <select class="fi" id="ia-a-fonte" onchange="iaAlunoTrocarFonte()" style="width:100%">
+              <option value="">Selecione uma aula ou prova...</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" id="ia-a-chat-wrap" style="display:none;flex-direction:column;height:60vh">
+          <div id="ia-a-msgs" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:10px"></div>
+          <div style="display:flex;gap:8px;border-top:1px solid var(--bdr);padding-top:12px;flex-shrink:0">
+            <textarea class="fi" id="ia-a-input" placeholder="Digite sua dúvida..." rows="2" style="flex:1;resize:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();iaAlunoEnviar()}"></textarea>
+            <button class="btn btn-p" id="ia-a-send" onclick="iaAlunoEnviar()">Enviar</button>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -1179,6 +1203,7 @@ const _SVG={
   users:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   award:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
   file:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  ai:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>`,
 };
 function ni(id,svg,label,action){return`<button class="ni" id="${id}" onclick="${action}">${svg}<span>${label}</span></button>`}
 function buildProfNav(){G('snav').innerHTML=`
@@ -1202,6 +1227,8 @@ function buildAlunoNav(){G('snav').innerHTML=`
   <div class="nlbl">Avaliações</div>
   ${ni('ni-pv-a',_SVG.file,'Provas',"nav('sec-a-provas','ni-pv-a',()=>reload().then(renderAlunoProvas))")}
   ${ni('ni-nt-a',_SVG.award,'Notas',"nav('sec-a-notas','ni-nt-a',()=>reload().then(renderAlunoNotas))")}
+  <div class="nlbl">Assistente</div>
+  ${ni('ni-ia-a',_SVG.ai,'Assistente IA',"nav('sec-a-ia','ni-ia-a',()=>reload().then(renderAlunoIA))")}
 `}
 
 /* ══ DASHBOARD ══ */
@@ -2257,6 +2284,83 @@ function renderAlunoNotas(){
   tbP.innerHTML=rs.length?rs.map(r=>{const p=S.provas.find(x=>x.id===r.provaId);if(!p)return'';const mx=p.questoes.length*p.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${p.titulo}</strong></td><td><span class="badge bp">${p.disciplina}</span></td><td>${r.acertos}/${p.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarProva('${p.id}')" title="Revisar">📋</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhuma prova realizada.</td></tr>';
   const tbE=G('a-ex-tb');
   tbE.innerHTML=rsEx.length?rsEx.map(r=>{const ex=S.exercicios.find(x=>x.id===r.exercicioId);if(!ex)return'';const aula=S.aulas.find(al=>al.id===ex.aulaId);const mx=ex.questoes.length*ex.pontosPorQ,ok=r.nota>=mx*0.6;return`<tr><td><strong>${ex.titulo}</strong></td><td>${aula?aula.titulo:'-'}</td><td>${r.acertos}/${ex.questoes.length}</td><td><strong>${r.nota.toFixed(1)}</strong><span class="mut">/${mx.toFixed(1)}</span></td><td><span class="badge ${ok?'bg':'br'}">${ok?'✅':'❌'}</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-sec btn-sm" onclick="revisarExercicio('${ex.id}')" title="Revisar">📋</button></div></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">Nenhum exercício.</td></tr>';
+}
+
+/* ══ ALUNO ASSISTENTE IA ══ */
+let _iaFonte=null,_iaCtxTexto='',_iaHist=[];
+function _txt(html){const d=document.createElement('div');d.innerHTML=html||'';return(d.textContent||'').trim()}
+function renderAlunoIA(){
+  const u=S.user;
+  const aulas=S.aulas.filter(al=>al.turmas.includes(u.turma));
+  const provas=S.provas.filter(p=>p.turmas.includes(u.turma)&&(p.liberada||S.respostas.find(r=>r.provaId===p.id&&r.alunoRA===u.ra)));
+  const sel=G('ia-a-fonte');
+  const optAulas=aulas.map(al=>`<option value="aula:${al.id}">📖 ${al.titulo} (${al.disciplina})</option>`).join('');
+  const optProvas=provas.map(p=>`<option value="prova:${p.id}">📋 ${p.titulo} (${p.disciplina})</option>`).join('');
+  sel.innerHTML=`<option value="">Selecione uma aula ou prova...</option>${optAulas}${optProvas}`;
+  sel.value='';
+  _iaFonte=null;_iaCtxTexto='';_iaHist=[];
+  G('ia-a-chat-wrap').style.display='none';
+  G('ia-a-msgs').innerHTML='';
+}
+function iaAlunoContexto(fonteVal){
+  const[tipo,id]=fonteVal.split(':');
+  if(tipo==='aula'){
+    const al=S.aulas.find(x=>x.id===id);if(!al)return'';
+    return`Aula: ${al.titulo}\nDisciplina: ${al.disciplina}\n\nConteúdo:\n${_txt(al.conteudo)}`;
+  }
+  if(tipo==='prova'){
+    const p=S.provas.find(x=>x.id===id);if(!p)return'';
+    const qs=p.questoes.map((q,i)=>{
+      let linha=`${i+1}) ${_txt(q.enunciado)}`;
+      if(q.tipo==='multipla'&&Array.isArray(q.opcoes))linha+='\nAlternativas: '+q.opcoes.map((o,j)=>`${String.fromCharCode(65+j)}) ${_txt(o)}`).join(' | ');
+      if(q.tipo==='redacao'&&q.proposta)linha+=`\nProposta: ${_txt(q.proposta)}`;
+      return linha;
+    }).join('\n\n');
+    return`Prova: ${p.titulo}\nDisciplina: ${p.disciplina}\n\nQuestões:\n${qs}`;
+  }
+  return'';
+}
+function iaAlunoTrocarFonte(){
+  const val=G('ia-a-fonte').value;
+  _iaFonte=val||null;_iaHist=[];
+  G('ia-a-msgs').innerHTML='';
+  if(!val){G('ia-a-chat-wrap').style.display='none';return}
+  _iaCtxTexto=iaAlunoContexto(val);
+  G('ia-a-chat-wrap').style.display='flex';
+  iaAlunoAddMsg('bot','Oi! Pode perguntar o que quiser sobre esse conteúdo. 🙂');
+}
+function iaAlunoAddMsg(role,text,loading=false){
+  const el=document.createElement('div');
+  el.className='ia-msg '+(role==='user'?'ia-msg-user':'ia-msg-bot')+(loading?' ia-msg-load':'');
+  el.textContent=text;
+  if(loading)el.id='ia-a-loading';
+  G('ia-a-msgs').appendChild(el);
+  G('ia-a-msgs').scrollTop=G('ia-a-msgs').scrollHeight;
+  return el;
+}
+async function iaAlunoEnviar(){
+  if(!_iaFonte){toast('Selecione uma aula ou prova primeiro.','yellow');return}
+  const inp=G('ia-a-input');const pergunta=inp.value.trim();
+  if(!pergunta)return;
+  inp.value='';
+  iaAlunoAddMsg('user',pergunta);
+  _iaHist.push({role:'user',content:pergunta});
+  const btn=G('ia-a-send');btn.disabled=true;
+  iaAlunoAddMsg('bot','Pensando...',true);
+  try{
+    const{data,error}=await sb.functions.invoke('assistente-aluno-ia',{body:{contexto:_iaCtxTexto,pergunta,historico:_iaHist.slice(0,-1)}});
+    G('ia-a-loading')?.remove();
+    if(error)throw error;
+    const resposta=data?.resposta||'Não consegui responder agora.';
+    iaAlunoAddMsg('bot',resposta);
+    _iaHist.push({role:'assistant',content:resposta});
+  }catch(e){
+    G('ia-a-loading')?.remove();
+    iaAlunoAddMsg('bot','❌ Erro ao consultar o assistente. Tente novamente.');
+    console.error('assistente-aluno-ia:',e);
+  }finally{
+    btn.disabled=false;
+  }
 }
 
 /* ══ PWA ══ */
