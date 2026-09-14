@@ -7,9 +7,9 @@ const CORS = {
 }
 
 async function deepseekJSON(prompt: string, maxTokens: number) {
-  const cappedTokens = Math.min(maxTokens, 4000)
+  const cappedTokens = Math.min(maxTokens, 3000)
   const ctrl = new AbortController()
-  const timeout = setTimeout(() => ctrl.abort(), 50000)
+  const timeout = setTimeout(() => ctrl.abort(), 20000)
   let r: Response
   try {
     r = await fetch('https://api.deepseek.com/chat/completions', {
