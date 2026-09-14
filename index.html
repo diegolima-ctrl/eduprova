@@ -820,9 +820,9 @@ Pontos: 1000</div>
               </div>
             </div>
             <div class="g2">
-              <div class="fg"><label class="fl">Questões novas a gerar <span class="mut xs">(além das reaproveitadas)</span></label><input class="fi" type="number" id="ia-p-qtd" value="5" min="0" max="15" step="1"></div>
+              <div class="fg"><label class="fl">Questões novas a gerar <span class="mut xs">(além das reaproveitadas)</span></label><input class="fi" type="number" id="ia-p-qtd" value="5" min="0" max="15" step="1" oninput="updIATotalInfo()"></div>
               <div class="fg"><label class="fl">Tipo de questão</label>
-                <select class="fi" id="ia-p-tq" style="width:100%">
+                <select class="fi" id="ia-p-tq" style="width:100%" onchange="iaProfTrocarTQ()">
                   <option value="multipla">Múltipla escolha</option>
                   <option value="subjetiva">Dissertativa</option>
                   <option value="redacao">Redação (ENEM)</option>
@@ -830,6 +830,11 @@ Pontos: 1000</div>
                 </select>
               </div>
             </div>
+            <div class="g2">
+              <div class="fg" id="ia-p-pontos-wrap"><label class="fl">Pontos por questão</label><input class="fi" type="number" id="ia-p-pontos" value="1" min="0.1" step="0.1"></div>
+              <div class="fg" id="ia-p-pontos-red-wrap" style="display:none"><label class="fl">Pontuação máxima da redação</label><input class="fi" type="number" id="ia-p-pontos-red" value="1000" min="1" max="1000" step="1"></div>
+            </div>
+            <div id="ia-p-total-info" class="mut sm" style="margin-bottom:6px"></div>
           </div>
           <button class="btn btn-p" id="ia-p-gerar" onclick="gerarConteudoIA()" style="width:100%;margin-top:6px">✨ Gerar com IA</button>
           <div class="mut sm mt2">A IA gera um rascunho — nada é salvo até você revisar e clicar em Salvar na tela seguinte.</div>
@@ -1805,11 +1810,27 @@ function renderGeradorIA(){
   sel.innerHTML='<option value="">Nenhuma (aula avulsa)</option>'+S.trilhas.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
   buildIAAulasSel();
   iaProfTrocarTipo();
+  iaProfTrocarTQ();
 }
 function iaProfTrocarTipo(){
   const tipo=G('ia-p-tipo').value;
   G('ia-p-aula-fields').style.display=tipo==='aula'?'block':'none';
   G('ia-p-prova-fields').style.display=tipo==='prova'?'block':'none';
+}
+function iaProfTrocarTQ(){
+  const tq=G('ia-p-tq').value;
+  G('ia-p-pontos-wrap').style.display=tq==='redacao'?'none':'block';
+  G('ia-p-pontos-red-wrap').style.display=tq==='redacao'?'block':'none';
+}
+function updIATotalInfo(){
+  const el=G('ia-p-total-info');if(!el)return;
+  const novas=Math.max(parseInt(G('ia-p-qtd')?.value)||0,0);
+  const reaproveitadas=iaProfReuseSel.size;
+  if(!reaproveitadas&&!novas){el.textContent='';return}
+  const partes=[];
+  if(reaproveitadas)partes.push(`${reaproveitadas} reaproveitada(s)`);
+  if(novas)partes.push(`${novas} nova(s)`);
+  el.textContent=`📊 Total: ${partes.join(' + ')} = ${reaproveitadas+novas} questão(ões)`;
 }
 let iaProfFiltro={turno:'',turma:'',trilha:'',busca:''};
 function buildIAAulasSel(){
@@ -1818,7 +1839,7 @@ function buildIAAulasSel(){
   G('ia-f-turno').value='';G('ia-f-turma').innerHTML='<option value="">Todas as turmas</option>';G('ia-f-busca').value='';
   iaFiltroRebuildTrilhas();
   renderIAAulasChips();
-  updIAAulasH();renderIAReuseList();
+  updIAAulasH();renderIAReuseList();updIATotalInfo();
 }
 function iaFiltroTurnoChange(){
   iaProfFiltro.turno=G('ia-f-turno').value;iaProfFiltro.turma='';
@@ -1858,7 +1879,7 @@ function togIAAula(id,checked){
     const exIds=new Set(S.exercicios.filter(e=>e.aulaId===id).map(e=>e.id));
     [...iaProfReuseSel].forEach(k=>{if(exIds.has(k.split(':')[0]))iaProfReuseSel.delete(k)});
   }
-  updIAAulasH();renderIAReuseList();
+  updIAAulasH();renderIAReuseList();updIATotalInfo();
 }
 function updIAAulasH(){G('ia-p-aulas-h').textContent=iaProfAulasSel.size?`${iaProfAulasSel.size} aula(s) selecionada(s)`:'Nenhuma aula selecionada'}
 function renderIAReuseList(){
@@ -1876,7 +1897,7 @@ function renderIAReuseList(){
     return`<div style="margin-bottom:10px"><div class="mut xs" style="font-weight:700;margin-bottom:4px">${al?al.titulo:'?'} — ${ex.titulo}</div>${qs}</div>`;
   }).join('');
 }
-function togIAReuse(key,checked){checked?iaProfReuseSel.add(key):iaProfReuseSel.delete(key)}
+function togIAReuse(key,checked){checked?iaProfReuseSel.add(key):iaProfReuseSel.delete(key);updIATotalInfo()}
 function addQPreset(key,cid,q){if(!QD[key])QD[key]=[];const idx=QD[key].length;QD[key].push(q);_rQ(key,cid,idx,q)}
 async function gerarConteudoIA(){
   const tipo=G('ia-p-tipo').value;
@@ -1885,9 +1906,12 @@ async function gerarConteudoIA(){
   const nivel=G('ia-p-nivel').value;
   if(!disciplina||!tema)return toast('⚠️ Preencha disciplina e tema.','yellow');
   const body={tipo,disciplina,tema,nivel};
+  let pontos=1,pontosRed=1000;
   if(tipo==='prova'){
     body.quantidade=G('ia-p-qtd').value;
     body.tipoQuestao=G('ia-p-tq').value;
+    pontos=Math.max(parseFloat(G('ia-p-pontos').value)||1,0.1);
+    pontosRed=Math.min(Math.max(parseFloat(G('ia-p-pontos-red').value)||1000,1),1000);
     if(iaProfAulasSel.size){
       const blocos=[...iaProfAulasSel].map(id=>{
         const al=S.aulas.find(a=>a.id===id);if(!al)return'';
@@ -1904,7 +1928,7 @@ async function gerarConteudoIA(){
     if(error)throw error;
     if(data?.error)throw new Error(data.error);
     hhl();
-    if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data);
+    if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data,pontos,pontosRed);
   }catch(e){
     hhl();console.error('gerar-conteudo-ia:',e);toast('❌ Erro ao gerar conteúdo com IA.','red');
   }finally{btn.disabled=false}
@@ -1916,10 +1940,11 @@ function aplicarAulaGerada(data,trilhaId){
   if(trilhaId)buildATC(new Set([trilhaId]));
   toast('✨ Aula gerada! Revise o conteúdo, escolha as turmas e salve.','green');
 }
-function aplicarProvaGerada(data){
+function aplicarProvaGerada(data,pontos=1,pontosRed=1000){
   irNovaProva();
   G('pv-t').value=data.titulo||'';
   G('pv-d').value=data.disciplina||'';
+  G('pv-p').value=pontos;
   QD['qP']=[];G('qcP').innerHTML='';
   iaProfReuseSel.forEach(key=>{
     const[exId,qi]=key.split(':');
@@ -1927,7 +1952,11 @@ function aplicarProvaGerada(data){
     const q=ex.questoes[parseInt(qi)];if(!q)return;
     addQPreset('qP','qcP',{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});
   });
-  const questoes=data.questoes||[];
+  const questoes=(data.questoes||[]).map(q=>{
+    if(q.tipo==='subjetiva')return{...q,pontos};
+    if(q.tipo==='redacao')return{...q,pontos:pontosRed};
+    return q;
+  });
   questoes.forEach(q=>addQPreset('qP','qcP',q));
   if(!questoes.length&&!iaProfReuseSel.size)addQ('qP','qcP','multipla');
   toast('✨ Prova montada! Revise as questões, escolha as turmas e salve.','green');
