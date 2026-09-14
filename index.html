@@ -1671,11 +1671,11 @@ async function gerarExercicioIA(){
   const aula=S.aulas.find(x=>x.id===editAulaId);if(!aula)return;
   const qtd=Math.min(Math.max(parseInt(G('ex-ia-qtd').value)||5,1),15);
   const nivel=G('ex-ia-nivel').value;
-  const btn=G('ex-ia-btn');btn.disabled=true;shl('Gerando questões com IA...');
+  const btn=G('ex-ia-btn');btn.disabled=true;shl('Gerando questões com IA... pode levar até 2 minutos');
   try{
     const{data,error}=await sb.functions.invoke('gerar-conteudo-ia',{body:{tipo:'exercicio',disciplina:aula.disciplina,tema:aula.titulo,nivel,quantidade:qtd,contextoAula:_txt(aula.conteudo)}});
     hhl();
-    if(error){console.error('gerar-conteudo-ia (exercicio):',error);toast('❌ '+await _iaErroMsg(error),'red');return}
+    if(error){const m=await _iaErroMsg(error);console.error('gerar-conteudo-ia (exercicio):',m,error);toast('❌ '+m,'red');return}
     if(data?.error){console.error('gerar-conteudo-ia (exercicio):',data.error);toast('❌ '+(data.erroMsg||data.error),'red');return}
     const questoes=data.questoes||[];
     if(!questoes.length)return toast('⚠️ A IA não retornou questões. Tente novamente.','yellow');
@@ -1926,10 +1926,10 @@ async function gerarConteudoIA(){
     }
   }
   const trilhaAlvo=G('ia-p-trilha').value||null;
-  const btn=G('ia-p-gerar');btn.disabled=true;shl('Gerando com IA... isso pode levar alguns segundos');
+  const btn=G('ia-p-gerar');btn.disabled=true;shl('Gerando com IA... pode levar até 2 minutos');
   try{
     const{data,error}=await sb.functions.invoke('gerar-conteudo-ia',{body});
-    if(error){hhl();console.error('gerar-conteudo-ia:',error);toast('❌ '+await _iaErroMsg(error),'red');return}
+    if(error){hhl();const m=await _iaErroMsg(error);console.error('gerar-conteudo-ia:',m,error);toast('❌ '+m,'red');return}
     if(data?.error){hhl();console.error('gerar-conteudo-ia:',data.error);toast('❌ '+(data.erroMsg||data.error),'red');return}
     hhl();
     if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data,pontos,pontosRed);

@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { deepseekChat, mensagemDeFalha, prazoPadrao, ErroIA } from "../_shared/deepseek.ts"
+import { chamarIA, mensagemDeFalha, prazoPadrao, ErroIA } from "../_shared/ia.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -11,8 +11,8 @@ const CORS = {
 // no limite de tokens de saida do modelo.
 const LOTE = 5
 
-async function deepseekJSON(prompt: string, maxTokens: number, prazo: number, temperature = 0.5) {
-  const { content, finishReason } = await deepseekChat({
+async function gerarJSON(prompt: string, maxTokens: number, prazo: number, temperature = 0.5) {
+  const { content, finishReason } = await chamarIA({
     messages: [{ role: 'user', content: prompt }],
     maxTokens, temperature, json: true, prazo,
   })
@@ -33,7 +33,7 @@ async function gerarEmLotes(qtd: number, prazo: number, montarPrompt: (n: number
   for (let rest = qtd; rest > 0; rest -= LOTE) lotes.push(Math.min(LOTE, rest))
 
   const res = await Promise.allSettled(
-    lotes.map((n, i) => deepseekJSON(montarPrompt(n, i, lotes.length), 800 * n + 600, prazo, lotes.length > 1 ? 0.7 : 0.5))
+    lotes.map((n, i) => gerarJSON(montarPrompt(n, i, lotes.length), 800 * n + 600, prazo, lotes.length > 1 ? 0.7 : 0.5))
   )
 
   const ok = res.filter(r => r.status === 'fulfilled').map(r => (r as PromiseFulfilledResult<any>).value)
@@ -110,7 +110,7 @@ Retorne APENAS um JSON com dois campos:
 - "titulo": título curto e atrativo para a aula
 - "conteudo": o conteúdo da aula em HTML simples (várias seções: introdução, explicação, exemplos), com pelo menos 4 parágrafos`
 
-      const result = await deepseekJSON(prompt, 3000, prazo)
+      const result = await gerarJSON(prompt, 3000, prazo)
       return new Response(JSON.stringify({
         tipo: 'aula',
         titulo: String(result?.titulo || tema).slice(0, 200),
@@ -163,7 +163,7 @@ Retorne APENAS um JSON no formato:
 Gere exatamente ${n} questão(ões), seguindo a instrução sobre os tipos.`
 
       const result = tipoQuestao === 'redacao'
-        ? await deepseekJSON(montarPrompt(1, 0, 1), 3000, prazo)
+        ? await gerarJSON(montarPrompt(1, 0, 1), 3000, prazo)
         : await gerarEmLotes(qtd, prazo, montarPrompt)
 
       const questoesRaw = Array.isArray(result?.questoes) ? result.questoes.slice(0, qtd) : []

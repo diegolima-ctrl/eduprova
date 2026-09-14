@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { deepseekChat, mensagemDeFalha, prazoPadrao } from "../_shared/deepseek.ts"
+import { chamarIA, mensagemDeFalha, prazoPadrao } from "../_shared/ia.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -26,7 +26,7 @@ Avalie a resposta do aluno com rigor pedagógico e retorne APENAS um JSON com do
 - "nota": número de 0 a ${pontos} (pode usar decimal como 2.5; 0 se em branco ou completamente errado)
 - "feedback": comentário em português de até 2 linhas explicando a nota, o que acertou e o que faltou`
 
-    const { content } = await deepseekChat({
+    const { content } = await chamarIA({
       messages: [{ role: 'user', content: prompt }],
       maxTokens: 200, temperature: 0.1, json: true, prazo: prazoPadrao(60000),
     })

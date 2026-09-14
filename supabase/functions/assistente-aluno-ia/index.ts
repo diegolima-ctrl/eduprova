@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { deepseekChat, mensagemDeFalha, prazoPadrao } from "../_shared/deepseek.ts"
+import { chamarIA, mensagemDeFalha, prazoPadrao } from "../_shared/ia.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -42,7 +42,7 @@ ${String(contexto || '').slice(0, 8000)}
       { role: 'user', content: String(pergunta).slice(0, 2000) },
     ]
 
-    const { content } = await deepseekChat({
+    const { content } = await chamarIA({
       messages, maxTokens: 700, temperature: 0.3, prazo: prazoPadrao(80000),
     })
     const resposta: string = content.trim() || 'Não consegui gerar uma resposta agora. Tente novamente.'
