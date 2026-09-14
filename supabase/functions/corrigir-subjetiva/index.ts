@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { deepseekChat, mensagemDeFalha, prazoPadrao } from "../_shared/deepseek.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -25,31 +26,15 @@ Avalie a resposta do aluno com rigor pedagógico e retorne APENAS um JSON com do
 - "nota": número de 0 a ${pontos} (pode usar decimal como 2.5; 0 se em branco ou completamente errado)
 - "feedback": comentário em português de até 2 linhas explicando a nota, o que acertou e o que faltou`
 
-    const r = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('DEEPSEEK_API_KEY')}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        temperature: 0.1,
-        max_tokens: 200,
-      }),
+    const { content } = await deepseekChat({
+      messages: [{ role: 'user', content: prompt }],
+      maxTokens: 200, temperature: 0.1, json: true, prazo: prazoPadrao(60000),
     })
 
-    if (!r.ok) {
-      const err = await r.text()
-      throw new Error(`DeepSeek API error ${r.status}: ${err}`)
-    }
-
-    const data = await r.json()
     let result: { nota: number; feedback: string } = { nota: 0, feedback: 'Erro na correção automática.' }
 
     try {
-      result = JSON.parse(data.choices[0].message.content)
+      result = JSON.parse(content)
     } catch {
       result = { nota: 0, feedback: 'Não foi possível processar a resposta da IA.' }
     }
@@ -59,8 +44,10 @@ Avalie a resposta do aluno com rigor pedagógico e retorne APENAS um JSON com do
 
     return new Response(JSON.stringify(result), { headers: CORS })
   } catch (e) {
+    const msg = mensagemDeFalha(e)
+    console.error('corrigir-subjetiva:', msg)
     return new Response(
-      JSON.stringify({ nota: 0, feedback: 'Erro interno na correção.', error: String(e) }),
+      JSON.stringify({ nota: 0, feedback: `Erro na correção automática: ${msg}`, error: msg }),
       { status: 500, headers: CORS }
     )
   }

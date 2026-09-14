@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { deepseekChat, mensagemDeFalha, prazoPadrao } from "../_shared/deepseek.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -41,32 +42,17 @@ ${String(contexto || '').slice(0, 8000)}
       { role: 'user', content: String(pergunta).slice(0, 2000) },
     ]
 
-    const r = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('DEEPSEEK_API_KEY')}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages,
-        temperature: 0.3,
-        max_tokens: 700,
-      }),
+    const { content } = await deepseekChat({
+      messages, maxTokens: 700, temperature: 0.3, prazo: prazoPadrao(80000),
     })
-
-    if (!r.ok) {
-      const err = await r.text()
-      throw new Error(`DeepSeek API error ${r.status}: ${err}`)
-    }
-
-    const data = await r.json()
-    const resposta: string = data.choices?.[0]?.message?.content?.trim() || 'Não consegui gerar uma resposta agora. Tente novamente.'
+    const resposta: string = content.trim() || 'Não consegui gerar uma resposta agora. Tente novamente.'
 
     return new Response(JSON.stringify({ resposta }), { headers: CORS })
   } catch (e) {
+    const msg = mensagemDeFalha(e)
+    console.error('assistente-aluno-ia:', msg)
     return new Response(
-      JSON.stringify({ resposta: '', error: String(e), erroMsg: 'Erro ao consultar o assistente de IA.' }),
+      JSON.stringify({ resposta: '', error: msg, erroMsg: msg }),
       { status: 500, headers: CORS }
     )
   }

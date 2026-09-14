@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { deepseekChat, mensagemDeFalha, prazoPadrao, ErroIA } from "../_shared/deepseek.ts"
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -6,47 +7,53 @@ const CORS = {
   'Content-Type': 'application/json',
 }
 
-async function deepseekJSON(prompt: string, maxTokens: number) {
-  const cappedTokens = Math.min(maxTokens, 3000)
-  const ctrl = new AbortController()
-  const timeout = setTimeout(() => ctrl.abort(), 20000)
-  let r: Response
-  try {
-    r = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      signal: ctrl.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('DEEPSEEK_API_KEY')}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        temperature: 0.5,
-        max_tokens: cappedTokens,
-      }),
-    })
-  } catch (e) {
-    if ((e as Error)?.name === 'AbortError') {
-      throw new Error('A IA demorou demais para responder. Tente novamente com menos questões.')
-    }
-    throw e
-  } finally {
-    clearTimeout(timeout)
-  }
-  if (!r.ok) {
-    const err = await r.text()
-    throw new Error(`DeepSeek API error ${r.status}: ${err.slice(0, 500)}`)
-  }
-  const data = await r.json()
-  const content = data.choices?.[0]?.message?.content
-  if (!content) throw new Error('A IA não retornou conteúdo. Tente novamente.')
+// Questoes por chamada. Lotes pequenos respondem mais rapido e cabem com folga
+// no limite de tokens de saida do modelo.
+const LOTE = 5
+
+async function deepseekJSON(prompt: string, maxTokens: number, prazo: number, temperature = 0.5) {
+  const { content, finishReason } = await deepseekChat({
+    messages: [{ role: 'user', content: prompt }],
+    maxTokens, temperature, json: true, prazo,
+  })
   try {
     return JSON.parse(content)
   } catch {
-    throw new Error('A IA retornou um formato inválido. Tente novamente.')
+    if (finishReason === 'length') {
+      throw new ErroIA('A resposta da IA foi cortada por tamanho. Tente gerar menos questões por vez.')
+    }
+    throw new ErroIA('A IA retornou um formato inválido. Tente novamente.', true)
   }
+}
+
+// Quebra a geracao em lotes paralelos de ate LOTE questoes: cada chamada fica
+// curta e o tempo total e o da chamada mais lenta, nao a soma delas.
+async function gerarEmLotes(qtd: number, prazo: number, montarPrompt: (n: number, i: number, total: number) => string) {
+  const lotes: number[] = []
+  for (let rest = qtd; rest > 0; rest -= LOTE) lotes.push(Math.min(LOTE, rest))
+
+  const res = await Promise.allSettled(
+    lotes.map((n, i) => deepseekJSON(montarPrompt(n, i, lotes.length), 800 * n + 600, prazo, lotes.length > 1 ? 0.7 : 0.5))
+  )
+
+  const ok = res.filter(r => r.status === 'fulfilled').map(r => (r as PromiseFulfilledResult<any>).value)
+  if (!ok.length) {
+    const primeiro = res.find(r => r.status === 'rejected') as PromiseRejectedResult | undefined
+    throw primeiro?.reason instanceof Error ? primeiro.reason : new ErroIA('Não foi possível gerar as questões.', true)
+  }
+
+  // Lotes nao se enxergam, entao descartamos enunciados repetidos.
+  const vistos = new Set<string>()
+  const questoes: any[] = []
+  for (const bloco of ok) {
+    for (const q of (Array.isArray(bloco?.questoes) ? bloco.questoes : [])) {
+      const chave = String(q?.enunciado || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 120)
+      if (!chave || vistos.has(chave)) continue
+      vistos.add(chave)
+      questoes.push(q)
+    }
+  }
+  return { titulo: ok.find(b => b?.titulo)?.titulo || '', questoes: questoes.slice(0, qtd) }
 }
 
 function clampQuestao(q: any) {
@@ -80,11 +87,13 @@ function clampQuestao(q: any) {
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
 
+  const prazo = prazoPadrao()
+
   try {
     const { tipo, disciplina, tema, nivel, quantidade, tipoQuestao, contextoAulas, contextoAula } = await req.json()
 
     if (!disciplina || !tema) {
-      return new Response(JSON.stringify({ error: 'Preencha disciplina e tema.' }), { status: 400, headers: CORS })
+      return new Response(JSON.stringify({ error: 'Preencha disciplina e tema.', erroMsg: 'Preencha disciplina e tema.' }), { status: 400, headers: CORS })
     }
     const nivelTxt = nivel === 'facil' ? 'fácil' : nivel === 'dificil' ? 'difícil' : 'médio'
 
@@ -101,7 +110,7 @@ Retorne APENAS um JSON com dois campos:
 - "titulo": título curto e atrativo para a aula
 - "conteudo": o conteúdo da aula em HTML simples (várias seções: introdução, explicação, exemplos), com pelo menos 4 parágrafos`
 
-      const result = await deepseekJSON(prompt, 2500)
+      const result = await deepseekJSON(prompt, 3000, prazo)
       return new Response(JSON.stringify({
         tipo: 'aula',
         titulo: String(result?.titulo || tema).slice(0, 200),
@@ -113,6 +122,7 @@ Retorne APENAS um JSON com dois campos:
       let qtd = parseInt(quantidade)
       if (!Number.isInteger(qtd)) qtd = 5
       qtd = Math.min(Math.max(qtd, 0), 15)
+      if (tipoQuestao === 'redacao') qtd = Math.min(qtd, 1)
 
       if (qtd === 0) {
         return new Response(JSON.stringify({
@@ -131,14 +141,14 @@ Retorne APENAS um JSON com dois campos:
         ? `Baseie as questões no seguinte conteúdo de aula(s) já ministradas em sala (e, se houver, exercícios já aplicados). Crie questões NOVAS e inéditas testando a compreensão desse conteúdo — não copie perguntas prontas do material:\n"""\n${String(contextoAulas).slice(0, 6000)}\n"""\n\n`
         : ''
 
-      const prompt = `Você é um professor brasileiro elaborando uma prova/avaliação.
+      const montarPrompt = (n: number, i: number, total: number) => `Você é um professor brasileiro elaborando uma prova/avaliação.
 
 ${contextoBloco}Disciplina: ${disciplina}
 Tema: ${tema}
 Nível de dificuldade: ${nivelTxt}
-Quantidade de questões: ${qtd}
+Quantidade de questões: ${n}
 Instrução sobre os tipos de questão: ${instrucaoTipo}
-
+${total > 1 ? `\nEsta é a parte ${i + 1} de ${total} da prova. Aborde subtemas e habilidades diferentes das outras partes, para que não haja questões repetidas.\n` : ''}
 Retorne APENAS um JSON no formato:
 {
   "titulo": "título curto da prova",
@@ -150,16 +160,19 @@ Retorne APENAS um JSON no formato:
     // para redação: {"tipo":"redacao","enunciado":"tema da redação","proposta":"proposta completa com textos motivadores e comando","criterios":"","pontos":1000}
   ]
 }
-Gere exatamente ${qtd} questão(ões), seguindo a instrução sobre os tipos.`
+Gere exatamente ${n} questão(ões), seguindo a instrução sobre os tipos.`
 
-      const result = await deepseekJSON(prompt, 800 * qtd + 500)
+      const result = tipoQuestao === 'redacao'
+        ? await deepseekJSON(montarPrompt(1, 0, 1), 3000, prazo)
+        : await gerarEmLotes(qtd, prazo, montarPrompt)
+
       const questoesRaw = Array.isArray(result?.questoes) ? result.questoes.slice(0, qtd) : []
       const questoes = questoesRaw.map(clampQuestao)
 
       return new Response(JSON.stringify({
         tipo: 'prova',
         titulo: String(result?.titulo || tema).slice(0, 200),
-        disciplina: String(result?.disciplina || disciplina).slice(0, 100),
+        disciplina: String((result as any)?.disciplina || disciplina).slice(0, 100),
         questoes,
       }), { headers: CORS })
     }
@@ -173,13 +186,13 @@ Gere exatamente ${qtd} questão(ões), seguindo a instrução sobre os tipos.`
         ? `Conteúdo da aula (baseie as questões nele):\n"""\n${String(contextoAula).slice(0, 6000)}\n"""\n\n`
         : ''
 
-      const prompt = `Você é um professor brasileiro criando um exercício de fixação de múltipla escolha para os alunos praticarem o conteúdo de uma aula específica.
+      const montarPrompt = (n: number, i: number, total: number) => `Você é um professor brasileiro criando um exercício de fixação de múltipla escolha para os alunos praticarem o conteúdo de uma aula específica.
 
 ${contextoBloco}Disciplina: ${disciplina}
 Aula: ${tema}
 Nível de dificuldade: ${nivelTxt}
-
-Gere exatamente ${qtd} questões de múltipla escolha (5 alternativas cada, uma correta), testando a compreensão do conteúdo acima.
+${total > 1 ? `\nEsta é a parte ${i + 1} de ${total} do exercício. Aborde trechos e habilidades diferentes das outras partes, para não repetir questões.\n` : ''}
+Gere exatamente ${n} questões de múltipla escolha (5 alternativas cada, uma correta), testando a compreensão do conteúdo acima.
 
 Retorne APENAS um JSON no formato:
 {
@@ -187,7 +200,7 @@ Retorne APENAS um JSON no formato:
   "questoes": [{"tipo":"multipla","enunciado":"...","opcoes":["...","...","...","...","..."],"correta":0}]
 }`
 
-      const result = await deepseekJSON(prompt, 800 * qtd + 300)
+      const result = await gerarEmLotes(qtd, prazo, montarPrompt)
       const questoesRaw = Array.isArray(result?.questoes) ? result.questoes.slice(0, qtd) : []
       const questoes = questoesRaw.map(clampQuestao).map((q: any) => ({ ...q, tipo: 'multipla' }))
 
@@ -198,10 +211,12 @@ Retorne APENAS um JSON no formato:
       }), { headers: CORS })
     }
 
-    return new Response(JSON.stringify({ error: 'Tipo inválido. Use "aula", "prova" ou "exercicio".' }), { status: 400, headers: CORS })
+    return new Response(JSON.stringify({ error: 'Tipo inválido. Use "aula", "prova" ou "exercicio".', erroMsg: 'Tipo inválido.' }), { status: 400, headers: CORS })
   } catch (e) {
+    const msg = mensagemDeFalha(e)
+    console.error('gerar-conteudo-ia:', msg)
     return new Response(
-      JSON.stringify({ error: String(e), erroMsg: 'Erro ao gerar conteúdo com IA.' }),
+      JSON.stringify({ error: msg, erroMsg: msg }),
       { status: 500, headers: CORS }
     )
   }
