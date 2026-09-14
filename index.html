@@ -794,24 +794,8 @@ Pontos: 1000</div>
             </div>
           </div>
           <div id="ia-p-prova-fields" style="display:none">
-            <div class="fg"><label class="fl">Filtrar aulas por</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <select class="fi" id="ia-f-turno" onchange="iaFiltroTurnoChange()" style="flex:1;min-width:110px">
-                  <option value="">Todos os turnos</option>
-                  <option value="M">☀️ Manhã</option>
-                  <option value="T">🌆 Tarde</option>
-                </select>
-                <select class="fi" id="ia-f-turma" onchange="iaFiltroTurmaChange()" style="flex:1;min-width:110px">
-                  <option value="">Todas as turmas</option>
-                </select>
-                <select class="fi" id="ia-f-trilha" onchange="iaFiltroTrilhaChange()" style="flex:1;min-width:140px">
-                  <option value="">Todas as trilhas</option>
-                </select>
-              </div>
-              <input class="fi" id="ia-f-busca" placeholder="🔍 Buscar aula por título ou disciplina..." oninput="iaFiltroBuscaChange()" style="width:100%;margin-top:8px">
-            </div>
             <div class="fg"><label class="fl">Basear-se em aula(s) específica(s) <span class="mut xs">(opcional — a IA usa o conteúdo dessas aulas)</span></label>
-              <div id="ia-p-aulas-sel" style="max-height:240px;overflow-y:auto;border:1px solid var(--bdr);border-radius:10px;padding:2px 14px;background:var(--surf2)"></div>
+              <div class="tcg" id="ia-p-aulas-sel"></div>
               <div id="ia-p-aulas-h" class="mut sm mt2">Nenhuma aula selecionada</div>
             </div>
             <div id="ia-p-reuse-wrap" style="display:none">
@@ -820,9 +804,9 @@ Pontos: 1000</div>
               </div>
             </div>
             <div class="g2">
-              <div class="fg"><label class="fl">Questões novas a gerar <span class="mut xs">(além das reaproveitadas)</span></label><input class="fi" type="number" id="ia-p-qtd" value="5" min="0" max="15" step="1" oninput="updIATotalInfo()"></div>
+              <div class="fg"><label class="fl">Questões novas a gerar <span class="mut xs">(além das reaproveitadas)</span></label><input class="fi" type="number" id="ia-p-qtd" value="5" min="0" max="15" step="1"></div>
               <div class="fg"><label class="fl">Tipo de questão</label>
-                <select class="fi" id="ia-p-tq" style="width:100%" onchange="iaProfTrocarTQ()">
+                <select class="fi" id="ia-p-tq" style="width:100%">
                   <option value="multipla">Múltipla escolha</option>
                   <option value="subjetiva">Dissertativa</option>
                   <option value="redacao">Redação (ENEM)</option>
@@ -830,11 +814,6 @@ Pontos: 1000</div>
                 </select>
               </div>
             </div>
-            <div class="g2">
-              <div class="fg" id="ia-p-pontos-wrap"><label class="fl">Pontos por questão</label><input class="fi" type="number" id="ia-p-pontos" value="1" min="0.1" step="0.1"></div>
-              <div class="fg" id="ia-p-pontos-red-wrap" style="display:none"><label class="fl">Pontuação máxima da redação</label><input class="fi" type="number" id="ia-p-pontos-red" value="1000" min="1" max="1000" step="1"></div>
-            </div>
-            <div id="ia-p-total-info" class="mut sm" style="margin-bottom:6px"></div>
           </div>
           <button class="btn btn-p" id="ia-p-gerar" onclick="gerarConteudoIA()" style="width:100%;margin-top:6px">✨ Gerar com IA</button>
           <div class="mut sm mt2">A IA gera um rascunho — nada é salvo até você revisar e clicar em Salvar na tela seguinte.</div>
@@ -1810,76 +1789,27 @@ function renderGeradorIA(){
   sel.innerHTML='<option value="">Nenhuma (aula avulsa)</option>'+S.trilhas.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
   buildIAAulasSel();
   iaProfTrocarTipo();
-  iaProfTrocarTQ();
 }
 function iaProfTrocarTipo(){
   const tipo=G('ia-p-tipo').value;
   G('ia-p-aula-fields').style.display=tipo==='aula'?'block':'none';
   G('ia-p-prova-fields').style.display=tipo==='prova'?'block':'none';
 }
-function iaProfTrocarTQ(){
-  const tq=G('ia-p-tq').value;
-  G('ia-p-pontos-wrap').style.display=tq==='redacao'?'none':'block';
-  G('ia-p-pontos-red-wrap').style.display=tq==='redacao'?'block':'none';
-}
-function updIATotalInfo(){
-  const el=G('ia-p-total-info');if(!el)return;
-  const novas=Math.max(parseInt(G('ia-p-qtd')?.value)||0,0);
-  const reaproveitadas=iaProfReuseSel.size;
-  if(!reaproveitadas&&!novas){el.textContent='';return}
-  const partes=[];
-  if(reaproveitadas)partes.push(`${reaproveitadas} reaproveitada(s)`);
-  if(novas)partes.push(`${novas} nova(s)`);
-  el.textContent=`📊 Total: ${partes.join(' + ')} = ${reaproveitadas+novas} questão(ões)`;
-}
-let iaProfFiltro={turno:'',turma:'',trilha:'',busca:''};
 function buildIAAulasSel(){
   iaProfAulasSel=new Set();iaProfReuseSel=new Set();
-  iaProfFiltro={turno:'',turma:'',trilha:'',busca:''};
-  G('ia-f-turno').value='';G('ia-f-turma').innerHTML='<option value="">Todas as turmas</option>';G('ia-f-busca').value='';
-  iaFiltroRebuildTrilhas();
-  renderIAAulasChips();
-  updIAAulasH();renderIAReuseList();updIATotalInfo();
-}
-function iaFiltroTurnoChange(){
-  iaProfFiltro.turno=G('ia-f-turno').value;iaProfFiltro.turma='';
-  const lista=TURMAS.filter(t=>!iaProfFiltro.turno||t[1]===iaProfFiltro.turno);
-  G('ia-f-turma').innerHTML='<option value="">Todas as turmas</option>'+lista.map(t=>`<option>${t}</option>`).join('');
-  iaFiltroRebuildTrilhas();renderIAAulasChips();
-}
-function iaFiltroTurmaChange(){iaProfFiltro.turma=G('ia-f-turma').value;iaFiltroRebuildTrilhas();renderIAAulasChips()}
-function iaFiltroTrilhaChange(){iaProfFiltro.trilha=G('ia-f-trilha').value;renderIAAulasChips()}
-function iaFiltroBuscaChange(){iaProfFiltro.busca=G('ia-f-busca').value.trim();renderIAAulasChips()}
-function iaFiltroRebuildTrilhas(){
-  const sel=G('ia-f-trilha'),cur=sel.value;
-  const trilhasF=S.trilhas.filter(t=>(!iaProfFiltro.turno||t.turmas.some(x=>x[1]===iaProfFiltro.turno))&&(!iaProfFiltro.turma||t.turmas.includes(iaProfFiltro.turma)));
-  sel.innerHTML='<option value="">Todas as trilhas</option>'+trilhasF.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
-  if(trilhasF.find(t=>t.id===cur))sel.value=cur;else iaProfFiltro.trilha='';
-}
-function iaFiltroAulasFiltradas(){
-  return S.aulas.filter(al=>{
-    if(iaProfFiltro.turno&&!al.turmas.some(t=>t[1]===iaProfFiltro.turno))return false;
-    if(iaProfFiltro.turma&&!al.turmas.includes(iaProfFiltro.turma))return false;
-    if(iaProfFiltro.trilha){const tri=S.trilhas.find(t=>t.id===iaProfFiltro.trilha);if(!tri||!tri.ordemAulas.includes(al.id))return false}
-    if(iaProfFiltro.busca){const q=iaProfFiltro.busca.toLowerCase();if(!al.titulo.toLowerCase().includes(q)&&!al.disciplina.toLowerCase().includes(q))return false}
-    return true;
-  });
-}
-function renderIAAulasChips(){
   const el=G('ia-p-aulas-sel');
-  if(!S.aulas.length){el.innerHTML='<div class="mut sm" style="padding:10px 0">Nenhuma aula criada ainda.</div>';return}
-  const lista=iaFiltroAulasFiltradas();
-  if(!lista.length){el.innerHTML='<div class="mut sm" style="padding:10px 0">Nenhuma aula encontrada com esse filtro.</div>';return}
-  el.innerHTML=lista.map((al,i)=>`<label style="display:flex;align-items:center;gap:10px;padding:9px 0;cursor:pointer;${i<lista.length-1?'border-bottom:1px solid var(--bdr)':''}"><input type="checkbox" ${iaProfAulasSel.has(al.id)?'checked':''} onchange="togIAAula('${al.id}',this.checked)" style="flex-shrink:0;width:16px;height:16px;accent-color:var(--acc)"><span style="flex:1;min-width:0;font-size:13px;overflow-wrap:anywhere">${al.titulo} <span class="mut xs">— ${al.disciplina}</span></span></label>`).join('');
+  if(!S.aulas.length){el.innerHTML='<div class="mut sm">Nenhuma aula criada ainda.</div>'}
+  else el.innerHTML=S.aulas.map(al=>`<div class="tci" id="iaa-${al.id}" onclick="togIAAula('${al.id}')"><span>${al.titulo}</span></div>`).join('');
+  updIAAulasH();renderIAReuseList();
 }
-function togIAAula(id,checked){
-  if(checked)iaProfAulasSel.add(id);
-  else{
+function togIAAula(id){
+  if(iaProfAulasSel.has(id)){
     iaProfAulasSel.delete(id);
     const exIds=new Set(S.exercicios.filter(e=>e.aulaId===id).map(e=>e.id));
     [...iaProfReuseSel].forEach(k=>{if(exIds.has(k.split(':')[0]))iaProfReuseSel.delete(k)});
-  }
-  updIAAulasH();renderIAReuseList();updIATotalInfo();
+  }else iaProfAulasSel.add(id);
+  G(`iaa-${id}`).classList.toggle('on',iaProfAulasSel.has(id));
+  updIAAulasH();renderIAReuseList();
 }
 function updIAAulasH(){G('ia-p-aulas-h').textContent=iaProfAulasSel.size?`${iaProfAulasSel.size} aula(s) selecionada(s)`:'Nenhuma aula selecionada'}
 function renderIAReuseList(){
@@ -1897,7 +1827,7 @@ function renderIAReuseList(){
     return`<div style="margin-bottom:10px"><div class="mut xs" style="font-weight:700;margin-bottom:4px">${al?al.titulo:'?'} — ${ex.titulo}</div>${qs}</div>`;
   }).join('');
 }
-function togIAReuse(key,checked){checked?iaProfReuseSel.add(key):iaProfReuseSel.delete(key);updIATotalInfo()}
+function togIAReuse(key,checked){checked?iaProfReuseSel.add(key):iaProfReuseSel.delete(key)}
 function addQPreset(key,cid,q){if(!QD[key])QD[key]=[];const idx=QD[key].length;QD[key].push(q);_rQ(key,cid,idx,q)}
 async function _iaErroMsg(error){
   try{const body=await error?.context?.json();if(body?.erroMsg)return body.erroMsg;if(body?.error)return String(body.error).slice(0,300)}catch(_){}
@@ -1910,12 +1840,9 @@ async function gerarConteudoIA(){
   const nivel=G('ia-p-nivel').value;
   if(!disciplina||!tema)return toast('⚠️ Preencha disciplina e tema.','yellow');
   const body={tipo,disciplina,tema,nivel};
-  let pontos=1,pontosRed=1000;
   if(tipo==='prova'){
     body.quantidade=G('ia-p-qtd').value;
     body.tipoQuestao=G('ia-p-tq').value;
-    pontos=Math.max(parseFloat(G('ia-p-pontos').value)||1,0.1);
-    pontosRed=Math.min(Math.max(parseFloat(G('ia-p-pontos-red').value)||1000,1),1000);
     if(iaProfAulasSel.size){
       const blocos=[...iaProfAulasSel].map(id=>{
         const al=S.aulas.find(a=>a.id===id);if(!al)return'';
@@ -1932,7 +1859,7 @@ async function gerarConteudoIA(){
     if(error){hhl();const m=await _iaErroMsg(error);console.error('gerar-conteudo-ia:',m,error);toast('❌ '+m,'red');return}
     if(data?.error){hhl();console.error('gerar-conteudo-ia:',data.error);toast('❌ '+(data.erroMsg||data.error),'red');return}
     hhl();
-    if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data,pontos,pontosRed);
+    if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data);
   }catch(e){
     hhl();console.error('gerar-conteudo-ia:',e);toast('❌ '+(e?.message||'Erro ao gerar conteúdo com IA.'),'red');
   }finally{btn.disabled=false}
@@ -1944,11 +1871,10 @@ function aplicarAulaGerada(data,trilhaId){
   if(trilhaId)buildATC(new Set([trilhaId]));
   toast('✨ Aula gerada! Revise o conteúdo, escolha as turmas e salve.','green');
 }
-function aplicarProvaGerada(data,pontos=1,pontosRed=1000){
+function aplicarProvaGerada(data){
   irNovaProva();
   G('pv-t').value=data.titulo||'';
   G('pv-d').value=data.disciplina||'';
-  G('pv-p').value=pontos;
   QD['qP']=[];G('qcP').innerHTML='';
   iaProfReuseSel.forEach(key=>{
     const[exId,qi]=key.split(':');
@@ -1956,11 +1882,7 @@ function aplicarProvaGerada(data,pontos=1,pontosRed=1000){
     const q=ex.questoes[parseInt(qi)];if(!q)return;
     addQPreset('qP','qcP',{tipo:'multipla',enunciado:q.enunciado,opcoes:[...q.opcoes],correta:q.correta,imagemUrl:q.imagemUrl||null});
   });
-  const questoes=(data.questoes||[]).map(q=>{
-    if(q.tipo==='subjetiva')return{...q,pontos};
-    if(q.tipo==='redacao')return{...q,pontos:pontosRed};
-    return q;
-  });
+  const questoes=data.questoes||[];
   questoes.forEach(q=>addQPreset('qP','qcP',q));
   if(!questoes.length&&!iaProfReuseSel.size)addQ('qP','qcP','multipla');
   toast('✨ Prova montada! Revise as questões, escolha as turmas e salve.','green');
