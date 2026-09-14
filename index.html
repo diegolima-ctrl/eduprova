@@ -1675,15 +1675,15 @@ async function gerarExercicioIA(){
   try{
     const{data,error}=await sb.functions.invoke('gerar-conteudo-ia',{body:{tipo:'exercicio',disciplina:aula.disciplina,tema:aula.titulo,nivel,quantidade:qtd,contextoAula:_txt(aula.conteudo)}});
     hhl();
-    if(error)throw error;
-    if(data?.error)throw new Error(data.error);
+    if(error){console.error('gerar-conteudo-ia (exercicio):',error);toast('❌ '+await _iaErroMsg(error),'red');return}
+    if(data?.error){console.error('gerar-conteudo-ia (exercicio):',data.error);toast('❌ '+(data.erroMsg||data.error),'red');return}
     const questoes=data.questoes||[];
     if(!questoes.length)return toast('⚠️ A IA não retornou questões. Tente novamente.','yellow');
     questoes.forEach(q=>addQPreset('exQ','qcE',q));
     if(!G('ex-t').value.trim()&&data.titulo)G('ex-t').value=data.titulo;
     toast(`✨ ${questoes.length} questão(ões) gerada(s)! Revise antes de salvar.`,'green');
   }catch(e){
-    hhl();console.error('gerar-conteudo-ia (exercicio):',e);toast('❌ Erro ao gerar questões com IA.','red');
+    hhl();console.error('gerar-conteudo-ia (exercicio):',e);toast('❌ '+(e?.message||'Erro ao gerar questões com IA.'),'red');
   }finally{btn.disabled=false}
 }
 async function delEx(id){if(!confirm('Excluir exercício?'))return;shl('Excluindo...');try{const ex=S.exercicios.find(x=>x.id===id);if(ex)for(const q of ex.questoes)if(q.imagemUrl)await removeImg(q.imagemUrl);await sb.from('respostas_exercicios').delete().eq('exercicio_id',id);await sb.from('exercicios').delete().eq('id',id);await loadAllData();rExAula(editAulaId);toast('🗑 Removido','red')}catch(e){toast('❌ Erro.','red')}finally{hhl()}}
@@ -1899,6 +1899,10 @@ function renderIAReuseList(){
 }
 function togIAReuse(key,checked){checked?iaProfReuseSel.add(key):iaProfReuseSel.delete(key);updIATotalInfo()}
 function addQPreset(key,cid,q){if(!QD[key])QD[key]=[];const idx=QD[key].length;QD[key].push(q);_rQ(key,cid,idx,q)}
+async function _iaErroMsg(error){
+  try{const body=await error?.context?.json();if(body?.erroMsg)return body.erroMsg;if(body?.error)return String(body.error).slice(0,300)}catch(_){}
+  return error?.message||'Erro ao gerar conteúdo com IA.';
+}
 async function gerarConteudoIA(){
   const tipo=G('ia-p-tipo').value;
   const disciplina=G('ia-p-disc').value.trim();
@@ -1925,12 +1929,12 @@ async function gerarConteudoIA(){
   const btn=G('ia-p-gerar');btn.disabled=true;shl('Gerando com IA... isso pode levar alguns segundos');
   try{
     const{data,error}=await sb.functions.invoke('gerar-conteudo-ia',{body});
-    if(error)throw error;
-    if(data?.error)throw new Error(data.error);
+    if(error){hhl();console.error('gerar-conteudo-ia:',error);toast('❌ '+await _iaErroMsg(error),'red');return}
+    if(data?.error){hhl();console.error('gerar-conteudo-ia:',data.error);toast('❌ '+(data.erroMsg||data.error),'red');return}
     hhl();
     if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data,pontos,pontosRed);
   }catch(e){
-    hhl();console.error('gerar-conteudo-ia:',e);toast('❌ Erro ao gerar conteúdo com IA.','red');
+    hhl();console.error('gerar-conteudo-ia:',e);toast('❌ '+(e?.message||'Erro ao gerar conteúdo com IA.'),'red');
   }finally{btn.disabled=false}
 }
 function aplicarAulaGerada(data,trilhaId){

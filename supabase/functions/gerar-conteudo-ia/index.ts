@@ -7,26 +7,46 @@ const CORS = {
 }
 
 async function deepseekJSON(prompt: string, maxTokens: number) {
-  const r = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${Deno.env.get('DEEPSEEK_API_KEY')}`,
-    },
-    body: JSON.stringify({
-      model: 'deepseek-chat',
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-      temperature: 0.5,
-      max_tokens: maxTokens,
-    }),
-  })
+  const cappedTokens = Math.min(maxTokens, 4000)
+  const ctrl = new AbortController()
+  const timeout = setTimeout(() => ctrl.abort(), 50000)
+  let r: Response
+  try {
+    r = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('DEEPSEEK_API_KEY')}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
+        temperature: 0.5,
+        max_tokens: cappedTokens,
+      }),
+    })
+  } catch (e) {
+    if ((e as Error)?.name === 'AbortError') {
+      throw new Error('A IA demorou demais para responder. Tente novamente com menos questões.')
+    }
+    throw e
+  } finally {
+    clearTimeout(timeout)
+  }
   if (!r.ok) {
     const err = await r.text()
-    throw new Error(`DeepSeek API error ${r.status}: ${err}`)
+    throw new Error(`DeepSeek API error ${r.status}: ${err.slice(0, 500)}`)
   }
   const data = await r.json()
-  return JSON.parse(data.choices?.[0]?.message?.content ?? '{}')
+  const content = data.choices?.[0]?.message?.content
+  if (!content) throw new Error('A IA não retornou conteúdo. Tente novamente.')
+  try {
+    return JSON.parse(content)
+  } catch {
+    throw new Error('A IA retornou um formato inválido. Tente novamente.')
+  }
 }
 
 function clampQuestao(q: any) {
