@@ -7,9 +7,9 @@
 // da plataforma e o app recebe 504 (IDLE_TIMEOUT) ou 546 (WORKER_RESOURCE_LIMIT),
 // sem mensagem nenhuma para o usuario.
 //
-// Aqui cada tentativa tem timeout proprio que cobre headers E corpo, e, se um
-// provedor nao responde, tentamos o proximo antes de desistir — sempre
-// terminando antes do limite da plataforma para que o app receba um erro claro.
+// Aqui cada tentativa tem timeout proprio que cobre headers E corpo, e a chamada
+// e' repetida enquanto houver tempo — sempre terminando antes do limite da
+// plataforma para que o app receba uma mensagem de erro clara.
 
 export const LIMITE_PLATAFORMA_MS = 150000
 
@@ -24,23 +24,16 @@ type Provedor = {
   tentativaMs: number
 }
 
-// Ordem de preferencia. Um provedor sem chave configurada e' simplesmente pulado.
+// Unico provedor em uso. A lista existe para permitir acrescentar outro no
+// futuro sem mexer nas funcoes: um provedor sem chave configurada e' pulado.
 const PROVEDORES: Provedor[] = [
   {
     nome: 'DeepSeek',
     url: 'https://api.deepseek.com/chat/completions',
     env: 'DEEPSEEK_API_KEY',
     modelo: 'deepseek-chat',
-    tentativas: 2,
+    tentativas: 3,
     tentativaMs: 35000,
-  },
-  {
-    nome: 'Groq',
-    url: 'https://api.groq.com/openai/v1/chat/completions',
-    env: 'GROQ_API_KEY',
-    modelo: 'llama-3.3-70b-versatile',
-    tentativas: 2,
-    tentativaMs: 20000,
   },
 ]
 
@@ -131,7 +124,7 @@ export async function chamarIA(op: OpcoesIA): Promise<Resultado> {
     .filter(x => !!x.chave)
 
   if (!disponiveis.length) {
-    throw new ErroIA('Nenhuma chave de IA está configurada no projeto (DEEPSEEK_API_KEY ou GROQ_API_KEY).')
+    throw new ErroIA('A chave da IA (DEEPSEEK_API_KEY) não está configurada no projeto.')
   }
 
   const falhas: string[] = []
@@ -159,7 +152,7 @@ export async function chamarIA(op: OpcoesIA): Promise<Resultado> {
     }
   }
 
-  throw new ErroIA(`Nenhum provedor de IA respondeu. ${falhas.join(' ')}`, true)
+  throw new ErroIA(`A IA não respondeu. ${falhas.join(' ')}`, true)
 }
 
 export function mensagemDeFalha(e: unknown) {
