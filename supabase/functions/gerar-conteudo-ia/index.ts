@@ -61,7 +61,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
 
   try {
-    const { tipo, disciplina, tema, nivel, quantidade, tipoQuestao } = await req.json()
+    const { tipo, disciplina, tema, nivel, quantidade, tipoQuestao, contextoAulas, contextoAula } = await req.json()
 
     if (!disciplina || !tema) {
       return new Response(JSON.stringify({ error: 'Preencha disciplina e tema.' }), { status: 400, headers: CORS })
@@ -90,7 +90,16 @@ Retorne APENAS um JSON com dois campos:
     }
 
     if (tipo === 'prova') {
-      const qtd = Math.min(Math.max(parseInt(quantidade) || 5, 1), 15)
+      let qtd = parseInt(quantidade)
+      if (!Number.isInteger(qtd)) qtd = 5
+      qtd = Math.min(Math.max(qtd, 0), 15)
+
+      if (qtd === 0) {
+        return new Response(JSON.stringify({
+          tipo: 'prova', titulo: String(tema).slice(0, 200), disciplina: String(disciplina).slice(0, 100), questoes: [],
+        }), { headers: CORS })
+      }
+
       const tqMap: Record<string, string> = {
         multipla: 'todas as questões devem ser de MÚLTIPLA ESCOLHA (5 alternativas, uma correta)',
         subjetiva: 'todas as questões devem ser DISSERTATIVAS (o aluno escreve a resposta, sem alternativas)',
@@ -98,10 +107,13 @@ Retorne APENAS um JSON com dois campos:
         mista: 'misture questões de múltipla escolha e dissertativas',
       }
       const instrucaoTipo = tqMap[tipoQuestao] || tqMap.multipla
+      const contextoBloco = contextoAulas
+        ? `Baseie as questões no seguinte conteúdo de aula(s) já ministradas em sala (e, se houver, exercícios já aplicados). Crie questões NOVAS e inéditas testando a compreensão desse conteúdo — não copie perguntas prontas do material:\n"""\n${String(contextoAulas).slice(0, 6000)}\n"""\n\n`
+        : ''
 
       const prompt = `Você é um professor brasileiro elaborando uma prova/avaliação.
 
-Disciplina: ${disciplina}
+${contextoBloco}Disciplina: ${disciplina}
 Tema: ${tema}
 Nível de dificuldade: ${nivelTxt}
 Quantidade de questões: ${qtd}
@@ -132,7 +144,41 @@ Gere exatamente ${qtd} questão(ões), seguindo a instrução sobre os tipos.`
       }), { headers: CORS })
     }
 
-    return new Response(JSON.stringify({ error: 'Tipo inválido. Use "aula" ou "prova".' }), { status: 400, headers: CORS })
+    if (tipo === 'exercicio') {
+      let qtd = parseInt(quantidade)
+      if (!Number.isInteger(qtd) || qtd < 1) qtd = 5
+      qtd = Math.min(qtd, 15)
+
+      const contextoBloco = contextoAula
+        ? `Conteúdo da aula (baseie as questões nele):\n"""\n${String(contextoAula).slice(0, 6000)}\n"""\n\n`
+        : ''
+
+      const prompt = `Você é um professor brasileiro criando um exercício de fixação de múltipla escolha para os alunos praticarem o conteúdo de uma aula específica.
+
+${contextoBloco}Disciplina: ${disciplina}
+Aula: ${tema}
+Nível de dificuldade: ${nivelTxt}
+
+Gere exatamente ${qtd} questões de múltipla escolha (5 alternativas cada, uma correta), testando a compreensão do conteúdo acima.
+
+Retorne APENAS um JSON no formato:
+{
+  "titulo": "título curto para o exercício (ex: Exercícios de Fixação — <tema da aula>)",
+  "questoes": [{"tipo":"multipla","enunciado":"...","opcoes":["...","...","...","...","..."],"correta":0}]
+}`
+
+      const result = await deepseekJSON(prompt, 800 * qtd + 300)
+      const questoesRaw = Array.isArray(result?.questoes) ? result.questoes.slice(0, qtd) : []
+      const questoes = questoesRaw.map(clampQuestao).map((q: any) => ({ ...q, tipo: 'multipla' }))
+
+      return new Response(JSON.stringify({
+        tipo: 'exercicio',
+        titulo: String(result?.titulo || `Exercícios de Fixação — ${tema}`).slice(0, 200),
+        questoes,
+      }), { headers: CORS })
+    }
+
+    return new Response(JSON.stringify({ error: 'Tipo inválido. Use "aula", "prova" ou "exercicio".' }), { status: 400, headers: CORS })
   } catch (e) {
     return new Response(
       JSON.stringify({ error: String(e), erroMsg: 'Erro ao gerar conteúdo com IA.' }),
