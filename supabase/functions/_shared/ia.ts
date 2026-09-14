@@ -32,8 +32,11 @@ const PROVEDORES: Provedor[] = [
     url: 'https://api.deepseek.com/chat/completions',
     env: 'DEEPSEEK_API_KEY',
     modelo: 'deepseek-chat',
-    tentativas: 3,
-    tentativaMs: 35000,
+    // Quando a DeepSeek atende, ela responde em 3 a 5 segundos; passar disso
+    // significa que a requisicao caiu na fila dela. Esperar pouco e tentar de
+    // novo rende muito mais que uma espera longa: sao 4 chances em ~90s.
+    tentativas: 4,
+    tentativaMs: 22000,
   },
 ]
 
