@@ -794,6 +794,22 @@ Pontos: 1000</div>
             </div>
           </div>
           <div id="ia-p-prova-fields" style="display:none">
+            <div class="fg"><label class="fl">Filtrar aulas por</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <select class="fi" id="ia-f-turno" onchange="iaFiltroTurnoChange()" style="flex:1;min-width:110px">
+                  <option value="">Todos os turnos</option>
+                  <option value="M">☀️ Manhã</option>
+                  <option value="T">🌆 Tarde</option>
+                </select>
+                <select class="fi" id="ia-f-turma" onchange="iaFiltroTurmaChange()" style="flex:1;min-width:110px">
+                  <option value="">Todas as turmas</option>
+                </select>
+                <select class="fi" id="ia-f-trilha" onchange="iaFiltroTrilhaChange()" style="flex:1;min-width:140px">
+                  <option value="">Todas as trilhas</option>
+                </select>
+              </div>
+              <input class="fi" id="ia-f-busca" placeholder="🔍 Buscar aula por título ou disciplina..." oninput="iaFiltroBuscaChange()" style="width:100%;margin-top:8px">
+            </div>
             <div class="fg"><label class="fl">Basear-se em aula(s) específica(s) <span class="mut xs">(opcional — a IA usa o conteúdo dessas aulas)</span></label>
               <div class="tcg" id="ia-p-aulas-sel"></div>
               <div id="ia-p-aulas-h" class="mut sm mt2">Nenhuma aula selecionada</div>
@@ -1795,12 +1811,45 @@ function iaProfTrocarTipo(){
   G('ia-p-aula-fields').style.display=tipo==='aula'?'block':'none';
   G('ia-p-prova-fields').style.display=tipo==='prova'?'block':'none';
 }
+let iaProfFiltro={turno:'',turma:'',trilha:'',busca:''};
 function buildIAAulasSel(){
   iaProfAulasSel=new Set();iaProfReuseSel=new Set();
-  const el=G('ia-p-aulas-sel');
-  if(!S.aulas.length){el.innerHTML='<div class="mut sm">Nenhuma aula criada ainda.</div>'}
-  else el.innerHTML=S.aulas.map(al=>`<div class="tci" id="iaa-${al.id}" onclick="togIAAula('${al.id}')"><span>${al.titulo}</span></div>`).join('');
+  iaProfFiltro={turno:'',turma:'',trilha:'',busca:''};
+  G('ia-f-turno').value='';G('ia-f-turma').innerHTML='<option value="">Todas as turmas</option>';G('ia-f-busca').value='';
+  iaFiltroRebuildTrilhas();
+  renderIAAulasChips();
   updIAAulasH();renderIAReuseList();
+}
+function iaFiltroTurnoChange(){
+  iaProfFiltro.turno=G('ia-f-turno').value;iaProfFiltro.turma='';
+  const lista=TURMAS.filter(t=>!iaProfFiltro.turno||t[1]===iaProfFiltro.turno);
+  G('ia-f-turma').innerHTML='<option value="">Todas as turmas</option>'+lista.map(t=>`<option>${t}</option>`).join('');
+  iaFiltroRebuildTrilhas();renderIAAulasChips();
+}
+function iaFiltroTurmaChange(){iaProfFiltro.turma=G('ia-f-turma').value;iaFiltroRebuildTrilhas();renderIAAulasChips()}
+function iaFiltroTrilhaChange(){iaProfFiltro.trilha=G('ia-f-trilha').value;renderIAAulasChips()}
+function iaFiltroBuscaChange(){iaProfFiltro.busca=G('ia-f-busca').value.trim();renderIAAulasChips()}
+function iaFiltroRebuildTrilhas(){
+  const sel=G('ia-f-trilha'),cur=sel.value;
+  const trilhasF=S.trilhas.filter(t=>(!iaProfFiltro.turno||t.turmas.some(x=>x[1]===iaProfFiltro.turno))&&(!iaProfFiltro.turma||t.turmas.includes(iaProfFiltro.turma)));
+  sel.innerHTML='<option value="">Todas as trilhas</option>'+trilhasF.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
+  if(trilhasF.find(t=>t.id===cur))sel.value=cur;else iaProfFiltro.trilha='';
+}
+function iaFiltroAulasFiltradas(){
+  return S.aulas.filter(al=>{
+    if(iaProfFiltro.turno&&!al.turmas.some(t=>t[1]===iaProfFiltro.turno))return false;
+    if(iaProfFiltro.turma&&!al.turmas.includes(iaProfFiltro.turma))return false;
+    if(iaProfFiltro.trilha){const tri=S.trilhas.find(t=>t.id===iaProfFiltro.trilha);if(!tri||!tri.ordemAulas.includes(al.id))return false}
+    if(iaProfFiltro.busca){const q=iaProfFiltro.busca.toLowerCase();if(!al.titulo.toLowerCase().includes(q)&&!al.disciplina.toLowerCase().includes(q))return false}
+    return true;
+  });
+}
+function renderIAAulasChips(){
+  const el=G('ia-p-aulas-sel');
+  if(!S.aulas.length){el.innerHTML='<div class="mut sm">Nenhuma aula criada ainda.</div>';return}
+  const lista=iaFiltroAulasFiltradas();
+  if(!lista.length){el.innerHTML='<div class="mut sm">Nenhuma aula encontrada com esse filtro.</div>';return}
+  el.innerHTML=lista.map(al=>`<div class="tci${iaProfAulasSel.has(al.id)?' on':''}" id="iaa-${al.id}" onclick="togIAAula('${al.id}')"><span>${al.titulo}</span></div>`).join('');
 }
 function togIAAula(id){
   if(iaProfAulasSel.has(id)){
