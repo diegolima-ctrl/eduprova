@@ -767,6 +767,50 @@ Pontos: 1000</div>
         <div id="res-sec-trilhas" style="display:none"><div id="res-trilhas-body"></div></div>
       </div>
 
+      <!-- Professor: Gerar com IA -->
+      <div class="sec" id="sec-ia-prof">
+        <div class="ph"><div><div class="ptit">Gerar com IA</div><div class="psub">Peça para a IA criar uma aula ou uma prova — você revisa e edita antes de salvar</div></div></div>
+        <div class="card">
+          <div class="fg"><label class="fl">O que você quer gerar?</label>
+            <select class="fi" id="ia-p-tipo" onchange="iaProfTrocarTipo()" style="width:100%">
+              <option value="aula">📖 Aula</option>
+              <option value="prova">📋 Prova / Questões</option>
+            </select>
+          </div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Disciplina</label><input class="fi" id="ia-p-disc" placeholder="Ex: Matemática"></div>
+            <div class="fg"><label class="fl">Tema</label><input class="fi" id="ia-p-tema" placeholder="Ex: Equação do 2º grau"></div>
+          </div>
+          <div class="fg"><label class="fl">Nível</label>
+            <select class="fi" id="ia-p-nivel" style="width:100%">
+              <option value="facil">Fácil</option>
+              <option value="medio" selected>Médio</option>
+              <option value="dificil">Difícil</option>
+            </select>
+          </div>
+          <div id="ia-p-aula-fields">
+            <div class="fg"><label class="fl">Adicionar à trilha <span class="mut xs">(opcional)</span></label>
+              <select class="fi" id="ia-p-trilha" style="width:100%"><option value="">Nenhuma (aula avulsa)</option></select>
+            </div>
+          </div>
+          <div id="ia-p-prova-fields" style="display:none">
+            <div class="g2">
+              <div class="fg"><label class="fl">Quantidade de questões</label><input class="fi" type="number" id="ia-p-qtd" value="5" min="1" max="15" step="1"></div>
+              <div class="fg"><label class="fl">Tipo de questão</label>
+                <select class="fi" id="ia-p-tq" style="width:100%">
+                  <option value="multipla">Múltipla escolha</option>
+                  <option value="subjetiva">Dissertativa</option>
+                  <option value="redacao">Redação (ENEM)</option>
+                  <option value="mista">Mista (múltipla + dissertativa)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-p" id="ia-p-gerar" onclick="gerarConteudoIA()" style="width:100%;margin-top:6px">✨ Gerar com IA</button>
+          <div class="mut sm mt2">A IA gera um rascunho — nada é salvo até você revisar e clicar em Salvar na tela seguinte.</div>
+        </div>
+      </div>
+
       <!-- Aluno: Trilhas -->
       <div class="sec" id="sec-a-trilhas"><div class="ph"><div><div class="ptit">Minhas Trilhas</div><div class="psub" id="a-tri-lbl"></div></div></div><div id="a-trilhas"></div></div>
 
@@ -1219,6 +1263,8 @@ function buildProfNav(){G('snav').innerHTML=`
   <div class="nlbl">Gestão</div>
   ${ni('ni-freq',_SVG.cal,'Frequência',"nav('sec-freq','ni-freq',()=>reload().then(renderFreq))")}
   ${ni('ni-turmas',_SVG.users,'Turmas',"nav('sec-turmas','ni-turmas',()=>reload().then(renderTurmas))")}
+  <div class="nlbl">Assistente</div>
+  ${ni('ni-ia-p',_SVG.ai,'Gerar com IA',"nav('sec-ia-prof','ni-ia-p',()=>reload().then(renderGeradorIA))")}
 `}
 function buildAlunoNav(){G('snav').innerHTML=`
   <div class="nlbl">Aprender</div>
@@ -1697,6 +1743,55 @@ function parseTxt(text){
 
 /* ══ PROVAS ══ */
 let editPvId=null;
+/* ══ PROFESSOR: GERAR COM IA ══ */
+function renderGeradorIA(){
+  const sel=G('ia-p-trilha');
+  sel.innerHTML='<option value="">Nenhuma (aula avulsa)</option>'+S.trilhas.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
+  iaProfTrocarTipo();
+}
+function iaProfTrocarTipo(){
+  const tipo=G('ia-p-tipo').value;
+  G('ia-p-aula-fields').style.display=tipo==='aula'?'block':'none';
+  G('ia-p-prova-fields').style.display=tipo==='prova'?'block':'none';
+}
+function addQPreset(key,cid,q){if(!QD[key])QD[key]=[];const idx=QD[key].length;QD[key].push(q);_rQ(key,cid,idx,q)}
+async function gerarConteudoIA(){
+  const tipo=G('ia-p-tipo').value;
+  const disciplina=G('ia-p-disc').value.trim();
+  const tema=G('ia-p-tema').value.trim();
+  const nivel=G('ia-p-nivel').value;
+  if(!disciplina||!tema)return toast('⚠️ Preencha disciplina e tema.','yellow');
+  const body={tipo,disciplina,tema,nivel};
+  if(tipo==='prova'){body.quantidade=G('ia-p-qtd').value;body.tipoQuestao=G('ia-p-tq').value}
+  const trilhaAlvo=G('ia-p-trilha').value||null;
+  const btn=G('ia-p-gerar');btn.disabled=true;shl('Gerando com IA... isso pode levar alguns segundos');
+  try{
+    const{data,error}=await sb.functions.invoke('gerar-conteudo-ia',{body});
+    if(error)throw error;
+    if(data?.error)throw new Error(data.error);
+    hhl();
+    if(tipo==='aula')aplicarAulaGerada(data,trilhaAlvo);else aplicarProvaGerada(data);
+  }catch(e){
+    hhl();console.error('gerar-conteudo-ia:',e);toast('❌ Erro ao gerar conteúdo com IA.','red');
+  }finally{btn.disabled=false}
+}
+function aplicarAulaGerada(data,trilhaId){
+  irNovaAula();
+  G('aula-t').value=data.titulo||'';
+  G('aula-cont').innerHTML=data.conteudo||'';
+  if(trilhaId)buildATC(new Set([trilhaId]));
+  toast('✨ Aula gerada! Revise o conteúdo, escolha as turmas e salve.','green');
+}
+function aplicarProvaGerada(data){
+  irNovaProva();
+  G('pv-t').value=data.titulo||'';
+  G('pv-d').value=data.disciplina||'';
+  QD['qP']=[];G('qcP').innerHTML='';
+  const questoes=data.questoes||[];
+  questoes.forEach(q=>addQPreset('qP','qcP',q));
+  if(!questoes.length)addQ('qP','qcP','multipla');
+  toast('✨ Prova gerada! Revise as questões, escolha as turmas e salve.','green');
+}
 function irNovaProva(){editPvId=null;QD['qP']=[];G('form-prova-tit').textContent='Nova Prova';G('btn-sv-pv').textContent='💾 Salvar Prova';['pv-t','pv-d'].forEach(id=>G(id).value='');G('pv-p').value='1';G('pv-dur').value='50';G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova');addQ('qP','qcP','multipla');closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function editarProva(id){const p=S.provas.find(x=>x.id===id);if(!p)return;editPvId=id;QD['qP']=[];G('form-prova-tit').textContent='Editar Prova';G('pv-t').value=p.titulo;G('pv-d').value=p.disciplina;G('pv-p').value=p.pontosPorQ;G('pv-dur').value=p.duracao||50;G('qcP').innerHTML='';G('pv-err').classList.add('hidden');buildTC('tcg-prova','th-prova','prova',new Set(p.turmas||[]));p.questoes.forEach((q,i)=>{const obj=q.tipo==='subjetiva'?{tipo:'subjetiva',enunciado:q.enunciado,gabarito:q.gabarito||'',criterios:q.criterios||'',pontos:q.pontos||5,imagemUrl:q.imagemUrl||null}:q.tipo==='redacao'?{tipo:'redacao',enunciado:q.enunciado,proposta:q.proposta||'',criterios:q.criterios||'',pontos:q.pontos||1000,imagemUrl:null}:{tipo:'multipla',enunciado:q.enunciado,opcoes:[...(q.opcoes||['','','','',''])],correta:q.correta,imagemUrl:q.imagemUrl||null};QD['qP'].push(obj);_rQ('qP','qcP',i,obj)});closeSB();showSec('sec-nova-prova');setNav('ni-np')}
 function cancelarProva(){editPvId=null;showSec('sec-provas');setNav('ni-provas');renderProvas()}
