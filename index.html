@@ -794,6 +794,9 @@ Pontos: 1000</div>
             </div>
           </div>
           <div id="ia-p-prova-fields" style="display:none">
+            <div class="fg"><label class="fl">Filtrar aulas por trilha</label>
+              <select class="fi" id="ia-p-f-trilha" style="width:100%" onchange="iaFiltrarAulas()"><option value="">Todas as trilhas</option></select>
+            </div>
             <div class="fg"><label class="fl">Basear-se em aula(s) específica(s) <span class="mut xs">(opcional — a IA usa o conteúdo dessas aulas)</span></label>
               <div class="tcg" id="ia-p-aulas-sel"></div>
               <div id="ia-p-aulas-h" class="mut sm mt2">Nenhuma aula selecionada</div>
@@ -1783,10 +1786,11 @@ function parseTxt(text){
 /* ══ PROVAS ══ */
 let editPvId=null;
 /* ══ PROFESSOR: GERAR COM IA ══ */
-let iaProfAulasSel=new Set(),iaProfReuseSel=new Set();
+let iaProfAulasSel=new Set(),iaProfReuseSel=new Set(),iaAulasVisiveis=new Set();
 function renderGeradorIA(){
-  const sel=G('ia-p-trilha');
-  sel.innerHTML='<option value="">Nenhuma (aula avulsa)</option>'+S.trilhas.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
+  const opcoesTrilha=S.trilhas.map(t=>`<option value="${t.id}">${t.icone||'🚀'} ${t.titulo}</option>`).join('');
+  G('ia-p-trilha').innerHTML='<option value="">Nenhuma (aula avulsa)</option>'+opcoesTrilha;
+  G('ia-p-f-trilha').innerHTML='<option value="">Todas as trilhas</option>'+opcoesTrilha;
   buildIAAulasSel();
   iaProfTrocarTipo();
 }
@@ -1797,9 +1801,19 @@ function iaProfTrocarTipo(){
 }
 function buildIAAulasSel(){
   iaProfAulasSel=new Set();iaProfReuseSel=new Set();
+  G('ia-p-f-trilha').value='';
+  rIAAulasChips();
+}
+function iaFiltrarAulas(){rIAAulasChips()}
+/* Redesenha os chips conforme o filtro de trilha, mantendo o que ja estava selecionado. */
+function rIAAulasChips(){
   const el=G('ia-p-aulas-sel');
-  if(!S.aulas.length){el.innerHTML='<div class="mut sm">Nenhuma aula criada ainda.</div>'}
-  else el.innerHTML=S.aulas.map(al=>`<div class="tci" id="iaa-${al.id}" onclick="togIAAula('${al.id}')"><span>${al.titulo}</span></div>`).join('');
+  const tri=S.trilhas.find(t=>t.id===G('ia-p-f-trilha').value);
+  const aulas=tri?S.aulas.filter(al=>tri.ordemAulas.includes(al.id)):S.aulas;
+  iaAulasVisiveis=new Set(aulas.map(al=>al.id));
+  if(!S.aulas.length)el.innerHTML='<div class="mut sm">Nenhuma aula criada ainda.</div>';
+  else if(!aulas.length)el.innerHTML='<div class="mut sm">Nenhuma aula nesta trilha.</div>';
+  else el.innerHTML=aulas.map(al=>`<div class="tci${iaProfAulasSel.has(al.id)?' on':''}" id="iaa-${al.id}" onclick="togIAAula('${al.id}')"><span>${al.titulo}</span></div>`).join('');
   updIAAulasH();renderIAReuseList();
 }
 function togIAAula(id){
@@ -1811,7 +1825,11 @@ function togIAAula(id){
   G(`iaa-${id}`).classList.toggle('on',iaProfAulasSel.has(id));
   updIAAulasH();renderIAReuseList();
 }
-function updIAAulasH(){G('ia-p-aulas-h').textContent=iaProfAulasSel.size?`${iaProfAulasSel.size} aula(s) selecionada(s)`:'Nenhuma aula selecionada'}
+function updIAAulasH(){
+  const n=iaProfAulasSel.size;
+  const fora=[...iaProfAulasSel].filter(id=>!iaAulasVisiveis.has(id)).length;
+  G('ia-p-aulas-h').textContent=n?`${n} aula(s) selecionada(s)${fora?` · ${fora} fora do filtro atual`:''}`:'Nenhuma aula selecionada';
+}
 function renderIAReuseList(){
   const wrap=G('ia-p-reuse-wrap'),list=G('ia-p-reuse-list');
   if(!iaProfAulasSel.size){wrap.style.display='none';iaProfReuseSel=new Set();return}
