@@ -150,6 +150,41 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);min-height:100v
 .ia-msg-user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
 .ia-msg-bot{align-self:flex-start;background:var(--surf2);border:1px solid var(--bdr);color:var(--txt);border-bottom-left-radius:4px}
 .ia-msg-bot.ia-msg-load{color:var(--mut);font-style:italic}
+/* ── Assistente do aluno: materiais de estudo ── */
+.tabs-sc{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs-sc .tbtn{flex:0 0 auto;white-space:nowrap;padding:9px 14px}
+.mat-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.mat-tt{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--txt)}
+.mat-ld{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--mut);font-size:14px;padding:30px 10px;text-align:center}
+.mat-sp{width:16px;height:16px;border:2px solid var(--bdr2);border-top-color:var(--acc);border-radius:50%;animation:mspin .7s linear infinite;flex-shrink:0}
+@keyframes mspin{to{transform:rotate(360deg)}}
+.rs-b{background:var(--surf2);border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.rs-bt{font-weight:700;font-size:14px;color:var(--acc);margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.rs-n{width:20px;height:20px;border-radius:6px;background:var(--acc);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rs-li{position:relative;padding-left:16px;font-size:13.5px;line-height:1.6;color:var(--txt2);margin-bottom:6px}
+.rs-li:last-child{margin-bottom:0}
+.rs-li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--acc);opacity:.55}
+.rs-cc{border-left:3px solid var(--grn);background:var(--success-50);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--txt)}
+.mm-c{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:700;font-size:15px;padding:12px 24px;border-radius:999px;text-align:center;width:fit-content;max-width:100%;margin:0 auto}
+.mm-tr{width:2px;height:20px;background:var(--bdr2);margin:0 auto}
+.mm-rs{position:relative;padding-left:24px}
+.mm-rs::before{content:'';position:absolute;left:0;top:0;bottom:26px;width:2px;background:var(--bdr2)}
+.mm-r{position:relative;margin-bottom:12px}
+.mm-r:last-child{margin-bottom:0}
+.mm-r::before{content:'';position:absolute;left:-24px;top:24px;width:24px;height:2px;background:var(--bdr2)}
+.mm-b{background:var(--surf2);border:1px solid var(--bdr);border-left:4px solid var(--c);border-radius:12px;padding:12px 14px}
+.mm-bt{font-weight:700;font-size:14px;color:var(--c);margin-bottom:8px}
+.mm-ch{display:flex;flex-wrap:wrap;gap:6px}
+.mm-cp{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;font-size:12.5px;color:var(--txt2)}
+.fc-w{perspective:1200px;max-width:520px;margin:0 auto}
+.fc{position:relative;height:240px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1);cursor:pointer}
+.fc.on{transform:rotateY(180deg)}
+.fc-s{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow-y:auto}
+.fc-f{background:var(--surf2);border:1px solid var(--bdr2);color:var(--txt);font-size:16px;font-weight:600;line-height:1.5}
+.fc-v{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-size:15px;line-height:1.6;transform:rotateY(180deg)}
+.fc-tag{font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:10px;flex-shrink:0}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px}
+.fc-ct{font-size:13px;color:var(--mut);min-width:70px;text-align:center}
 .ctit{font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--txt)}
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px}
 .sc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:18px}
@@ -857,6 +892,13 @@ Pontos: 1000</div>
             </select>
           </div>
         </div>
+        <div class="tabs tabs-sc" id="ia-a-modos" style="display:none">
+          <button class="tbtn on" id="iam-chat" onclick="iaAlunoModo('chat')">💬 Conversar</button>
+          <button class="tbtn" id="iam-resumo" onclick="iaAlunoModo('resumo')">📝 Resumo</button>
+          <button class="tbtn" id="iam-mapa" onclick="iaAlunoModo('mapa')">🧠 Mapa mental</button>
+          <button class="tbtn" id="iam-flashcards" onclick="iaAlunoModo('flashcards')">🎴 Flashcards</button>
+        </div>
+        <div class="card" id="ia-a-mat-wrap" style="display:none"><div id="ia-a-mat"></div></div>
         <div class="card" id="ia-a-chat-wrap" style="display:none;flex-direction:column;height:60vh">
           <div id="ia-a-msgs" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:10px"></div>
           <div style="display:flex;gap:8px;border-top:1px solid var(--bdr);padding-top:12px;flex-shrink:0">
@@ -2502,8 +2544,8 @@ function renderAlunoIA(){
   sel.innerHTML=`<option value="">Selecione uma aula ou prova...</option>${optAulas}${optProvas}`;
   sel.value='';
   _iaFonte=null;_iaCtxTexto='';_iaHist=[];
-  G('ia-a-chat-wrap').style.display='none';
-  G('ia-a-msgs').innerHTML='';
+  ['ia-a-modos','ia-a-chat-wrap','ia-a-mat-wrap'].forEach(id=>G(id).style.display='none');
+  G('ia-a-msgs').innerHTML='';G('ia-a-mat').innerHTML='';
 }
 function iaAlunoContexto(fonteVal){
   const[tipo,id]=fonteVal.split(':');
@@ -2526,12 +2568,99 @@ function iaAlunoContexto(fonteVal){
 function iaAlunoTrocarFonte(){
   const val=G('ia-a-fonte').value;
   _iaFonte=val||null;_iaHist=[];
-  G('ia-a-msgs').innerHTML='';
-  if(!val){G('ia-a-chat-wrap').style.display='none';return}
+  G('ia-a-msgs').innerHTML='';G('ia-a-mat').innerHTML='';
+  if(!val){['ia-a-modos','ia-a-chat-wrap','ia-a-mat-wrap'].forEach(id=>G(id).style.display='none');return}
   _iaCtxTexto=iaAlunoContexto(val);
-  G('ia-a-chat-wrap').style.display='flex';
-  iaAlunoAddMsg('bot','Oi! Pode perguntar o que quiser sobre esse conteúdo. 🙂');
+  G('ia-a-modos').style.display='flex';
+  /* Resumo/mapa/flashcards cobrem o conteudo inteiro e entregariam as respostas de
+     uma prova ainda nao entregue. Nesse caso ficam so' o chat, que tem a regra de
+     nao revelar gabarito questao por questao. */
+  const liberado=_iaMaterialLiberado(val);
+  ['resumo','mapa','flashcards'].forEach(k=>G('iam-'+k).style.display=liberado?'':'none');
+  iaAlunoModo('chat');
+  iaAlunoAddMsg('bot',liberado?'Oi! Pode perguntar o que quiser sobre esse conteúdo. 🙂':'Oi! Pode perguntar o que quiser sobre esse conteúdo. 🙂\n\nResumo, mapa mental e flashcards ficam disponíveis depois que você entregar esta prova.');
 }
+function _iaMaterialLiberado(fonteVal){
+  const[tipo,id]=String(fonteVal||'').split(':');
+  if(tipo!=='prova')return true;
+  return !!S.respostas.find(r=>r.provaId===id&&r.alunoRA===S.user.ra);
+}
+/* ── Materiais de estudo (resumo, mapa mental, flashcards) ── */
+const IA_MODOS=['chat','resumo','mapa','flashcards'];
+const IA_MAT_NOME={resumo:'o resumo',mapa:'o mapa mental',flashcards:'os flashcards'};
+const IA_MAT_TIT={resumo:'📝 Resumo',mapa:'🧠 Mapa mental',flashcards:'🎴 Flashcards'};
+const MM_CORES=['var(--acc)','var(--acc2)','var(--tel)','var(--org)','var(--yel)','var(--grn)'];
+function _esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+/* A chave inclui uma impressao do conteudo: se o professor editar a aula, o material salvo deixa de valer sozinho. */
+function _iaHash(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return(h>>>0).toString(36)}
+function _iaCacheKey(modo){return`iamat:v1:${_iaFonte}:${_iaHash(_iaCtxTexto)}:${modo}`}
+function _iaCacheGet(modo){try{const s=localStorage.getItem(_iaCacheKey(modo));return s?JSON.parse(s):null}catch(_){return null}}
+function _iaCacheSet(modo,mat){
+  try{localStorage.setItem(_iaCacheKey(modo),JSON.stringify(mat))}
+  catch(_){ // provavelmente cota cheia: limpa os materiais antigos e tenta uma vez
+    try{Object.keys(localStorage).filter(k=>k.indexOf('iamat:')===0).forEach(k=>localStorage.removeItem(k));localStorage.setItem(_iaCacheKey(modo),JSON.stringify(mat))}catch(__){}
+  }
+}
+function iaAlunoModo(m){
+  if(!_iaFonte)return;
+  IA_MODOS.forEach(k=>G('iam-'+k).classList.toggle('on',k===m));
+  G('ia-a-chat-wrap').style.display=m==='chat'?'flex':'none';
+  G('ia-a-mat-wrap').style.display=m==='chat'?'none':'block';
+  if(m!=='chat')iaCarregarMaterial(m,false);
+}
+async function iaCarregarMaterial(modo,forcar){
+  const el=G('ia-a-mat');
+  if(!forcar){const salvo=_iaCacheGet(modo);if(salvo)return rIAMaterial(modo,salvo,true)}
+  el.innerHTML=`<div class="mat-ld"><div class="mat-sp"></div><span>Gerando ${IA_MAT_NOME[modo]} com IA...</span></div>`;
+  try{
+    const{data,error}=await sb.functions.invoke('assistente-aluno-ia',{body:{modo,contexto:_iaCtxTexto}});
+    if(error)throw new Error(await _iaErroMsg(error));
+    if(data?.error)throw new Error(data.erroMsg||data.error);
+    if(!data?.material)throw new Error('A IA não devolveu o material. Tente de novo.');
+    _iaCacheSet(modo,data.material);
+    rIAMaterial(modo,data.material,false);
+  }catch(e){
+    console.error('material IA ('+modo+'):',e);
+    el.innerHTML=`<div class="mat-ld" style="flex-direction:column;gap:14px"><span style="color:var(--red)">❌ ${_esc(e?.message||'Não foi possível gerar agora.')}</span><button class="btn btn-sec btn-sm" onclick="iaCarregarMaterial('${modo}',true)">🔄 Tentar de novo</button></div>`;
+  }
+}
+function rIAMaterial(modo,mat,doCache){
+  const corpo=modo==='resumo'?rIAResumo(mat):modo==='mapa'?rIAMapa(mat):rIAFlash(mat);
+  G('ia-a-mat').innerHTML=`<div class="mat-hd"><div class="mat-tt">${IA_MAT_TIT[modo]}</div><div style="display:flex;align-items:center;gap:10px">${doCache?'<span class="mut xs">salvo neste aparelho</span>':''}<button class="btn btn-sec btn-sm" onclick="iaCarregarMaterial('${modo}',true)">🔄 Gerar de novo</button></div></div>${corpo}`;
+  if(modo==='flashcards')_fcIr(0);
+}
+function rIAResumo(m){
+  const tops=(m.topicos||[]).map((t,i)=>`<div class="rs-b"><div class="rs-bt"><span class="rs-n">${i+1}</span>${_esc(t.titulo)}</div>${(t.pontos||[]).map(p=>`<div class="rs-li">${_esc(p)}</div>`).join('')}</div>`).join('');
+  return`${m.titulo?`<div class="mut sm" style="margin-bottom:12px">${_esc(m.titulo)}</div>`:''}${tops}${m.conclusao?`<div class="rs-cc">💡 ${_esc(m.conclusao)}</div>`:''}`;
+}
+function rIAMapa(m){
+  const ramos=(m.ramos||[]).map((r,i)=>{
+    const chips=(r.sub||[]).map(s=>`<span class="mm-cp">${_esc(s)}</span>`).join('');
+    return`<div class="mm-r"><div class="mm-b" style="--c:${MM_CORES[i%MM_CORES.length]}"><div class="mm-bt">${_esc(r.titulo)}</div>${chips?`<div class="mm-ch">${chips}</div>`:''}</div></div>`;
+  }).join('');
+  return`<div class="mm-c">${_esc(m.centro)}</div><div class="mm-tr"></div><div class="mm-rs">${ramos}</div>`;
+}
+let _fcCards=[],_fcIdx=0;
+function rIAFlash(m){
+  _fcCards=(m.cards||[]).slice();_fcIdx=0;
+  return`<div class="fc-w"><div class="fc" id="fc-card" onclick="_fcVirar()">
+    <div class="fc-s fc-f"><div class="fc-tag">Pergunta</div><div id="fc-frente"></div></div>
+    <div class="fc-s fc-v"><div class="fc-tag">Resposta</div><div id="fc-verso"></div></div>
+  </div>
+  <div class="fc-nav"><button class="btn btn-sec btn-sm" onclick="_fcIr(_fcIdx-1)">‹ Anterior</button><div class="fc-ct" id="fc-ct"></div><button class="btn btn-sec btn-sm" onclick="_fcIr(_fcIdx+1)">Próximo ›</button></div>
+  <div style="text-align:center;margin-top:12px"><button class="btn btn-sec btn-sm" onclick="_fcEmbaralhar()">🔀 Embaralhar</button></div>
+  <div class="mut xs" style="text-align:center;margin-top:8px">Toque no card para ver a resposta</div></div>`;
+}
+function _fcVirar(){G('fc-card').classList.toggle('on')}
+function _fcIr(i){
+  if(!_fcCards.length)return;
+  _fcIdx=(i+_fcCards.length)%_fcCards.length;
+  const c=_fcCards[_fcIdx];
+  G('fc-card').classList.remove('on');
+  G('fc-frente').textContent=c.frente;G('fc-verso').textContent=c.verso;
+  G('fc-ct').textContent=`${_fcIdx+1} de ${_fcCards.length}`;
+}
+function _fcEmbaralhar(){for(let i=_fcCards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[_fcCards[i],_fcCards[j]]=[_fcCards[j],_fcCards[i]]}_fcIr(0)}
 function iaAlunoAddMsg(role,text,loading=false){
   const el=document.createElement('div');
   el.className='ia-msg '+(role==='user'?'ia-msg-user':'ia-msg-bot')+(loading?' ia-msg-load':'');
