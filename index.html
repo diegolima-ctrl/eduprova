@@ -1113,7 +1113,34 @@ function nav(s,n,fn){closeSB();showSec(s);setNav(n);if(fn)fn()}
 document.querySelectorAll('.mov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.add('hidden')}));
 
 /* ══ DADOS ══ */
+/* Banco congestionado devolve "canceling statement due to statement timeout".
+   Vale repetir: em segundos a fila costuma estar vazia de novo. */
+function ehSobrecarga(e){
+  const m=`${(e&&e.code)||''} ${(e&&e.message)||''}`.toLowerCase();
+  return m.includes('57014')||m.includes('statement timeout')||m.includes('timeout')
+    ||m.includes('failed to fetch')||m.includes('networkerror')||m.includes('load failed');
+}
+async function comRetry(fn,tentativas=3){
+  let ultimo=null;
+  for(let i=0;i<tentativas;i++){
+    try{
+      const r=await fn();
+      if(!r.error)return r;
+      ultimo=r.error;
+      if(!ehSobrecarga(ultimo))return r;
+    }catch(e){
+      ultimo=e;
+      if(!ehSobrecarga(e))throw e;
+    }
+    await new Promise(ok=>setTimeout(ok,700*(i+1)));
+  }
+  return{data:null,error:ultimo};
+}
 async function loadAllData(){
+  // Professor precisa da base inteira; aluno NÃO.
+  // Carregar tudo para todo mundo derrubava o Postgres quando a turma entrava
+  // junta (10 varreduras de tabela por aluno => "statement timeout" no login).
+  if(S.user&&S.user.tipo==='aluno')return loadDadosAluno();
   const safe=async(p)=>{try{const r=await p;return r.error?{data:[]}:r}catch(e){return{data:[]}}};
   // Busca TODAS as linhas em páginas de 1000 (o Supabase limita cada select a 1000 por padrão).
   // Sem isso, tabelas grandes (respostas, frequencia...) ficam truncadas e provas entregues
@@ -1143,18 +1170,85 @@ async function loadAllData(){
     safe(all('frequencia','data',false)),
     safe(all('aulas_configuracao'))
   ]);
-  S.provas=r0.data.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,liberada:!!p.liberada}));
-  S.alunos=r1.data.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
-  S.respostas=r2.data.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.aulas=r3.data.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,periodo:x.periodo||'',turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
-  S.exercicios=r4.data.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em}));
-  S.respostasEx=r5.data.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
-  S.trilhas=r6.data.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em}));
-  S.progresso=r7.data.map(p=>({id:p.id,trilhaId:p.trilha_id,alunoRA:p.aluno_ra,concluidas:A(p.aulas_concluidas),xp:p.xp||0,nivel:p.nivel||1}));
-  S.frequencia=r8.data.map(f=>({id:f.id,alunoRA:f.aluno_ra,alunoNome:f.aluno_nome,alunoTurma:f.aluno_turma,data:f.data,presente:f.presente}));
-  S.aulasConf=r9.data.map(x=>({id:x.id,data:x.data,turma:x.turma,qtd:x.quantidade_aulas}));
+  aplicarDados({provas:r0.data,alunos:r1.data,respostas:r2.data,aulas:r3.data,exercicios:r4.data,
+    respostasEx:r5.data,trilhas:r6.data,progresso:r7.data,frequencia:r8.data,aulasConf:r9.data});
 }
-async function reload(){shl('Atualizando...');try{await loadAllData()}catch(e){console.error(e)}hhl()}
+
+/* Carga enxuta do aluno: só o conteúdo da turma dele + as respostas dele.
+   Sai de ~1,7 MB e 10 varreduras completas para poucos KB filtrados no servidor. */
+async function loadDadosAluno(){
+  const u=S.user;
+  const turmaJ=JSON.stringify([u.turma]); // coluna turmas é jsonb -> cs.["1M1"]
+  const safe=async(p)=>{try{const r=await p;return r.error?{data:[]}:r}catch(e){return{data:[]}}};
+  const uniq=arr=>{const m=new Map();arr.forEach(x=>{if(x&&!m.has(x.id))m.set(x.id,x)});return[...m.values()]};
+  const recente=(a,b)=>String(b.criada_em||'').localeCompare(String(a.criada_em||''));
+
+  const[qTri,qAulas,qProvas,qResp,qRespEx,qProg,qFreq]=await Promise.all([
+    safe(sb.from('trilhas').select('*').contains('turmas',turmaJ).order('criada_em',{ascending:false})),
+    safe(sb.from('aulas').select('*').contains('turmas',turmaJ).order('criada_em',{ascending:false})),
+    safe(sb.from('provas').select('*').contains('turmas',turmaJ).order('criada_em',{ascending:false})),
+    safe(sb.from('respostas').select('*').eq('aluno_ra',u.ra)),
+    safe(sb.from('respostas_exercicios').select('*').eq('aluno_ra',u.ra)),
+    safe(sb.from('progresso_trilha').select('*').eq('aluno_ra',u.ra)),
+    safe(sb.from('frequencia').select('*').eq('aluno_ra',u.ra).order('data',{ascending:false}))
+  ]);
+
+  // Completa o que o filtro por turma não pega: aulas usadas nas trilhas e provas
+  // já respondidas (ex.: aluno mudou de turma) — senão somem de Notas/Revisar.
+  const temAula=new Set(qAulas.data.map(a=>a.id));
+  const faltaAula=[...new Set(qTri.data.flatMap(t=>A(t.ordem_aulas)))].filter(id=>id&&!temAula.has(id));
+  const temProva=new Set(qProvas.data.map(p=>p.id));
+  const faltaProva=[...new Set(qResp.data.map(r=>r.prova_id))].filter(id=>id&&!temProva.has(id));
+  const[xAulas,xProvas]=await Promise.all([
+    faltaAula.length?safe(sb.from('aulas').select('*').in('id',faltaAula)):{data:[]},
+    faltaProva.length?safe(sb.from('provas').select('*').in('id',faltaProva)):{data:[]}
+  ]);
+  const aulas=uniq([...qAulas.data,...xAulas.data]).sort(recente);
+  const provas=uniq([...qProvas.data,...xProvas.data]).sort(recente);
+
+  // Exercícios das aulas visíveis + os que o aluno já entregou.
+  const aulaIds=aulas.map(a=>a.id);
+  const exIds=[...new Set(qRespEx.data.map(r=>r.exercicio_id))].filter(Boolean);
+  const[exA,exB]=await Promise.all([
+    aulaIds.length?safe(sb.from('exercicios').select('*').in('aula_id',aulaIds)):{data:[]},
+    exIds.length?safe(sb.from('exercicios').select('*').in('id',exIds)):{data:[]}
+  ]);
+
+  aplicarDados({
+    provas,
+    alunos:[{aluno_id:u.ra,nome:u.nome,turma:u.turma}],
+    respostas:qResp.data,
+    aulas,
+    exercicios:uniq([...exA.data,...exB.data]).sort(recente),
+    respostasEx:qRespEx.data,
+    trilhas:qTri.data,
+    progresso:qProg.data,
+    frequencia:qFreq.data,
+    aulasConf:[] // só a tela de frequência do professor usa
+  });
+}
+
+function aplicarDados(d){
+  S.provas=d.provas.map(p=>({id:p.id,titulo:p.titulo,disciplina:p.disciplina,turmas:A(p.turmas,p.turma),pontosPorQ:p.pontos_por_q,duracao:p.duracao||50,questoes:A(p.questoes),criadaEm:p.criada_em,liberada:!!p.liberada}));
+  S.alunos=d.alunos.map(x=>({ra:x.aluno_id,nome:x.nome,turma:x.turma}));
+  S.respostas=d.respostas.map(r=>({id:r.id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,provaId:r.prova_id,respostas:r.respostas,textoRespostas:r.texto_respostas||{},correcoes:r.correcoes||{},nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  S.aulas=d.aulas.map(x=>({id:x.id,titulo:x.titulo,disciplina:x.disciplina,periodo:x.periodo||'',turmas:A(x.turmas),conteudo:x.conteudo||'',imagens:A(x.imagens),videos:A(x.videos||null),criadaEm:x.criada_em}));
+  S.exercicios=d.exercicios.map(x=>({id:x.id,aulaId:x.aula_id,titulo:x.titulo,descricao:x.descricao||'',turmas:A(x.turmas),questoes:A(x.questoes),pontosPorQ:x.pontos_por_q,criadaEm:x.criada_em}));
+  S.respostasEx=d.respostasEx.map(r=>({id:r.id,exercicioId:r.exercicio_id,alunoRA:r.aluno_ra,alunoNome:r.aluno_nome,alunoTurma:r.aluno_turma,respostas:r.respostas,nota:r.nota,acertos:r.acertos,entregueEm:r.entregue_em}));
+  S.trilhas=d.trilhas.map(t=>({id:t.id,titulo:t.titulo,descricao:t.descricao||'',disciplina:t.disciplina,turmas:A(t.turmas),ordemAulas:A(t.ordem_aulas),cor:t.cor||'#4f7cff',icone:t.icone||'🚀',criadaEm:t.criada_em}));
+  S.progresso=d.progresso.map(p=>({id:p.id,trilhaId:p.trilha_id,alunoRA:p.aluno_ra,concluidas:A(p.aulas_concluidas),xp:p.xp||0,nivel:p.nivel||1}));
+  S.frequencia=d.frequencia.map(f=>({id:f.id,alunoRA:f.aluno_ra,alunoNome:f.aluno_nome,alunoTurma:f.aluno_turma,data:f.data,presente:f.presente}));
+  S.aulasConf=d.aulasConf.map(x=>({id:x.id,data:x.data,turma:x.turma,qtd:x.quantidade_aulas}));
+}
+let _recarregando=null;
+async function reload(){
+  // Cada clique no menu chama reload(); sem esta trava um aluno impaciente
+  // dispara várias cargas simultâneas e só aumenta a fila no banco.
+  if(_recarregando)return _recarregando;
+  shl('Atualizando...');
+  _recarregando=(async()=>{try{await loadAllData()}catch(e){console.error(e)}})();
+  try{await _recarregando}finally{_recarregando=null;hhl()}
+}
 
 /* ══ IMAGE ══ */
 async function uploadImg(file,prefix){
@@ -1200,7 +1294,7 @@ async function doLogin(){
       if(!turma||!nome||!senha){errEl.textContent='Preencha todos os campos.';errEl.classList.remove('hidden');return}
       shl('Verificando cadastro...');
       const alunoId=nome.toLowerCase().replace(/\s+/g,'.')+'_'+turma;
-      const{data:ex,error:e1}=await sb.from('alunos').select('*').eq('aluno_id',alunoId).maybeSingle();
+      const{data:ex,error:e1}=await comRetry(()=>sb.from('alunos').select('*').eq('aluno_id',alunoId).maybeSingle());
       if(e1)throw e1;
       if(ex){
         if(ex.senha!==senha){
@@ -1222,7 +1316,7 @@ async function doLogin(){
         S.user={tipo:'aluno',nome:ex.nome,turma:ex.turma,ra:ex.aluno_id};
       }else{
         // Novo aluno — cria conta
-        const{error:e2}=await sb.from('alunos').insert({aluno_id:alunoId,nome,turma,senha});
+        const{error:e2}=await comRetry(()=>sb.from('alunos').insert({aluno_id:alunoId,nome,turma,senha}));
         if(e2)throw e2;
         S.user={tipo:'aluno',nome,turma,ra:alunoId};
       }
@@ -1233,7 +1327,7 @@ async function doLogin(){
     hhl();
     G('scr-login').classList.add('hidden');G('scr-app').classList.remove('hidden');
     initApp();
-  }catch(e){hhl();errEl.textContent=`Erro: ${e.message||'tente novamente'}`;errEl.classList.remove('hidden');console.error(e)}
+  }catch(e){hhl();errEl.textContent=ehSobrecarga(e)?'⏳ Sistema congestionado neste momento. Aguarde uns segundos e toque em Entrar de novo.':`Erro: ${e.message||'tente novamente'}`;errEl.classList.remove('hidden');console.error(e)}
   finally{btn.disabled=false;btn.textContent='Entrar →'}
 }
 
