@@ -1,4 +1,4 @@
-const CACHE = 'eduprova-v4';
+const CACHE = 'eduprova-v6';
 const STATIC = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
